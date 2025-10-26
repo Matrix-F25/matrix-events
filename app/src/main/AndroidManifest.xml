@@ -12,7 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Matrixevents">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.OrganizerMyEventsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.EntrantMyEventsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.EventSearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.QRCodeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
