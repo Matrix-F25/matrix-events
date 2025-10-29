@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!--
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -40,44 +39,45 @@
             </intent-filter>
         </activity>
     </application>
-    -->
-    <application
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.Matrixevents">
 
-        <activity
-            android:name=".activities.OrganizerMyEventsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.EntrantMyEventsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.EventSearchActivity"
-            android:exported="true"> <!-- Change exported to true for launcher -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.NotificationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.QRCodeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.MainActivity"
-            android:exported="false" />
-    </application>
+
+<!--    <application-->
+<!--        android:allowBackup="true"-->
+<!--        android:dataExtractionRules="@xml/data_extraction_rules"-->
+<!--        android:fullBackupContent="@xml/backup_rules"-->
+<!--        android:icon="@mipmap/ic_launcher"-->
+<!--        android:label="@string/app_name"-->
+<!--        android:roundIcon="@mipmap/ic_launcher_round"-->
+<!--        android:supportsRtl="true"-->
+<!--        android:theme="@style/Theme.Matrixevents">-->
+
+<!--        <activity-->
+<!--            android:name=".activities.OrganizerMyEventsActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".activities.ProfileActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".activities.EntrantMyEventsActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".activities.EventSearchActivity"-->
+<!--            android:exported="true"> &lt;!&ndash; Change exported to true for launcher &ndash;&gt;-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name=".activities.NotificationActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".activities.QRCodeActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".activities.MainActivity"-->
+<!--            android:exported="false" />-->
+<!--    </application>-->
 
 
 </manifest>
