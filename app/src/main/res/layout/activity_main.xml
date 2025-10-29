@@ -5,16 +5,41 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/matrix_background"
     tools:context=".activities.MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="160dp"
+        android:layout_height="80dp"
+        android:text="@string/login_button_text"
+        android:textColor="@color/neon_green"
+        app:layout_constraintBottom_toTopOf="@+id/signup_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.821"
+        app:cornerRadius="0dp"
+        app:backgroundTint="@color/black"
+        app:strokeColor="@color/neon_green"
+        app:strokeWidth="2dp" />
+
+    <Button
+        android:id="@+id/signup_button"
+        android:layout_width="160dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="292dp"
+        android:text="@string/signup_button_text"
+        android:textColor="@color/neon_green"
+        app:backgroundTint="@color/black"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:strokeColor="@color/neon_green"
+        app:strokeWidth="2dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
