@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".activities.NotificationActivity">
 
-    <!-- Example page content -->
     <TextView
         android:id="@+id/page_title"
         android:layout_width="wrap_content"
@@ -19,16 +18,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <!-- This is the navigation bar on the bottom -->
-    <include
-        android:id="@+id/bottom_navigation"
-        layout="@layout/navigation_bar"
+    <FrameLayout
+        android:id="@+id/navigation_bar_fragment"
+        android:name="com.example.matrix_events.fragments.NavigationBarFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

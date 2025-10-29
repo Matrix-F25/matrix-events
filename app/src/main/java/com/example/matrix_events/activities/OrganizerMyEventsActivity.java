@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class OrganizerMyEventsActivity extends AppCompatActivity {
@@ -20,49 +21,18 @@ public class OrganizerMyEventsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_organizer_my_events);
-
-        // ---Navigation Bar Logic ---
-        navBarLogic();
-        // ---Button Logic ---
-        buttonLogic();
-
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-    }
-    private void navBarLogic() {
-        // 1. Find the BottomNavigationView
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_my_events))
+                .commit();
 
-        // 2. Set the correct item as selected.
-        bottomNavigationView.setSelectedItemId(R.id.nav_my_events);
-
-        // 3. Set up the item selection listener
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            // Prevent re-launching the same activity
-            if (id == bottomNavigationView.getSelectedItemId()) {
-                return true;
-            }
-
-            if (id == R.id.nav_qrcode) {
-                startActivity(new Intent(getApplicationContext(), QRCodeActivity.class));
-            } else if (id == R.id.nav_notifications) {
-                startActivity(new Intent(getApplicationContext(), NotificationActivity.class));
-            } else if (id == R.id.nav_event_search) {
-                startActivity(new Intent(getApplicationContext(), EventSearchActivity.class));
-            } else if (id == R.id.nav_my_events) {
-                startActivity(new Intent(getApplicationContext(), EntrantMyEventsActivity.class));
-            } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-            }
-            overridePendingTransition(0, 0);
-            return true;
-        });
+        // ---Button Logic ---
+        buttonLogic();
     }
 
     private void buttonLogic(){
