@@ -2,12 +2,12 @@ package com.example.matrix_events.entities;
 
 import com.example.matrix_events.database.DBObject;
 
-public class Profile extends DBObject {
+public class Notification extends DBObject {
     private String name;
     private String description;
 
-    public Profile() {}       // Required for Firestore
-    public Profile(String name, String description) {
+    public Notification() {}       // Required for Firestore
+    public Notification(String name, String description) {
         this.name = name;
         this.description = description;
     }
