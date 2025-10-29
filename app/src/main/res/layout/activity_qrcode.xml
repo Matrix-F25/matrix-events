@@ -7,4 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".activities.QRCodeActivity">
 
+    <!-- This is the navigation bar on the bottom -->
+    <include
+        android:id="@+id/bottom_navigation"
+        layout="@layout/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
