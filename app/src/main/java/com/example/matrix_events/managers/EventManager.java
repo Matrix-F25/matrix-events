@@ -37,12 +37,8 @@ public class EventManager extends Model implements DBListener<Event> {
 
     // Create, update, delete operations for organizers and admins
     public void createEvent(Event event) { connector.createAsync(event); }
-    public void updateEvent(Event event) {
-        connector.updateAsync(event);
-    }
-    public void deleteEvent(Event event) {
-        connector.deleteAsync(event);
-    }
+    public void updateEvent(Event event) { connector.updateAsync(event); }
+    public void deleteEvent(Event event) { connector.deleteAsync(event); }
 
     @Override
     public void readAllAsync_Complete(List<Event> objects) {

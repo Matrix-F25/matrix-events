@@ -52,19 +52,14 @@ public class NavigationBarFragment extends Fragment {
             Intent intent;
             if (id == R.id.nav_qrcode) {
                 intent = new Intent(requireContext(), QRCodeActivity.class);
-                startActivity(new Intent(requireContext(), QRCodeActivity.class));
             } else if (id == R.id.nav_notifications) {
                 intent = new Intent(requireContext(), NotificationActivity.class);
-                startActivity(new Intent(requireContext(), NotificationActivity.class));
             } else if (id == R.id.nav_event_search) {
                 intent = new Intent(requireContext(), EventSearchActivity.class);
-                startActivity(new Intent(requireContext(), EventSearchActivity.class));
             } else if (id == R.id.nav_my_events) {
                 intent = new Intent(requireContext(), EntrantMyEventsActivity.class);
-                startActivity(new Intent(requireContext(), EntrantMyEventsActivity.class));
             } else if (id == R.id.nav_profile) {
                 intent = new Intent(requireContext(), ProfileActivity.class);
-                startActivity(new Intent(requireContext(), ProfileActivity.class));
             } else {
                 Log.w("NavigationFragment", "INVALID navigation context provided.");
                 intent = new Intent();
