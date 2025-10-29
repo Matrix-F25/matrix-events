@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "68758771811",
+    "project_id": "matrix-events",
+    "storage_bucket": "matrix-events.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68758771811:android:508ec9bf60d27b8ddd0056",
+        "android_client_info": {
+          "package_name": "com.example.matrix_events"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1yboLjd0lmNOzK18EDQd2isabzmvt2XI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
