@@ -8,6 +8,17 @@
     tools:context=".activities.QRCodeActivity">
 
     <!-- This is the navigation bar on the bottom -->
+    <TextView
+        android:id="@+id/page_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="qrcode page"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <include
         android:id="@+id/bottom_navigation"
         layout="@layout/navigation_bar"
