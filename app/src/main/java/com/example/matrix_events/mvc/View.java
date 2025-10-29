@@ -1,4 +1,5 @@
 package com.example.matrix_events.mvc;
 
-public class View {
+public abstract class View {
+    abstract public void update();
 }
