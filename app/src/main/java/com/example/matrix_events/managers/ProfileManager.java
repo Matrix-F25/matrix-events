@@ -14,12 +14,12 @@ public class ProfileManager implements DBListener<Profile> {
 
     private List<Profile> profiles;
     private final DBConnector<Profile> connector;
-    private static EventManager manager = new EventManager();
+    private static NotificationManager manager = new NotificationManager();
     private ProfileManager() {
         profiles = new ArrayList<>();
         connector = new DBConnector<>("profiles", this, Profile.class);
     }
-    public static ProfileManager getInstance() {
+    public static NotificationManager getInstance() {
         return manager;
     }
 
