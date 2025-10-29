@@ -23,9 +23,6 @@ public class EventSearchActivity extends AppCompatActivity {
         // --- Start of Navigation Bar Logic ---
         navBarLogic();
 
-
-
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -34,8 +31,8 @@ public class EventSearchActivity extends AppCompatActivity {
     }
     private void navBarLogic() {
         // 1. Find the BottomNavigationView
+        //BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-
         // 2. Set the correct item as selected.
         bottomNavigationView.setSelectedItemId(R.id.nav_event_search);
 
