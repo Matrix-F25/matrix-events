@@ -10,21 +10,15 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 
 public class DBConnector<T extends DBObject> {
-    private static final String TAG = "DEBUG";
+    private static final String TAG = "DBConnector";
 
-    // Firestore references
+    // Firestore collection reference
     private final CollectionReference collectionRef;
-
-    // Listener to database changes
-    private final DBListener<T> listener;
-    private final Class<T> objectType;
 
     // Generic constructor, connects to arbitrary collection in database
     public DBConnector(String collection, DBListener<T> listener, Class<T> objectType) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         collectionRef = db.collection(collection);
-        this.listener = listener;
-        this.objectType = objectType;
         collectionRef
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
@@ -35,7 +29,7 @@ public class DBConnector<T extends DBObject> {
                         Log.w(TAG, "FireStore collection no snapshot data received");
                         return;
                     }
-                    Log.d(TAG, "FireStore collection registered a change, now " + snapshots.size() + " documents");
+                    Log.d(TAG, "FireStore collection registered an update. Reading collection of " + snapshots.size() + " documents");
 
                     ArrayList<T> objectList = new ArrayList<>();
                     for (DocumentSnapshot documentSnapshot : snapshots.getDocuments()) {
@@ -57,27 +51,9 @@ public class DBConnector<T extends DBObject> {
                     Log.d(TAG, "Document created with ID: " + documentReference.getId());
                     object.setId(documentReference.getId());
                     collectionRef.document(object.getId()).update("id", object.getId());
-                    listener.createAsync_Complete(object);
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error creating document", e));
     }
-
-//    public void readAllAsync() {
-//        Log.d(TAG, "Attempting to read ALL documents");
-//        collectionRef
-//                .get()
-//                .addOnSuccessListener(queryDocumentSnapshots -> {
-//                    Log.d(TAG, "All documents read successfully");
-//                    ArrayList<T> objectList = new ArrayList<>();
-//                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-//                        T object = documentSnapshot.toObject(objectType);
-//                        object.setId(documentSnapshot.getId());
-//                        objectList.add(object);
-//                    }
-//                    listener.readAllAsync_Complete(objectList);
-//                })
-//                .addOnFailureListener(e -> Log.w(TAG, "Error reading documents", e));
-//    }
 
     public void updateAsync(T object) {
         Log.d(TAG, "Attempting to update document");
@@ -89,8 +65,7 @@ public class DBConnector<T extends DBObject> {
                 .document(object.getId())
                 .set(object)
                 .addOnSuccessListener(command -> {
-                    Log.d(TAG, "Document updated with ID: " + object.getId());
-                    listener.updateAsync_Complete(object);
+                    Log.d(TAG, "Document with ID: " + object.getId() + " successfully updated");
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
@@ -105,8 +80,7 @@ public class DBConnector<T extends DBObject> {
                 .document(object.getId())
                 .delete()
                 .addOnSuccessListener(command -> {
-                    Log.d(TAG, "Document deleted with ID: " + object.getId());
-                    listener.deleteAsync_Complete(object);
+                    Log.d(TAG, "Document with ID: " + object.getId() + " successfully deleted");
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e));
     }

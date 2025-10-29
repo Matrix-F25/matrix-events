@@ -10,19 +10,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventManager implements DBListener<Event> {
-    private static final String TAG = "DEBUG";
+    private static final String TAG = "EventManager";
 
     private List<Event> events;
     private final DBConnector<Event> connector;
+
+    // Singleton
     private static EventManager manager = new EventManager();
     private EventManager() {
         events = new ArrayList<>();
-        connector = new DBConnector<>("events", this, Event.class);
+        connector = new DBConnector<Event>("events", this, Event.class);
     }
     public static EventManager getInstance() {
         return manager;
     }
 
+    // Event getters for views
     public Event getEvent(String id) {
         for (Event event : events) {
             if (event.getId().equals(id)) {
@@ -34,18 +37,14 @@ public class EventManager implements DBListener<Event> {
     public List<Event> getEvents() {
         return events;
     }
-    public void createEvent() {
-        Event e = new Event("Nikolai's Event", "Wicked cool description");
-        connector.createAsync(e);
-    }
+
+    // Create, update, delete operations for organizers and admins
+    public void createEvent(Event event) { connector.createAsync(event); }
     public void updateEvent(Event event) {
         connector.updateAsync(event);
     }
-
-    @Override
-    public void createAsync_Complete(Event object) {
-        events.add(object);
-        // TODO notify views
+    public void deleteEvent(Event event) {
+        connector.deleteAsync(event);
     }
 
     @Override
@@ -55,23 +54,6 @@ public class EventManager implements DBListener<Event> {
         for (Event e : objects) {
             Log.d(TAG, e.getId());
         }
-        // TODO notify views
-    }
-
-    @Override
-    public void updateAsync_Complete(Event object) {
-        for (Event event : events) {
-            if (event.equals(object)) {
-                event = object;
-                break;
-            }
-        }
-        // TODO notify views
-    }
-
-    @Override
-    public void deleteAsync_Complete(Event object) {
-        events.remove(object);
         // TODO notify views
     }
 }
