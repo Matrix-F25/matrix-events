@@ -17,7 +17,6 @@
         android:layout_marginTop="4dp"
         android:text="X"
         android:textColor="@color/neon_green"
-
         app:backgroundTint="@color/black"
         app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,6 +25,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="@color/neon_green"
         app:strokeWidth="2dp" />
+
+    <Button
+        android:id="@+id/event_detail_join_button"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="Join Waitlist"
+        android:textColor="@color/neon_green"
+        app:backgroundTint="@color/black"
+        app:cornerRadius="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/neon_green"
+        app:strokeWidth="2dp"
+        tools:layout_editor_absoluteY="473dp" />
 
     <TextView
         android:id="@+id/event_details_title_placeholder"
@@ -52,7 +66,7 @@
         android:background="@color/black"
         android:text="Description: "
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.096"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +82,7 @@
         android:maxLines="4"
         android:text="@string/lorem_ipsum"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.261"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +97,7 @@
         android:background="@color/black"
         android:text="Organizer: "
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.092"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,9 +109,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:background="@color/black"
-        android:text="John Doe"
+        android:text="String"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/organizer_name_static"
@@ -110,11 +124,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="188dp"
+        android:layout_marginEnd="208dp"
         android:background="@color/black"
         android:text="Time"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@id/event_date_placeholder"
         app:layout_constraintTop_toBottomOf="@+id/organizer_name_placeholder" />
@@ -127,7 +141,7 @@
         android:background="@color/black"
         android:text="Event Date: "
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
@@ -141,9 +155,9 @@
         android:background="@color/black"
         android:text="Date"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.365"
+        app:layout_constraintHorizontal_bias="0.331"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/organizer_name_placeholder" />
 
@@ -155,7 +169,7 @@
         android:background="@color/black"
         android:text="Registration Opens: "
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.129"
         app:layout_constraintStart_toStartOf="parent"
@@ -169,9 +183,9 @@
         android:background="@color/black"
         android:text="Date"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.569"
+        app:layout_constraintHorizontal_bias="0.521"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_date_placeholder" />
 
@@ -180,11 +194,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="112dp"
+        android:layout_marginEnd="136dp"
         android:background="@color/black"
         android:text="Time"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@id/registration_open_placeholder"
         app:layout_constraintTop_toBottomOf="@+id/event_time_placeholder" />
@@ -197,7 +211,7 @@
         android:background="@color/black"
         android:text="Registration Closes: "
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.127"
         app:layout_constraintStart_toStartOf="parent"
@@ -211,9 +225,9 @@
         android:background="@color/black"
         android:text="Date"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.577"
+        app:layout_constraintHorizontal_bias="0.521"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/registration_open_placeholder" />
 
@@ -222,11 +236,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="108dp"
+        android:layout_marginEnd="136dp"
         android:background="@color/black"
         android:text="Time"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/registration_closes_placeholder"
         app:layout_constraintTop_toBottomOf="@id/registration_open_time" />
@@ -240,12 +254,11 @@
         android:background="@color/black"
         android:text="Max Waitlist Capacity: "
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintHorizontal_bias="0.41"
         app:layout_constraintLeft_toRightOf="@+id/registration_closes_placeholder"
         app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintTop_toBottomOf="@+id/registration_closes_placeholder" />
 
     <TextView
@@ -257,10 +270,66 @@
         android:background="@color/black"
         android:text="Int"
         android:textColor="@color/neon_green"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/event_max_waitlist_cap_static"
         app:layout_constraintTop_toBottomOf="@id/registration_closes_placeholder" />
 
+    <TextView
+        android:id="@+id/event_max_cap_static"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/black"
+        android:text="Max Event Capacity: "
+        android:textColor="@color/neon_green"
+        android:textSize="18sp"
+        app:layout_constraintRight_toLeftOf="@id/event_max_cap_placeholder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_max_waitlist_cap_static" />
+
+    <TextView
+        android:id="@+id/event_max_cap_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@color/black"
+        android:text="Int"
+        android:textColor="@color/neon_green"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.026"
+        app:layout_constraintStart_toEndOf="@id/event_max_cap_static"
+        app:layout_constraintTop_toBottomOf="@+id/event_max_waitlist_cap_placeholder" />
+
+    <TextView
+        android:id="@+id/waitlist_status_static"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/black"
+        android:text="Waitlist Status: "
+        android:textColor="@color/neon_green"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/waitlist_status_placeholder"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_max_cap_static" />
+
+    <TextView
+        android:id="@+id/waitlist_status_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="188dp"
+        android:background="@color/black"
+        android:text="Boolean"
+        android:textColor="@color/neon_green"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/waitlist_status_static"
+        app:layout_constraintTop_toBottomOf="@+id/event_max_cap_placeholder" />
 </androidx.constraintlayout.widget.ConstraintLayout>
