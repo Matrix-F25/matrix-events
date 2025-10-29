@@ -1,6 +1,8 @@
 package com.example.matrix_events.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +11,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.fragments.NavigationBarFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class EntrantMyEventsActivity extends AppCompatActivity {
 
@@ -21,6 +25,24 @@ public class EntrantMyEventsActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_my_events))
+                .commit();
+
+        // ---buttonLogic---
+        buttonLogic();
+    }
+
+    private void buttonLogic(){
+        Button switchToEntrantButton = findViewById(R.id.button_switch_to_org);
+        // Set the click listener
+        switchToEntrantButton.setOnClickListener(v -> {
+            // Create an intent to go to the Org "My Events" screen
+            Intent intent = new Intent(EntrantMyEventsActivity.this, OrganizerMyEventsActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 }
