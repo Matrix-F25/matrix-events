@@ -5,57 +5,53 @@ import android.util.Log;
 import com.example.matrix_events.database.DBConnector;
 import com.example.matrix_events.database.DBListener;
 import com.example.matrix_events.entities.Profile;
+import com.example.matrix_events.mvc.Model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileManager implements DBListener<Profile> {
+public class ProfileManager extends Model implements DBListener<Profile> {
     private static final String TAG = "ProfileManager";
 
-    private List<Profile> profiles;
-    private final DBConnector<Profile> connector;
+    private List<Profile> profiles = new ArrayList<>();
+    private final DBConnector<Profile> connector = new DBConnector<Profile>("profiles", this, Profile.class);
+
+    // Singleton
     private static ProfileManager manager = new ProfileManager();
-    private ProfileManager() {
-        profiles = new ArrayList<>();
-        connector = new DBConnector<>("profiles", this, Profile.class);
-    }
     public static ProfileManager getInstance() {
         return manager;
     }
 
-    public void createProfile() {
-        Profile p = new Profile("Connor's (the cool one) Profile", "Wicked cool description");
-        connector.createAsync(p);
+    // Profile getters
+    public Profile getProfile(String id) {
+        for (Profile profile : profiles) {
+            if (profile.getId().equals(id)) {
+                return profile;
+            }
+        }
+        return null;
     }
-
     public List<Profile> getProfiles() {
         return profiles;
     }
 
-    @Override
-    public void createAsync_Complete(Profile object) {
-        profiles.add(object);
-        // TODO notify views
+    // Create, update, delete operations for organizers and admins
+    public void createProfile(Profile profile) { connector.createAsync(profile); }
+    public void updateProfile(Profile profile) {
+        connector.updateAsync(profile);
+    }
+    public void deleteProfile(Profile profile) {
+        connector.deleteAsync(profile);
     }
 
     @Override
     public void readAllAsync_Complete(List<Profile> objects) {
+        Log.d(TAG, "ProfileManager read all complete, notifying views");
         profiles = objects;
-        Log.d(TAG, "read async complete");
         for (Profile p : objects) {
             Log.d(TAG, p.getId());
         }
-        // TODO notify views
-    }
-
-    @Override
-    public void deleteAsync_Complete(Profile object) {
-        profiles.remove(object);
-        // TODO notify views
-    }
-
-    @Override
-    public void database_Changed() {
-        connector.readAllAsync();
+        // Notify views of profile changes
+        notifyViews();
     }
 }

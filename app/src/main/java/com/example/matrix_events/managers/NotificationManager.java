@@ -5,57 +5,53 @@ import android.util.Log;
 import com.example.matrix_events.database.DBConnector;
 import com.example.matrix_events.database.DBListener;
 import com.example.matrix_events.entities.Notification;
+import com.example.matrix_events.mvc.Model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationManager implements DBListener<Notification> {
+public class NotificationManager extends Model implements DBListener<Notification> {
     private static final String TAG = "NotificationManager";
 
-    private List<Notification> notifications;
-    private final DBConnector<Notification> connector;
+    private List<Notification> notifications = new ArrayList<>();
+    private final DBConnector<Notification> connector = new DBConnector<Notification>("notifications", this, Notification.class);
+
+    // Singleton
     private static NotificationManager manager = new NotificationManager();
-    private NotificationManager() {
-        notifications = new ArrayList<>();
-        connector = new DBConnector<>("notifications", this, Notification.class);
-    }
     public static NotificationManager getInstance() {
         return manager;
     }
 
-    public void createNotification() {
-        Notification n = new Notification("Connor's (the cool one) Notification", "Wicked cool description");
-        connector.createAsync(n);
+    // Notification getters
+    public Notification getNotification(String id) {
+        for (Notification notification : notifications) {
+            if (notification.getId().equals(id)) {
+                return notification;
+            }
+        }
+        return null;
     }
-
     public List<Notification> getNotifications() {
         return notifications;
     }
 
-    @Override
-    public void createAsync_Complete(Notification object) {
-        notifications.add(object);
-        // TODO notify views
+    // Create, update, delete operations for organizers and admins
+    public void createNotification(Notification notification) { connector.createAsync(notification); }
+    public void updateNotification(Notification notification) {
+        connector.updateAsync(notification);
+    }
+    public void deleteNotification(Notification notification) {
+        connector.deleteAsync(notification);
     }
 
     @Override
     public void readAllAsync_Complete(List<Notification> objects) {
+        Log.d(TAG, "NotificationManager read all complete, notifying views");
         notifications = objects;
-        Log.d(TAG, "read async complete");
         for (Notification n : objects) {
             Log.d(TAG, n.getId());
         }
-        // TODO notify views
-    }
-
-    @Override
-    public void deleteAsync_Complete(Notification object) {
-        notifications.remove(object);
-        // TODO notify views
-    }
-
-    @Override
-    public void database_Changed() {
-        connector.readAllAsync();
+        // Notify views of notification changes
+        notifyViews();
     }
 }
