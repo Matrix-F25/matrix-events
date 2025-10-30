@@ -23,6 +23,10 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     }
 
     // Profile getters
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
     public Profile getProfile(String id) {
         for (Profile profile : profiles) {
             if (profile.getId().equals(id)) {
@@ -31,13 +35,10 @@ public class ProfileManager extends Model implements DBListener<Profile> {
         }
         return null;
     }
-    public List<Profile> getProfiles() {
-        return profiles;
-    }
 
     public Profile getProfileByDeviceId(String deviceId) {
         for (Profile profile : profiles) {
-            if (profile.getDeviceId() != null && profile.getDeviceId().equals(deviceId)) {
+            if (profile.getDeviceId().equals(deviceId)) {
                 return profile;
             }
         }
@@ -63,9 +64,6 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     public void readAllAsync_Complete(List<Profile> objects) {
         Log.d(TAG, "ProfileManager read all complete, notifying views");
         profiles = objects;
-        for (Profile p : objects) {
-            Log.d(TAG, p.getId());
-        }
         // Notify views of profile changes
         notifyViews();
     }
