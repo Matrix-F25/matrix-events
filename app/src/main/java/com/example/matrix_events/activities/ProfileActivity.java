@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +13,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.NavigationBarFragment;
+import com.example.matrix_events.managers.ProfileManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -20,11 +23,13 @@ import com.google.android.material.textfield.TextInputEditText;
 public class ProfileActivity extends AppCompatActivity {
 
     // Declarations
-    private TextInputEditText profile_name;
-    private TextInputEditText profile_email;
-    private TextInputEditText profile_phone;
-    private MaterialButton update_button;
-    private ImageButton settings_button;
+    private TextInputEditText profileName;
+    private TextInputEditText profileEmail;
+    private TextInputEditText profilePhoneNumber;
+    private MaterialButton updateButton;
+    private ImageButton settingsButton;
+
+    private ProfileManager profileManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,23 +46,44 @@ public class ProfileActivity extends AppCompatActivity {
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_profile))
                 .commit();
 
-        // Initializations
-        profile_name = findViewById(R.id.profile_name);
-        profile_email = findViewById(R.id.profile_email);
-        profile_phone = findViewById(R.id.profile_phone);
+        // Initialize Views
+        profileName = findViewById(R.id.profile_name);
+        profileEmail = findViewById(R.id.profile_email);
+        profilePhoneNumber = findViewById(R.id.profile_phone_number);
 
-        update_button = findViewById(R.id.profile_update_button);
-        settings_button = findViewById(R.id.profile_settings_button);
+        updateButton = findViewById(R.id.profile_update_button);
+        settingsButton = findViewById(R.id.profile_settings_button);
 
-        String name = profile_name.getText().toString();
-        String email = profile_email.getText().toString();
+        loadProfile();
 
-        update_button.setOnClickListener() {
+        updateButton.setOnClickListener() {
 
         }
 
-        settings_button.setOnClickListener() {
+        settingsButton.setOnClickListener() {
 
+        }
+
+        // Load Users Profile and Populate TextInput Fields
+        private void loadProfile() {
+            Profile profile = profileManager.getProfile();
+            if (profile != null) {
+                profileName.setText(Profile.getName());
+                profileEmail.setText(Profile.getEmail());
+                profilePhoneNumber.setText(Profile.getPhoneNumber());
+            }
+        }
+
+        // Updates Users Profile
+        private void updateProfile () {
+            String name = profileName.getText().toString().trim();
+            String email = profileEmail.getText().toString().trim();
+            String phoneNumber = profilePhoneNumber.getText().toString().trim();
+
+            Profile updatedProfile = new Profile(name, email, phoneNumber);
+            profileManager.updateProfile(updatedProfile);
+
+            Toast.makeText(this, "Profile Updated Successfully!", Toast.LENGTH_SHORT).show();
         }
     }
 }
