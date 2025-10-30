@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.NavigationBarFragment;
+import com.example.matrix_events.fragments.SettingsFragment;
 import com.example.matrix_events.managers.ProfileManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -30,6 +31,9 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageButton settingsButton;
 
     private ProfileManager profileManager;
+
+    // Need
+    private String deviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +58,14 @@ public class ProfileActivity extends AppCompatActivity {
         updateButton = findViewById(R.id.profile_update_button);
         settingsButton = findViewById(R.id.profile_settings_button);
 
-        loadProfile();
-
-        updateButton.setOnClickListener() {
-
-        }
-
-        settingsButton.setOnClickListener() {
-
-        }
+        // High-Level View of onCreate
+        loadProfile(deviceId);
+        updateButton.setOnClickListener(v -> updateProfile(deviceId));
+        settingsButton.setOnClickListener(v -> openSettings(deviceId));
 
         // Load Users Profile and Populate TextInput Fields
-        private void loadProfile() {
-            Profile profile = profileManager.getProfile();
+        private void loadProfile(deviceId) {
+            Profile profile = profileManager.getProfile(deviceId);
             if (profile != null) {
                 profileName.setText(Profile.getName());
                 profileEmail.setText(Profile.getEmail());
@@ -75,15 +74,21 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         // Updates Users Profile
-        private void updateProfile () {
+        private void updateProfile(deviceId) {
             String name = profileName.getText().toString().trim();
             String email = profileEmail.getText().toString().trim();
             String phoneNumber = profilePhoneNumber.getText().toString().trim();
 
-            Profile updatedProfile = new Profile(name, email, phoneNumber);
+            Profile updatedProfile = new Profile(name, email, phoneNumber, deviceIdId);
             profileManager.updateProfile(updatedProfile);
 
             Toast.makeText(this, "Profile Updated Successfully!", Toast.LENGTH_SHORT).show();
+        }
+
+        // Open Settings Fragment
+        private void openSettings() {
+            SettingsFragment settingsFragment = new SettingsFragment();
+
         }
     }
 }
