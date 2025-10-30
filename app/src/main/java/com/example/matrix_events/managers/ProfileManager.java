@@ -35,8 +35,23 @@ public class ProfileManager extends Model implements DBListener<Profile> {
         return profiles;
     }
 
+    public Profile getProfileByDeviceId(String deviceId) {
+        for (Profile profile : profiles) {
+            if (profile.getDeviceId() != null && profile.getDeviceId().equals(deviceId)) {
+                return profile;
+            }
+        }
+        return null;
+    }
+
+    public boolean doesProfileExist(String deviceId) {
+        return getProfileByDeviceId(deviceId) != null;
+    }
+
     // Create, update, delete operations for organizers and admins
-    public void createProfile(Profile profile) { connector.createAsync(profile); }
+    public void createProfile(Profile profile) {
+        connector.createAsync(profile);
+    }
     public void updateProfile(Profile profile) {
         connector.updateAsync(profile);
     }

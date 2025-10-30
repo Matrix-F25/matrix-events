@@ -4,12 +4,17 @@ import com.example.matrix_events.database.DBObject;
 
 public class Profile extends DBObject {
     private String name;
-    private String description;
+    private String email;
+    private String phoneNumber; // Optional
+    private String deviceId;
+    private boolean notificationsEnabled = true; // Default is true
 
     public Profile() {}       // Required for Firestore
-    public Profile(String name, String description) {
+    public Profile(String name, String email, String phoneNumber, String deviceId) {
         this.name = name;
-        this.description = description;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.deviceId = deviceId;
     }
 
     public String getName() {
@@ -18,10 +23,25 @@ public class Profile extends DBObject {
     public void setName(String name) {
         this.name = name;
     }
-    public String getDescription() {
-        return description;
+    public String getEmail() {
+        return email;
     }
-    public void setDescription(String description) {
-        this.description = description;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+    public String getDeviceId() {
+        return deviceId;
+    }
+    public boolean isNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
     }
 }
