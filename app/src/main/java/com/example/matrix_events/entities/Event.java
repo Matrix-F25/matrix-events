@@ -3,7 +3,9 @@ package com.example.matrix_events.entities;
 import com.example.matrix_events.database.DBObject;
 import com.google.firebase.Timestamp;
 
-public class Event extends DBObject {
+import java.io.Serializable;
+
+public class Event extends DBObject implements Serializable {
     private String name;
     private String description;
     private Profile organizer;

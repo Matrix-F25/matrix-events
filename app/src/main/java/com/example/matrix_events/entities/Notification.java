@@ -2,7 +2,9 @@ package com.example.matrix_events.entities;
 
 import com.example.matrix_events.database.DBObject;
 
-public class Notification extends DBObject {
+import java.io.Serializable;
+
+public class Notification extends DBObject implements Serializable {
     private String name;
     private String description;
 
