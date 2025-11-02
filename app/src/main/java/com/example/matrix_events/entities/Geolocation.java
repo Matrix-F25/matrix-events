@@ -1,6 +1,8 @@
 package com.example.matrix_events.entities;
 
-public class Geolocation {
+import java.io.Serializable;
+
+public class Geolocation implements Serializable {
     private String name;
     private double latitude;
     private double longitude;
