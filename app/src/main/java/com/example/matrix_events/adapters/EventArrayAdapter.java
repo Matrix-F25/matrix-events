@@ -1,4 +1,51 @@
 package com.example.matrix_events.adapters;
 
-public class EventArrayAdapter {
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.example.matrix_events.R;
+import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.utils.TimestampConverter;
+
+import java.util.ArrayList;
+
+public class EventArrayAdapter extends ArrayAdapter<Event> {
+    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList) {
+        super(context, 0, arrayList);
+    }
+
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_event_list_view, parent, false);
+        }
+
+        Event event = getItem(position);
+
+        TextView titleTextview = convertView.findViewById(R.id.title_textview);
+        assert titleTextview != null;
+        titleTextview.setText(event.getName());
+
+        TextView startDateTimeTextview = convertView.findViewById(R.id.date_time_textview);
+        assert startDateTimeTextview != null;
+        startDateTimeTextview.setText(TimestampConverter.convertFirebaseTimestampToString(event.getEventStartDateTime()));
+
+        TextView locationTextview = convertView.findViewById(R.id.location_textview);
+        assert locationTextview != null;
+        locationTextview.setText(event.getLocation().getName());
+
+        ImageView posterImageView = convertView.findViewById(R.id.poster_imageview);
+        assert posterImageView != null;
+        posterImageView.setImageResource(R.drawable.placeholder);
+
+        return convertView;
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.matrix_events.entities;
 
-public class Poster {
+import java.io.Serializable;
+
+public class Poster implements Serializable {
     private String imageUrl;
 
     public Poster() {}      // Required for Firestore

@@ -2,7 +2,9 @@ package com.example.matrix_events.entities;
 
 import com.example.matrix_events.database.DBObject;
 
-public class Profile extends DBObject {
+import java.io.Serializable;
+
+public class Profile extends DBObject implements Serializable {
     private String name;
     private String email;
     private String phoneNumber; // Optional
