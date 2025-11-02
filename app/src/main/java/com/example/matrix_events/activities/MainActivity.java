@@ -40,9 +40,17 @@ public class MainActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment signUpFragment = new SignUpFragment();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main, signUpFragment).addToBackStack(null).commit();
+                String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID); // getting the device ID
+
+                if (profileManager.doesProfileExist(deviceId)) { // if the device ID exists in the database
+                    Log.d("SignUp", "Account already exists. Showing toast");
+                    Toast.makeText(MainActivity.this, "You already have an account! Please click \"Login\"", Toast.LENGTH_LONG).show();
+                } else { // if the device ID does not exist in the database
+                    Log.d("SignUp", "Account created successfully using device ID: " + deviceId);
+                    Fragment fragment = new SignUpFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main, fragment).addToBackStack(null).commit();
+                }
             }
         });
 
