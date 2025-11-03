@@ -46,7 +46,7 @@ public class EventCreateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_event_create);
+        setContentView(R.layout.fragment_event_create);
 
         bindViews();
         db = FirebaseFirestore.getInstance();
@@ -172,8 +172,8 @@ public class EventCreateActivity extends AppCompatActivity {
         data.put("endTime", endMillis);
         data.put("capacity", capacity);
         data.put("waitlistCapacity", waitlistCapacity);
-        data.put("registrationStart", regStartMs); // can be null
-        data.put("registrationEnd", regEndMs);     // can be null
+        data.put("registrationStart", regStartMs);
+        data.put("registrationEnd", regEndMs);
         data.put("location", location);
         data.put("status", "OPEN");
         data.put("createdAt", System.currentTimeMillis());
