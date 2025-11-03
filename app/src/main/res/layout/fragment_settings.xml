@@ -32,12 +32,83 @@
             android:background="@color/grey"
             android:layout_marginBottom="16dp"/>
 
+        <!-- Notification Settings Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification_settings_page_header"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:drawableLeftCompat="@drawable/ic_blank_notification"/>
+
+        <!-- Divider -->
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/out_of_app_notifications_header"
+            android:textSize="18sp"/>
+
+        <!-- Admin Switch -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_admin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_switch"/>
+        <!-- Organizer Switch -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_organizer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/organizer_switch"/>
+
+        <!-- Account Settings Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/account_settings_page_header"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:drawableLeftCompat="@drawable/ic_profile"/>
+
+        <!-- Divider -->
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"/>
+
         <!-- Geolocation Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switch_geolocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enable Geolocation" />
+            android:text="@string/geolocation_switch"/>
+
+        <!-- Device Id Switch -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_device_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/device_id_switch"/>
+
+        <!-- Terms & Conditions Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/terms_conditions_page_header"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:drawableLeftCompat="@drawable/ic_terms_conditions"/>
+
+        <!-- Divider -->
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"/>
 
         <!-- Logout Button -->
         <com.google.android.material.button.MaterialButton
@@ -47,7 +118,21 @@
             android:text="@string/logout_button_text"
             android:textSize="20sp"
             android:textColor="@color/white"
+            app:backgroundTint="@color/black"
+            app:cornerRadius="10dp"
+            app:strokeWidth="2dp"
+            android:layout_marginTop="16dp" />
+
+        <!-- Delete Account Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profile_delete_account_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_account_button_text"
+            android:textSize="20sp"
+            android:textColor="@color/white"
             app:backgroundTint="@color/logout_red"
+            app:cornerRadius="10dp"
             app:strokeWidth="2dp"
             android:layout_marginTop="8dp" />
 

@@ -28,7 +28,16 @@
 
     <!-- Strings related to Settings -->
     <string name="settings_page_title">Settings</string>
-    <string name="geolocation_switch">Enable Geolocation</string>
+    <string name="notification_settings_page_header">Notification Settings</string>
+    <string name="out_of_app_notifications_header">Out-of-app Notifications:</string>
+    <string name="admin_switch">Admin</string>
+    <string name="organizer_switch">Organizer</string>
+    <string name="account_settings_page_header">Account Settings</string>
+    <string name="geolocation_switch">Enable Geolocation Access</string>
+    <string name="device_id_switch">Enable Device ID Auto-login</string>
+    <string name="terms_conditions_page_header">Terms &amp; Conditions</string>
     <string name="logout_button_text">Log Out</string>
+    <string name="delete_account_button_text">Delete Account</string>
+
 
 </resources>
