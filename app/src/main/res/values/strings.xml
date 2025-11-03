@@ -38,6 +38,7 @@
     <string name="terms_conditions_page_header">Terms &amp; Conditions</string>
     <string name="logout_button_text">Log Out</string>
     <string name="delete_account_button_text">Delete Account</string>
+    <string name="back_button_text">Back</string>
 
 
 </resources>

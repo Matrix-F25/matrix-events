@@ -69,7 +69,7 @@ public class SettingsFragment extends Fragment {
 
     private void showToast(String message) {
         if (getContext() != null) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
         }
     }
 }
