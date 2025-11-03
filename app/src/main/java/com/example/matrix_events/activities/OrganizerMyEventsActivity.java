@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.fragments.NavigationBarFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class OrganizerMyEventsActivity extends AppCompatActivity {
 
@@ -21,28 +20,42 @@ public class OrganizerMyEventsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_organizer_my_events);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        // If your layout has a view with id "main"
+        if (findViewById(R.id.main) != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                Insets sb = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(sb.left, sb.top, sb.right, sb.bottom);
+                return insets;
+            });
+        }
+
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_my_events))
                 .commit();
 
-        // ---Button Logic ---
+        // --- Button Logic ---
         buttonLogic();
     }
 
-    private void buttonLogic(){
+    private void buttonLogic() {
+        // Switch to Entrant
         Button switchToEntrantButton = findViewById(R.id.button_switch_to_entrant);
-        // Set the click listener
-        switchToEntrantButton.setOnClickListener(v -> {
-            // Create an intent to go to the Entrant "My Events" screen
-            Intent intent = new Intent(OrganizerMyEventsActivity.this, EntrantMyEventsActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        if (switchToEntrantButton != null) {
+            switchToEntrantButton.setOnClickListener(v -> {
+                Intent intent = new Intent(OrganizerMyEventsActivity.this, EntrantMyEventsActivity.class);
+                startActivity(intent);
+                finish();
+            });
+        }
+
+        // Create Event
+        Button createEventButton = findViewById(R.id.btn_create_event);
+        if (createEventButton != null) {
+            createEventButton.setOnClickListener(v -> {
+                startActivity(new Intent(OrganizerMyEventsActivity.this, EventCreateActivity.class));
+            });
+        }
     }
 }
