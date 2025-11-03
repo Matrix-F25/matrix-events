@@ -3,6 +3,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,8 @@ public class SettingsFragment extends Fragment {
     private MaterialButton logoutButton;
     private MaterialButton deleteAccountButton;
 
+    private MaterialButton backButton;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -37,6 +40,7 @@ public class SettingsFragment extends Fragment {
         switchDeviceId = view.findViewById(R.id.switch_device_id);
         logoutButton = view.findViewById(R.id.profile_logout_button);
         deleteAccountButton = view.findViewById(R.id.profile_delete_account_button);
+        backButton = view.findViewById(R.id.back_button);
 
         //  Call Setup Switch Listener Methods
         setupSwitchListeners();
@@ -65,6 +69,12 @@ public class SettingsFragment extends Fragment {
 
         deleteAccountButton.setOnClickListener(v ->
                 showToast("Account deleted"));
+
+        backButton.setOnClickListener(v -> {
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .popBackStack();
+        });
     }
 
     private void showToast(String message) {
