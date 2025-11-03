@@ -4,58 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/matrix_background">
-
-    <!-- REMINDER: fix right constraints for organizer, event details, reg. opens/closes (static) -->
+    android:background="#FFFFFF"
+    android:padding="16dp">
 
     <!-- title -->
-    <Button
-        android:id="@+id/event_details_back_button"
-        android:layout_width="55dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="4dp"
-        android:text="X"
-        android:textColor="@color/neon_green"
-        app:backgroundTint="@color/black"
-        app:cornerRadius="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.883"
-        app:layout_constraintStart_toEndOf="@+id/event_details_title_placeholder"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeColor="@color/neon_green"
-        app:strokeWidth="2dp" />
-
-    <Button
-        android:id="@+id/event_detail_join_button"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="Join Waitlist"
-        android:textColor="@color/neon_green"
-        app:backgroundTint="@color/black"
-        app:cornerRadius="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/neon_green"
-        app:strokeWidth="2dp"
-        tools:layout_editor_absoluteY="473dp" />
-
     <TextView
-        android:id="@+id/event_details_title_placeholder"
-        android:layout_width="230dp"
-        android:layout_height="57dp"
-        android:layout_marginTop="16dp"
+        android:id="@+id/event_title_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:text="Event Title"
         android:textAlignment="center"
         android:textSize="40sp"
-        android:textColor="@color/neon_green"
-        android:background="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.075"
+        app:layout_constraintEnd_toStartOf="@+id/event_back_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-    </TextView>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/event_back_button"
+        android:layout_width="55dp"
+        android:layout_height="40dp"
+        android:text="X"
+        app:cornerRadius="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeWidth="2dp" />
 
     <!-- description -->
     <TextView
@@ -63,28 +36,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:background="@color/black"
         android:text="Description: "
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.096"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/event_details_title_placeholder" />
+        app:layout_constraintTop_toBottomOf="@id/event_title_textview" />
 
     <TextView
-        android:id="@+id/event_description_placeholder"
-        android:layout_width="300dp"
+        android:id="@+id/event_description_textview"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@color/black"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:maxLines="4"
         android:text="@string/lorem_ipsum"
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.261"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/event_description_static" />
 
@@ -93,243 +60,181 @@
         android:id="@+id/organizer_name_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@color/black"
+        android:layout_marginTop="16dp"
         android:text="Organizer: "
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.092"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_description_placeholder" />
+        app:layout_constraintTop_toBottomOf="@+id/event_description_textview" />
 
     <TextView
-        android:id="@+id/organizer_name_placeholder"
+        android:id="@+id/event_organizer_name_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@color/black"
         android:text="String"
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="@+id/organizer_name_static"
         app:layout_constraintStart_toEndOf="@+id/organizer_name_static"
-        app:layout_constraintTop_toBottomOf="@id/event_description_placeholder" />
+        app:layout_constraintTop_toTopOf="@+id/organizer_name_static" />
 
     <!-- date and time details -->
 
     <TextView
-        android:id="@+id/event_time_placeholder"
+        android:id="@+id/event_start_date_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="208dp"
-        android:background="@color/black"
-        android:text="Time"
-        android:textColor="@color/neon_green"
+        android:text="Event Start: "
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/event_date_placeholder"
-        app:layout_constraintTop_toBottomOf="@+id/organizer_name_placeholder" />
-
-    <TextView
-        android:id="@+id/event_date_static"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@color/black"
-        android:text="Event Date: "
-        android:textColor="@color/neon_green"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.095"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/organizer_name_static" />
 
     <TextView
-        android:id="@+id/event_date_placeholder"
+        android:id="@+id/event_start_date_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/event_start_date_static"
+        app:layout_constraintStart_toEndOf="@+id/event_start_date_static"
+        app:layout_constraintTop_toTopOf="@+id/event_start_date_static" />
+
+    <TextView
+        android:id="@+id/event_end_date_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@color/black"
-        android:text="Date"
-        android:textColor="@color/neon_green"
+        android:text="Event End: "
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.331"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizer_name_placeholder" />
+        app:layout_constraintTop_toBottomOf="@+id/event_start_date_static" />
+
+    <TextView
+        android:id="@+id/event_end_date_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/event_end_date_static"
+        app:layout_constraintStart_toEndOf="@+id/event_end_date_static"
+        app:layout_constraintTop_toTopOf="@+id/event_end_date_static" />
 
     <TextView
         android:id="@+id/registration_open_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@color/black"
         android:text="Registration Opens: "
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.129"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_date_static" />
+        app:layout_constraintTop_toBottomOf="@+id/event_end_date_static" />
 
     <TextView
-        android:id="@+id/registration_open_placeholder"
+        android:id="@+id/registration_open_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@color/black"
         android:text="Date"
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.521"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_date_placeholder" />
-
-    <TextView
-        android:id="@+id/registration_open_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="136dp"
-        android:background="@color/black"
-        android:text="Time"
-        android:textColor="@color/neon_green"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/registration_open_placeholder"
-        app:layout_constraintTop_toBottomOf="@+id/event_time_placeholder" />
+        app:layout_constraintBottom_toBottomOf="@+id/registration_open_static"
+        app:layout_constraintStart_toEndOf="@+id/registration_open_static"
+        app:layout_constraintTop_toTopOf="@+id/registration_open_static" />
 
     <TextView
         android:id="@+id/registration_closes_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@color/black"
+        android:layout_marginTop="12dp"
         android:text="Registration Closes: "
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.127"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/registration_open_static" />
 
     <TextView
-        android:id="@+id/registration_closes_placeholder"
+        android:id="@+id/registration_closes_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@color/black"
         android:text="Date"
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.521"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registration_open_placeholder" />
-
-    <TextView
-        android:id="@+id/registration_closes_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="136dp"
-        android:background="@color/black"
-        android:text="Time"
-        android:textColor="@color/neon_green"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/registration_closes_placeholder"
-        app:layout_constraintTop_toBottomOf="@id/registration_open_time" />
+        app:layout_constraintBottom_toBottomOf="@+id/registration_closes_static"
+        app:layout_constraintStart_toEndOf="@+id/registration_closes_static"
+        app:layout_constraintTop_toTopOf="@+id/registration_closes_static" />
 
     <TextView
         android:id="@+id/event_max_waitlist_cap_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="152dp"
-        android:background="@color/black"
+        android:layout_marginTop="12dp"
         android:text="Max Waitlist Capacity: "
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.41"
-        app:layout_constraintLeft_toRightOf="@+id/registration_closes_placeholder"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registration_closes_placeholder" />
+        app:layout_constraintTop_toBottomOf="@+id/registration_closes_static" />
 
     <TextView
-        android:id="@+id/event_max_waitlist_cap_placeholder"
+        android:id="@+id/event_max_waitlist_cap_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="152dp"
-        android:background="@color/black"
         android:text="Int"
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="@+id/event_max_waitlist_cap_static"
         app:layout_constraintStart_toEndOf="@+id/event_max_waitlist_cap_static"
-        app:layout_constraintTop_toBottomOf="@id/registration_closes_placeholder" />
+        app:layout_constraintTop_toTopOf="@+id/event_max_waitlist_cap_static" />
 
     <TextView
         android:id="@+id/event_max_cap_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="4dp"
-        android:background="@color/black"
+        android:layout_marginTop="12dp"
         android:text="Max Event Capacity: "
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintRight_toLeftOf="@id/event_max_cap_placeholder"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_max_waitlist_cap_static" />
 
     <TextView
-        android:id="@+id/event_max_cap_placeholder"
+        android:id="@+id/event_max_cap_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:background="@color/black"
         android:text="Int"
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.026"
+        app:layout_constraintBottom_toBottomOf="@+id/event_max_cap_static"
         app:layout_constraintStart_toEndOf="@id/event_max_cap_static"
-        app:layout_constraintTop_toBottomOf="@+id/event_max_waitlist_cap_placeholder" />
+        app:layout_constraintTop_toTopOf="@+id/event_max_cap_static" />
 
     <TextView
         android:id="@+id/waitlist_status_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/black"
+        android:layout_marginTop="12dp"
         android:text="Waitlist Status: "
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/waitlist_status_placeholder"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_max_cap_static" />
 
     <TextView
-        android:id="@+id/waitlist_status_placeholder"
+        android:id="@+id/waitlist_status_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="188dp"
-        android:background="@color/black"
         android:text="Boolean"
-        android:textColor="@color/neon_green"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/waitlist_status_static"
+        app:layout_constraintStart_toEndOf="@id/waitlist_status_static"
+        app:layout_constraintTop_toTopOf="@+id/waitlist_status_static" />
+
+    <Button
+        android:id="@+id/event_waitlist_join_button"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="Join Waitlist"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/waitlist_status_static"
-        app:layout_constraintTop_toBottomOf="@+id/event_max_cap_placeholder" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeWidth="2dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
