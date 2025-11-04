@@ -50,6 +50,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
             }
         });
 
+        // Back Button Functionality
         Button waitlistButton = view.findViewById(R.id.event_waitlist_join_button);
         waitlistButton.setOnClickListener(v -> {
             Log.d("DEBUG", "waitlist button clicked");

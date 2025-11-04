@@ -1,9 +1,9 @@
 package com.example.matrix_events.fragments;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,15 +13,20 @@ import androidx.fragment.app.Fragment;
 import com.example.matrix_events.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.textview.MaterialTextView;
 
+// Need to make a View and follow MV
+    // implements com.example.matrix_events.mvc.View
 public class SettingsFragment extends Fragment {
 
+    // Declarations
     private MaterialSwitch switchAdmin;
     private MaterialSwitch switchOrganizer;
     private MaterialSwitch switchGeolocation;
     private MaterialSwitch switchDeviceId;
     private MaterialButton logoutButton;
     private MaterialButton deleteAccountButton;
+    private MaterialTextView terms_conditions;
 
     private MaterialButton backButton;
 
@@ -30,7 +35,7 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate Fragment Layout
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         // Initialize all switches and buttons
@@ -40,15 +45,17 @@ public class SettingsFragment extends Fragment {
         switchDeviceId = view.findViewById(R.id.switch_device_id);
         logoutButton = view.findViewById(R.id.profile_logout_button);
         deleteAccountButton = view.findViewById(R.id.profile_delete_account_button);
-        backButton = view.findViewById(R.id.back_button);
+        terms_conditions = view.findViewById(R.id.terms_conditions_clickable);
+        backButton = view.findViewById(R.id.settings_back_button);
 
-        //  Call Setup Switch Listener Methods
+        // Call Setup Switch Listener Methods
         setupSwitchListeners();
         setupButtonListeners();
 
         return view;
     }
 
+    // Method to Set Up All Switch Listeners
     private void setupSwitchListeners() {
         switchAdmin.setOnCheckedChangeListener((buttonView, isChecked) ->
                 showToast("Admin Notifications On " + (isChecked ? "enabled" : "disabled")));
@@ -63,6 +70,7 @@ public class SettingsFragment extends Fragment {
                 showToast("Device ID tracking Enabled " + (isChecked ? "enabled" : "disabled")));
     }
 
+    // Method to Set Up all Button Listeners
     private void setupButtonListeners() {
         logoutButton.setOnClickListener(v ->
                 showToast("Logged out successfully"));
@@ -71,9 +79,17 @@ public class SettingsFragment extends Fragment {
                 showToast("Account deleted"));
 
         backButton.setOnClickListener(v -> {
-            requireActivity()
-                    .getSupportFragmentManager()
-                    .popBackStack();
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+        terms_conditions.setOnClickListener(v -> {
+            TermsConditionsFragment termsConditionsFragment = new TermsConditionsFragment();
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, termsConditionsFragment)
+                    .addToBackStack(null) // So User Can Press Back
+                    .commit();
         });
     }
 

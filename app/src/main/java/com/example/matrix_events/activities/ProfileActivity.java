@@ -33,7 +33,6 @@ public class ProfileActivity extends AppCompatActivity {
     private ProfileManager profileManager;
     private Profile currentProfile;
 
-    @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
         profileManager = ProfileManager.getInstance();
 
         // Get Device ID (unique per device)
-        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        @SuppressLint("HardwareIds") String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Load and Populate User Profile
         loadProfile(deviceId);

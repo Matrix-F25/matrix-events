@@ -17,7 +17,6 @@
 
         <!-- Settings Page Title -->
         <TextView
-            android:id="@+id/settings_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/settings_page_title"
@@ -47,6 +46,7 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"/>
 
+        <!-- Out-of-app Notifications Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,13 +58,16 @@
             android:id="@+id/switch_admin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/admin_switch"/>
+            android:text="@string/admin_switch"
+            app:trackTint="@color/switch_track_color"/>
+
         <!-- Organizer Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switch_organizer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/organizer_switch"/>
+            android:text="@string/organizer_switch"
+            app:trackTint="@color/switch_track_color"/>
 
         <!-- Account Settings Header -->
         <com.google.android.material.textview.MaterialTextView
@@ -86,23 +89,16 @@
             android:id="@+id/switch_geolocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/geolocation_switch"/>
+            android:text="@string/geolocation_switch"
+            app:trackTint="@color/switch_track_color"/>
 
         <!-- Device Id Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switch_device_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/device_id_switch"/>
-
-        <!-- Terms & Conditions Header -->
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/terms_conditions_page_header"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:drawableLeftCompat="@drawable/ic_terms_conditions"/>
+            android:text="@string/device_id_switch"
+            app:trackTint="@color/switch_track_color"/>
 
         <!-- Divider -->
         <com.google.android.material.divider.MaterialDivider
@@ -121,7 +117,7 @@
             app:backgroundTint="@color/black"
             app:cornerRadius="10dp"
             app:strokeWidth="2dp"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="8dp" />
 
         <!-- Delete Account Button -->
         <com.google.android.material.button.MaterialButton
@@ -136,9 +132,23 @@
             app:strokeWidth="2dp"
             android:layout_marginTop="8dp" />
 
+        <!-- Terms & Conditions Clickable Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/terms_conditions_clickable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/terms_conditions_header"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="10dp"
+            app:drawableLeftCompat="@drawable/ic_terms_conditions" />
+
         <!-- Back Button -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/back_button"
+            android:id="@+id/settings_back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/back_button_text"
@@ -147,7 +157,7 @@
             app:backgroundTint="@color/black"
             app:cornerRadius="10dp"
             app:strokeWidth="2dp"
-            android:layout_marginTop="150dp" />
+            android:layout_marginTop="140dp" />
 
     </LinearLayout>
 
