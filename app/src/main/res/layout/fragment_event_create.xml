@@ -24,12 +24,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Event Name"
-            app:endIconMode="clear_text">
+            app:boxStrokeColor="?attr/colorPrimary">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEventName"
-                android:layout_width="356dp"
-                android:layout_height="34dp" />
+                android:id="@+id/input_event_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLines="1"
+                android:imeOptions="actionNext"
+                android:textSize="16sp"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="?attr/colorOnSurfaceVariant"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -63,7 +69,7 @@
 
         <LinearLayout
             android:layout_width="221dp"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -80,16 +86,16 @@
                 android:id="@+id/editTextStartDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="7"
                 android:inputType="date"
                 android:paddingHorizontal="10dp"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="221dp"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -99,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="Start Time :"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -115,7 +121,7 @@
 
         <LinearLayout
             android:layout_width="221dp"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -125,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="End Time :"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -141,7 +147,7 @@
 
         <LinearLayout
             android:layout_width="221dp"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -151,7 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="Event Capacity :"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -161,13 +167,13 @@
                 android:layout_weight="1"
                 android:inputType="number"
                 android:paddingHorizontal="10dp"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="221dp"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -177,7 +183,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="Waitlist Capacity :"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -187,13 +193,13 @@
                 android:layout_weight="1"
                 android:inputType="number"
                 android:paddingHorizontal="10dp"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="221dp"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -203,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="Registration Start Date :"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -213,13 +219,13 @@
                 android:layout_weight="1"
                 android:inputType="date"
                 android:paddingHorizontal="10dp"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="221dp"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -229,7 +235,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="Registration End Date :"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -239,13 +245,13 @@
                 android:layout_weight="1"
                 android:inputType="date"
                 android:paddingHorizontal="10dp"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="221dp"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -255,7 +261,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="Location :"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -265,7 +271,7 @@
                 android:layout_weight="1"
                 android:inputType="textCapWords"
                 android:paddingHorizontal="10dp"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <TextView
@@ -274,71 +280,6 @@
             android:text="Other Optional Features :"
             android:layout_marginTop="16dp"
             android:textStyle="bold" />
-
-        <!-- Recurring -->
-        <LinearLayout
-            android:layout_width="380dp"
-            android:layout_height="31dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Recurring Event" />
-
-            <Switch
-                android:id="@+id/switchRecurring"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <RadioGroup
-            android:id="@+id/groupFrequency"
-            android:layout_width="383dp"
-            android:layout_height="34dp"
-            android:orientation="horizontal"
-            android:paddingTop="4dp">
-
-            <RadioButton
-                android:id="@+id/radioDaily"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:text="Daily" />
-
-            <RadioButton
-                android:id="@+id/radioWeekly"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:text="Weekly" />
-
-            <RadioButton
-                android:id="@+id/radioMonthly"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:text="Monthly" />
-        </RadioGroup>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilRecurringEnd"
-            android:layout_width="385dp"
-            android:layout_height="47dp"
-            android:hint=" Recurring End Date         YYYY-MM-DD">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etRecurringEndDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="false" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Geolocation -->
         <LinearLayout
@@ -374,7 +315,7 @@
             app:icon="@android:drawable/ic_menu_upload" />
 
         <Button
-            android:id="@+id/createEvent"
+            android:id="@+id/btn_createEvent_org"
             android:layout_width="381dp"
             android:layout_height="52dp"
             android:text=" Create Event"
