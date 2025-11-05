@@ -47,4 +47,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/btn_create_event"
+        android:layout_width="191dp"
+        android:layout_height="45dp"
+        android:layout_margin="16dp"
+        android:text="Create Event"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/navigation_bar_fragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.457"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_switch_to_entrant"
+        app:layout_constraintVertical_bias="0.908" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
