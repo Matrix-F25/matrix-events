@@ -10,6 +10,7 @@ public class Notification extends DBObject implements Serializable {
     private Profile receiver;
     private String message;
     private Timestamp timestamp;
+    private boolean readFlag = false;
 
     public Notification() {}        // Required for Firestore
     public Notification(Profile sender, Profile receiver, String message, Timestamp timestamp) {
@@ -17,6 +18,10 @@ public class Notification extends DBObject implements Serializable {
         this.receiver = receiver;
         this.message = message;
         this.timestamp = timestamp;
+    }
+
+    public boolean isRead() {
+        return readFlag;
     }
 
     public Profile getSender() {
@@ -49,5 +54,13 @@ public class Notification extends DBObject implements Serializable {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean getReadFlag() {
+        return readFlag;
+    }
+
+    public void setReadFlag(boolean read) {
+        this.readFlag = read;
     }
 }

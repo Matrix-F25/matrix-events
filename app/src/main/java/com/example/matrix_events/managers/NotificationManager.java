@@ -23,9 +23,9 @@ public class NotificationManager extends Model implements DBListener<Notificatio
     }
 
     // Notification getters
-    public List<Notification> getAllNotifications() { return notifications; };
+    public List<Notification> getNotifications() { return notifications; };
 
-    public Notification getNotificationByID(String id) {
+    public Notification getNotificationByDBID(String id) {
         for (Notification notification : notifications) {
             if (notification.getId().equals(id)) {
                 return notification;
@@ -34,14 +34,24 @@ public class NotificationManager extends Model implements DBListener<Notificatio
         return null;
     }
 
-    public List<Notification> getProfileNotifications(String deviceID) {
-        List<Notification> profileNotifications = new ArrayList<>();
+    public List<Notification> getReceivedNotificationsByDeviceID(String deviceID) {
+        List<Notification> recvNotifications = new ArrayList<>();
         for (Notification notification : notifications) {
             if (notification.getReceiver().getDeviceId().equals(deviceID)) {
-                profileNotifications.add(notification);
+                recvNotifications.add(notification);
             }
         }
-        return profileNotifications;
+        return recvNotifications;
+    }
+
+    public List<Notification> getSentNotificationsByDeviceID(String deviceID) {
+        List<Notification> sentNotifications = new ArrayList<>();
+        for (Notification notification : notifications) {
+            if (notification.getSender().getDeviceId().equals(deviceID)) {
+                sentNotifications.add(notification);
+            }
+        }
+        return sentNotifications;
     }
 
     // Create, update, delete operations for organizers and admins
