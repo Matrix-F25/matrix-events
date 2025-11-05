@@ -20,10 +20,6 @@ public class Notification extends DBObject implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public boolean isRead() {
-        return readFlag;
-    }
-
     public Profile getSender() {
         return sender;
     }

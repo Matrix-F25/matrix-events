@@ -14,10 +14,15 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.EventArrayAdapter;
 import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Notification;
+import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.NotificationManager;
+import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 
@@ -97,6 +102,12 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //                poster                               // poster
 //        );
 //        EventManager.getInstance().createEvent(sampleEvent);
+//
+//        Timestamp timestamp = Timestamp.now();
+//        Profile albert = ProfileManager.getInstance().getProfileByDeviceId("9bef0d831b027a09");
+//        Profile nikolai = ProfileManager.getInstance().getProfileByDeviceId("25053a74eaf65030");
+//        Notification message = new Notification(nikolai, albert, "Test notification, hello!", timestamp);
+//        NotificationManager.getInstance().createNotification(message);
     }
 
     @Override
