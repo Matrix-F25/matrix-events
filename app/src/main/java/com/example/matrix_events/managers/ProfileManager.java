@@ -10,6 +10,8 @@ import com.example.matrix_events.mvc.Model;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotlinx.coroutines.scheduling.Task;
+
 public class ProfileManager extends Model implements DBListener<Profile> {
     private static final String TAG = "ProfileManager";
 
@@ -55,6 +57,9 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     }
     public void updateProfile(Profile profile) {
         connector.updateAsync(profile);
+    }
+    public Task<Void> updateNotificationPreference(String deviceId, String field, boolean value) {
+
     }
     public void deleteProfile(Profile profile) {
         connector.deleteAsync(profile);

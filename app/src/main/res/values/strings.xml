@@ -28,10 +28,11 @@
 
     <!-- Strings related to Settings -->
     <string name="settings_page_title">Settings</string>
-    <string name="notification_settings_page_header">Notification Settings</string>
-    <string name="out_of_app_notifications_header">Out-of-app Notifications:</string>
-    <string name="admin_switch">Enable Admin Notifications</string>
-    <string name="organizer_switch">Enable Organizer Notifications</string>
+    <string name="out_of_app_notification_settings_page_header">Out-of-app Notification Settings</string>
+    <string name="email_notifications_header"><u>Email Notifications:</u></string>
+    <string name="phone_notifications_header"><u>Phone Notifications:</u></string>
+    <string name="admin_switch">• Enable Admin Notifications</string>
+    <string name="organizer_switch">• Enable Organizer Notifications</string>
     <string name="account_settings_page_header">Account Settings</string>
     <string name="geolocation_switch">Enable Geolocation Access</string>
     <string name="device_id_switch">Enable Device ID Auto-login</string>

@@ -1,5 +1,6 @@
 package com.example.matrix_events.activities;
 
+// Imports
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Profile;
@@ -22,6 +24,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
+// ProfileActivity Class
 public class ProfileActivity extends AppCompatActivity {
 
     // Declarations
@@ -29,7 +32,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextInputEditText profileEmail;
     private TextInputEditText profilePhoneNumber;
 
-    // Declare Manager and Current Profile
+    // Declaration of ProfileManager and Current Profile
     private ProfileManager profileManager;
     private Profile currentProfile;
 
@@ -45,13 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Initialize Navigation Bar Fragment
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_profile))
-                .commit();
-
-        // Initialize Views
+        // Initialize View Attributes
         profileName = findViewById(R.id.profile_name);
         profileEmail = findViewById(R.id.profile_email);
         profilePhoneNumber = findViewById(R.id.profile_phone_number);
@@ -64,13 +61,20 @@ public class ProfileActivity extends AppCompatActivity {
         // Get Device ID (unique per device)
         @SuppressLint("HardwareIds") String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
+        // Initialize Navigation Bar Fragment
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_profile))
+                .commit();
+
+        // High-Level View of Methods Called
         // Load and Populate User Profile
         loadProfile(deviceId);
-
         // Set On Click Listeners
         updateButton.setOnClickListener(v -> updateProfile());
         settingsButton.setOnClickListener(v -> openSettings());
     }
+
 
     // Load User's Profile and Populate TextInput Fields
     private void loadProfile(String deviceId) {
@@ -81,14 +85,14 @@ public class ProfileActivity extends AppCompatActivity {
             profileEmail.setText(currentProfile.getEmail());
             profilePhoneNumber.setText(currentProfile.getPhoneNumber());
         } else {
-            Toast.makeText(this, "No profile found for this device.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No profile found for this device.", Toast.LENGTH_LONG).show();
         }
     }
 
     // Update User's Profile
     private void updateProfile() {
         if (currentProfile == null) {
-            Toast.makeText(this, "No profile to update.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No profile to update.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -114,5 +118,9 @@ public class ProfileActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, settingsFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private FragmentActivity requireActivity() {
+        return null;
     }
 }

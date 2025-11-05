@@ -1,6 +1,9 @@
 package com.example.matrix_events.fragments;
 
+// Imports
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,24 +14,33 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.entities.Profile;
+import com.example.matrix_events.managers.ProfileManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textview.MaterialTextView;
 
-// Need to make a View and follow MV
-    // implements com.example.matrix_events.mvc.View
+/*
+Need to make a View and follow MV
+implements com.example.matrix_events.mvc.View
+*/
+//SettingsFragment Class
 public class SettingsFragment extends Fragment {
 
     // Declarations
-    private MaterialSwitch switchAdmin;
-    private MaterialSwitch switchOrganizer;
-    private MaterialSwitch switchGeolocation;
-    private MaterialSwitch switchDeviceId;
+    private MaterialSwitch emailAdminSwitch;
+    private MaterialSwitch emailOrganizerSwitch;
+    private MaterialSwitch phoneAdminSwitch;
+    private MaterialSwitch phoneOrganizerSwitch;
     private MaterialButton logoutButton;
     private MaterialButton deleteAccountButton;
-    private MaterialTextView terms_conditions;
+    private MaterialTextView termsConditionsClickable;
 
     private MaterialButton backButton;
+
+    // Declaration of ProfileManager and Current Profile
+    private ProfileManager profileManager;
+    private Profile currentProfile;
 
     @Nullable
     @Override
@@ -39,34 +51,57 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         // Initialize all switches and buttons
-        switchAdmin = view.findViewById(R.id.switch_admin);
-        switchOrganizer = view.findViewById(R.id.switch_organizer);
-        switchGeolocation = view.findViewById(R.id.switch_geolocation);
-        switchDeviceId = view.findViewById(R.id.switch_device_id);
+        emailAdminSwitch = view.findViewById(R.id.email_admin_switch);
+        emailOrganizerSwitch = view.findViewById(R.id.email_organizer_switch);
+        phoneAdminSwitch = view.findViewById(R.id.phone_admin_switch);
+        phoneOrganizerSwitch = view.findViewById(R.id.phone_organizer_switch);
         logoutButton = view.findViewById(R.id.profile_logout_button);
         deleteAccountButton = view.findViewById(R.id.profile_delete_account_button);
-        terms_conditions = view.findViewById(R.id.terms_conditions_clickable);
+        termsConditionsClickable = view.findViewById(R.id.terms_conditions_clickable);
         backButton = view.findViewById(R.id.settings_back_button);
 
-        // Call Setup Switch Listener Methods
-        setupSwitchListeners();
+        // Grab Instance of Profile Manager
+        profileManager = ProfileManager.getInstance();
+
+        // Get Device ID (unique per device)
+        @SuppressLint("HardwareIds") String deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        // High-Level View of Methods Called
+        // Load and Populate User Profile, Also calls setupSwitchListeners
+        loadProfile(deviceId);
+        // Set Button On Click Listeners
         setupButtonListeners();
 
         return view;
     }
+    // Load and Populate User's Notification Preferences
+    private void loadProfile(String deviceId) {
+        currentProfile = profileManager.getProfileByDeviceId(deviceId);
 
+        if (currentProfile != null) {
+            emailAdminSwitch.setChecked(currentProfile.isEmailAdminNotifications());
+            emailOrganizerSwitch.setChecked(currentProfile.isEmailOrganizerNotifications());
+            phoneAdminSwitch.setChecked(currentProfile.isPhoneAdminNotifications());
+            phoneOrganizerSwitch.setChecked(currentProfile.isPhoneOrganizerNotifications());
+
+            setupSwitchListeners(deviceId);
+        } else {
+            // Broken Toast
+            // Toast.makeText(this, "No profile found for this device.", Toast.LENGTH_LONG).show();
+        }
+    }
     // Method to Set Up All Switch Listeners
-    private void setupSwitchListeners() {
-        switchAdmin.setOnCheckedChangeListener((buttonView, isChecked) ->
+    private void setupSwitchListeners(String deviceId) {
+        emailAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
                 showToast("Admin Notifications On " + (isChecked ? "enabled" : "disabled")));
 
-        switchOrganizer.setOnCheckedChangeListener((buttonView, isChecked) ->
+        emailOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
                 showToast("Organizer Notifications On " + (isChecked ? "enabled" : "disabled")));
 
-        switchGeolocation.setOnCheckedChangeListener((buttonView, isChecked) ->
+        phoneAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
                 showToast("Geolocation Enabled " + (isChecked ? "enabled" : "disabled")));
 
-        switchDeviceId.setOnCheckedChangeListener((buttonView, isChecked) ->
+        phoneOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
                 showToast("Device ID tracking Enabled " + (isChecked ? "enabled" : "disabled")));
     }
 
@@ -83,7 +118,8 @@ public class SettingsFragment extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
-        terms_conditions.setOnClickListener(v -> {
+
+        termsConditionsClickable.setOnClickListener(v -> {
             TermsConditionsFragment termsConditionsFragment = new TermsConditionsFragment();
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
