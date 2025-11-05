@@ -27,7 +27,7 @@ public class EventManager extends Model implements DBListener<Event> {
         return events;
     }
 
-    public Event getEvent(String id) {
+    public Event getEventByDBID(String id) {
         for (Event event : events) {
             if (event.getId().equals(id)) {
                 return event;
