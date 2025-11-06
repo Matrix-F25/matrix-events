@@ -19,6 +19,7 @@ import com.example.matrix_events.fragments.NotificationSeeMore;
 import com.example.matrix_events.managers.NotificationManager;
 import com.google.android.material.button.MaterialButton;
 
+
 import java.util.ArrayList;
 
 public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
