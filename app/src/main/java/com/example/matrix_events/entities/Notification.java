@@ -6,47 +6,42 @@ import java.io.Serializable;
 import com.google.firebase.Timestamp;
 
 public class Notification extends DBObject implements Serializable {
-
-    // there are two different types of notifications
-    // one is the automated message (ex: getting selected from the waitlist)
-    // the second is one from the actual event organizer. this contains an actual message
-    private String type;
-    private String title;
-    private String textBody;
+    private Profile sender;
+    private Profile receiver;
+    private String message;
     private Timestamp timestamp;
-    private String deviceId;
+    private boolean readFlag = false;
 
-    public Notification() {}
-    public Notification(String type, String title, String textBody, Timestamp timestamp, String deviceId) {
-        this.type = type;
-        this.title = title;
-        this.textBody = textBody;
+    public Notification() {}        // Required for Firestore
+    public Notification(Profile sender, Profile receiver, String message, Timestamp timestamp) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
         this.timestamp = timestamp;
-        this.deviceId = deviceId;
     }
 
-    public String getType() {
-        return type;
+    public Profile getSender() {
+        return sender;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setSender(Profile sender) {
+        this.sender = sender;
     }
 
-    public String getTitle() {
-        return title;
+    public Profile getReceiver() {
+        return receiver;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setReceiver(Profile receiver) {
+        this.receiver = receiver;
     }
 
-    public String getTextBody() {
-        return textBody;
+    public String getMessage() {
+        return message;
     }
 
-    public void setTextBody(String textBody) {
-        this.textBody = textBody;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Timestamp getTimestamp() {
@@ -57,11 +52,11 @@ public class Notification extends DBObject implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public boolean getReadFlag() {
+        return readFlag;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setReadFlag(boolean read) {
+        this.readFlag = read;
     }
 }
