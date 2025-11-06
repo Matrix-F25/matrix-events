@@ -15,6 +15,10 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</string>
+    <string name="list_result_text">You have been selected!</string>
+    <string name="waitlist_noti_title">Swimming Lessons</string>
+    <string name="message_noti_title">New message from: Swimming Lessons Organizer (Lisa Smith)</string>
+    <string name="message_noti_text">Hey everyone! I just wanted to remind everyone to purchase their pool pass prior to arriving at the facility tomorrow. If not, you won’t be allowed to join the group as space in the facility is limited. \n\nHave a great day!</string>
 
     <!-- Strings related to Profile -->
     <string name="profile_page_title">My Profile</string>
@@ -70,6 +74,5 @@
     <string name="section12_header">12. Contact</string>
     <string name="section12_text">If you have questions about these Terms or the lottery system, please contact us at team_matrix@gmail.com.</string>
     <string name="terms_back_button">Back</string>
-
-
+    
 </resources>

@@ -14,8 +14,6 @@ import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.utils.TimestampConverter;
 
-import org.w3c.dom.Text;
-
 public class EventDetailFragment extends Fragment implements com.example.matrix_events.mvc.View {
 
     View view = null;
@@ -68,7 +66,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
 
     @Override
     public void update() {
-        event = EventManager.getInstance().getEvent(event.getId());
+        event = EventManager.getInstance().getEventByDBID(event.getId());
         assert event != null;
         render();
     }
