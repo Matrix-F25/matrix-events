@@ -1,6 +1,7 @@
 package com.example.matrix_events.activities;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
@@ -20,9 +21,10 @@ import java.util.ArrayList;
 
 public class NotificationActivity extends AppCompatActivity implements View {
 
-    ArrayList<Notification> notifications;
-    NotificationArrayAdapter notificationArrayAdapter;
-    ListView notificationListView;
+    private ArrayList<Notification> notifications;
+    private NotificationArrayAdapter notificationArrayAdapter;
+    private ListView notificationListView;
+    private String deviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,8 @@ public class NotificationActivity extends AppCompatActivity implements View {
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_notifications))
                 .commit();
 
+        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
         notifications = new ArrayList<>();
         notificationListView = findViewById(R.id.notification_listview);
         notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);
@@ -51,7 +55,7 @@ public class NotificationActivity extends AppCompatActivity implements View {
     @Override
     public void update() {
         notifications.clear();
-        notifications.addAll(NotificationManager.getInstance().getNotifications());
+        notifications.addAll(NotificationManager.getInstance().getReceivedNotificationsByDeviceID(deviceId));
         notificationArrayAdapter.notifyDataSetChanged();
     }
 }
