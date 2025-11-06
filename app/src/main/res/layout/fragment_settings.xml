@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Could use fixing, so that it fills the entire screen no matter the screen dimensions -->
+<!-- Attributes will need id's if switched to constraint layout -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
