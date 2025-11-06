@@ -29,13 +29,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:lineSpacingMultiplier="1.1"
             android:text="@string/message_noti_title"
             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/button_delete"
             app:layout_constraintStart_toEndOf="@id/icon_info"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,7 +49,7 @@
             android:maxLines="2"
             android:text="@string/message_noti_text"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/text_message_title"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/text_message_title"
             app:layout_constraintTop_toBottomOf="@id/text_message_title" />
@@ -67,13 +68,11 @@
             android:id="@+id/button_delete"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginEnd="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_notification_x"
             app:layout_constraintBottom_toBottomOf="@id/button_see_more"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/button_see_more"
-            app:layout_constraintVertical_bias="1.0"
             app:tint="?android:attr/textColorPrimary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
