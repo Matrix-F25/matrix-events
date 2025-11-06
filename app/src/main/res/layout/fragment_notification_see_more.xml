@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:lineSpacingMultiplier="1.1"
-                android:text="<u>New message from: Swimming Lessons Organizer (Lisa Smith)</u>"
+                android:text="New message from: Swimming Lessons Organizer (Lisa Smith)"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textStyle="bold"
                 android:textColor="?android:attr/textColorPrimary"
