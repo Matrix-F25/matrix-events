@@ -1,7 +1,7 @@
 package com.example.matrix_events.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,10 +10,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.adapters.NotificationArrayAdapter;
+import com.example.matrix_events.entities.Notification;
 import com.example.matrix_events.fragments.NavigationBarFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.matrix_events.managers.NotificationManager;
+import com.example.matrix_events.mvc.View;
 
-public class NotificationActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class NotificationActivity extends AppCompatActivity implements View {
+
+    ArrayList<Notification> notifications;
+    NotificationArrayAdapter notificationArrayAdapter;
+    ListView notificationListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,5 +38,20 @@ public class NotificationActivity extends AppCompatActivity {
                 .setReorderingAllowed(true)
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_notifications))
                 .commit();
+
+        notifications = new ArrayList<>();
+        notificationListView = findViewById(R.id.notification_listview);
+        notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);
+        notificationListView.setAdapter(notificationArrayAdapter);
+
+        NotificationManager.getInstance().addView(this);
+        update();
+    }
+
+    @Override
+    public void update() {
+        notifications.clear();
+        notifications.addAll(NotificationManager.getInstance().getNotifications());
+        notificationArrayAdapter.notifyDataSetChanged();
     }
 }
