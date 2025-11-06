@@ -58,9 +58,7 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     public void updateProfile(Profile profile) {
         connector.updateAsync(profile);
     }
-    public void deleteProfile(Profile profile) {
-        connector.deleteAsync(profile);
-    }
+    public void deleteProfile(Profile profile) {connector.deleteAsync(profile);}
 
     @Override
     public void readAllAsync_Complete(List<Profile> objects) {

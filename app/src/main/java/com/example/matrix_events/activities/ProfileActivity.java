@@ -17,14 +17,16 @@ import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.fragments.SettingsFragment;
+import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
+import com.example.matrix_events.mvc.View;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
 // ProfileActivity Class
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements View {
 
     // Declarations
     private TextInputEditText profileName;
@@ -117,5 +119,17 @@ public class ProfileActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, settingsFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    // MV Implementation methods
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ProfileManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+
     }
 }

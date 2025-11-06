@@ -12,13 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.managers.ProfileManager;
 
-/*
-Need to make a View and follow MV
-implements com.example.matrix_events.mvc.View
-*/
 // TermsConditionsFragment Class
-public class TermsConditionsFragment extends Fragment {
+public class TermsConditionsFragment extends Fragment implements com.example.matrix_events.mvc.View {
 
     // Required Empty Constructor
     public TermsConditionsFragment() {}
@@ -40,5 +37,17 @@ public class TermsConditionsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    // MV Implementation methods
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ProfileManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+
     }
 }

@@ -24,12 +24,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textview.MaterialTextView;
 
-/*
-Need to make a View and follow MV
-implements com.example.matrix_events.mvc.View
-*/
 //SettingsFragment Class
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements com.example.matrix_events.mvc.View {
 
     // Declarations
     private MaterialSwitch emailAdminSwitch;
@@ -73,7 +69,7 @@ public class SettingsFragment extends Fragment {
         // High-Level View of Methods Called
         // Load and Populate User Profile, Also Calls setupSwitchListeners
         loadProfile(deviceId);
-        // Setup Button On Click Listeners
+        // Setup On Click Button Listeners
         setupButtonListeners();
 
         return view;
@@ -119,7 +115,7 @@ public class SettingsFragment extends Fragment {
     // Method to Set Up all Button Listeners
     private void setupButtonListeners() {
         logoutButton.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Logged Out Successfully!", Toast.LENGTH_LONG).show());
+                showLogoutConfirmationDialog());
 
         deleteProfileButton.setOnClickListener(v ->
                 showDeleteConfirmationDialog());
@@ -141,6 +137,40 @@ public class SettingsFragment extends Fragment {
                     .commit();
         });
     }
+
+    // Logout Confirmation Dialog
+    private void showLogoutConfirmationDialog() {
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Log Out")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    if (currentProfile != null) {
+                        currentProfile = null; // WIP: Find best way to log out of account.
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            showToast("Log Out Successful");
+                            navigateToMain();
+                        }, 800);
+                    } else {
+                        showToast("No profile found for this device");
+                    }
+                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    /*
+    private void logoutUser() {
+        // Optional: clear your locally cached profile
+        ProfileManager.getInstance().setCurrentProfile(null);
+
+        // Optional: clear shared preferences if you store login info
+        requireActivity()
+            .getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+            .edit()
+            .clear()
+            .apply();
+    }
+    */
 
     // Delete Profile Confirmation Dialog
     private void showDeleteConfirmationDialog() {
@@ -167,6 +197,18 @@ public class SettingsFragment extends Fragment {
         Intent intent = new Intent(requireContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    // MV Implementation methods
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ProfileManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+
     }
 
     // Toast Method For Simplicity
