@@ -69,6 +69,46 @@ public class EventManager extends Model implements DBListener<Event> {
         return eventsClosed;
     }
 
+    public List<Event> getEventsInWaitlist(String deviceID) {
+        List<Event> eventsInWaitlist = new ArrayList<>();
+        for (Event event : events) {
+            if (event.inWaitList(deviceID)) {
+                eventsInWaitlist.add(event);
+            }
+        }
+        return eventsInWaitlist;
+    }
+
+    public List<Event> getEventsInPending(String deviceID) {
+        List<Event> eventsInPending = new ArrayList<>();
+        for (Event event : events) {
+            if (event.inPendingList(deviceID)) {
+                eventsInPending.add(event);
+            }
+        }
+        return eventsInPending;
+    }
+
+    public List<Event> getEventsInAccepted(String deviceID) {
+        List<Event> eventsInAccepted = new ArrayList<>();
+        for (Event event : events) {
+            if (event.inAcceptedList(deviceID)) {
+                eventsInAccepted.add(event);
+            }
+        }
+        return eventsInAccepted;
+    }
+
+    public List<Event> getEventsInDeclined(String deviceID) {
+        List<Event> eventsInDeclined = new ArrayList<>();
+        for (Event event : events) {
+            if (event.inDeclinedList(deviceID)) {
+                eventsInDeclined.add(event);
+            }
+        }
+        return eventsInDeclined;
+    }
+
     // Create, update, delete operations for organizers and admins
     public void createEvent(Event event) { connector.createAsync(event); }
     public void updateEvent(Event event) { connector.updateAsync(event); }

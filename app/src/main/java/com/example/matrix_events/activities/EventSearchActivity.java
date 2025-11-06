@@ -35,7 +35,6 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 
     ArrayList<Event> events;
     EventArrayAdapter eventArrayAdapter;
-    ListView eventListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 
         events = new ArrayList<>();
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
-        eventListView = findViewById(R.id.event_listview);
+        ListView eventListView = findViewById(R.id.event_listview);
         eventListView.setAdapter(eventArrayAdapter);
 
         eventListView.setOnItemClickListener(((parent, view, position, id) -> {
