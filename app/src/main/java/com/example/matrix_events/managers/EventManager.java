@@ -23,9 +23,7 @@ public class EventManager extends Model implements DBListener<Event> {
     }
 
     // Event getters
-    public List<Event> getEvents() {
-        return events;
-    }
+    public List<Event> getEvents() { return events; }
 
     public Event getEventByDBID(String id) {
         for (Event event : events) {
@@ -47,6 +45,68 @@ public class EventManager extends Model implements DBListener<Event> {
 
     public boolean doesEventExist(String name) {
         return getEventByName(name) != null;
+    }
+
+    public List<Event> getEventsRegistrationNotClosed() {
+        List<Event> eventsNotClosed = new ArrayList<>();
+        for (Event event : events) {
+            if (!event.isRegistrationClosed()) {
+                // Registration closes in the future
+                eventsNotClosed.add(event);
+            }
+        }
+        return eventsNotClosed;
+    }
+
+    public List<Event> getEventsRegistrationClosed() {
+        List<Event> eventsClosed = new ArrayList<>();
+        for (Event event : events) {
+            if (event.isRegistrationClosed()) {
+                // Registration is closed
+                eventsClosed.add(event);
+            }
+        }
+        return eventsClosed;
+    }
+
+    public List<Event> getEventsInWaitlist(String deviceID) {
+        List<Event> eventsInWaitlist = new ArrayList<>();
+        for (Event event : events) {
+            if (event.inWaitList(deviceID)) {
+                eventsInWaitlist.add(event);
+            }
+        }
+        return eventsInWaitlist;
+    }
+
+    public List<Event> getEventsInPending(String deviceID) {
+        List<Event> eventsInPending = new ArrayList<>();
+        for (Event event : events) {
+            if (event.inPendingList(deviceID)) {
+                eventsInPending.add(event);
+            }
+        }
+        return eventsInPending;
+    }
+
+    public List<Event> getEventsInAccepted(String deviceID) {
+        List<Event> eventsInAccepted = new ArrayList<>();
+        for (Event event : events) {
+            if (event.inAcceptedList(deviceID)) {
+                eventsInAccepted.add(event);
+            }
+        }
+        return eventsInAccepted;
+    }
+
+    public List<Event> getEventsInDeclined(String deviceID) {
+        List<Event> eventsInDeclined = new ArrayList<>();
+        for (Event event : events) {
+            if (event.inDeclinedList(deviceID)) {
+                eventsInDeclined.add(event);
+            }
+        }
+        return eventsInDeclined;
     }
 
     // Create, update, delete operations for organizers and admins
