@@ -53,7 +53,7 @@ public class NotificationSeeMore extends Fragment {
             Chip timeChip = view.findViewById(R.id.chip_time);
             ImageButton closeButton = view.findViewById(R.id.button_close);
 
-            String title = "New message from: " + notification.getSender().getName() + " (Organizer)";
+            String title = "New message from: " + notification.getSender().getName();
             titleTextView.setText(title);
             bodyTextView.setText(notification.getMessage());
 
