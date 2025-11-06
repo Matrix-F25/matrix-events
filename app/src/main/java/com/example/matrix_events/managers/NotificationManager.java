@@ -23,7 +23,9 @@ public class NotificationManager extends Model implements DBListener<Notificatio
     }
 
     // Notification getters
-    public Notification getNotification(String id) {
+    public List<Notification> getNotifications() { return notifications; };
+
+    public Notification getNotificationByDBID(String id) {
         for (Notification notification : notifications) {
             if (notification.getId().equals(id)) {
                 return notification;
@@ -31,26 +33,35 @@ public class NotificationManager extends Model implements DBListener<Notificatio
         }
         return null;
     }
-    public List<Notification> getNotifications() {
-        return notifications;
+
+    public List<Notification> getReceivedNotificationsByDeviceID(String deviceID) {
+        List<Notification> recvNotifications = new ArrayList<>();
+        for (Notification notification : notifications) {
+            if (notification.getReceiver().getDeviceId().equals(deviceID)) {
+                recvNotifications.add(notification);
+            }
+        }
+        return recvNotifications;
+    }
+
+    public List<Notification> getSentNotificationsByDeviceID(String deviceID) {
+        List<Notification> sentNotifications = new ArrayList<>();
+        for (Notification notification : notifications) {
+            if (notification.getSender().getDeviceId().equals(deviceID)) {
+                sentNotifications.add(notification);
+            }
+        }
+        return sentNotifications;
     }
 
     // Create, update, delete operations for organizers and admins
     public void createNotification(Notification notification) { connector.createAsync(notification); }
-    public void updateNotification(Notification notification) {
-        connector.updateAsync(notification);
-    }
-    public void deleteNotification(Notification notification) {
-        connector.deleteAsync(notification);
-    }
+    public void updateNotification(Notification notification) { connector.updateAsync(notification); }
+    public void deleteNotification(Notification notification) { connector.deleteAsync(notification); }
 
     @Override
     public void readAllAsync_Complete(List<Notification> objects) {
-        Log.d(TAG, "NotificationManager read all complete, notifying views");
         notifications = objects;
-        for (Notification n : objects) {
-            Log.d(TAG, n.getId());
-        }
         // Notify views of notification changes
         notifyViews();
     }

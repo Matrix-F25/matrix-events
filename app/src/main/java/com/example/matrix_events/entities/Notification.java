@@ -2,26 +2,61 @@ package com.example.matrix_events.entities;
 
 import com.example.matrix_events.database.DBObject;
 
-public class Notification extends DBObject {
-    private String name;
-    private String description;
+import java.io.Serializable;
+import com.google.firebase.Timestamp;
 
-    public Notification() {}       // Required for Firestore
-    public Notification(String name, String description) {
-        this.name = name;
-        this.description = description;
+public class Notification extends DBObject implements Serializable {
+    private Profile sender;
+    private Profile receiver;
+    private String message;
+    private Timestamp timestamp;
+    private boolean readFlag = false;
+
+    public Notification() {}        // Required for Firestore
+    public Notification(Profile sender, Profile receiver, String message, Timestamp timestamp) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
+        this.timestamp = timestamp;
     }
 
-    public String getName() {
-        return name;
+    public Profile getSender() {
+        return sender;
     }
-    public void setName(String name) {
-        this.name = name;
+
+    public void setSender(Profile sender) {
+        this.sender = sender;
     }
-    public String getDescription() {
-        return description;
+
+    public Profile getReceiver() {
+        return receiver;
     }
-    public void setDescription(String description) {
-        this.description = description;
+
+    public void setReceiver(Profile receiver) {
+        this.receiver = receiver;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public boolean getReadFlag() {
+        return readFlag;
+    }
+
+    public void setReadFlag(boolean read) {
+        this.readFlag = read;
     }
 }

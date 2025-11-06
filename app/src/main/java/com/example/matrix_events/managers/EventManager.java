@@ -23,7 +23,11 @@ public class EventManager extends Model implements DBListener<Event> {
     }
 
     // Event getters
-    public Event getEvent(String id) {
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public Event getEventByDBID(String id) {
         for (Event event : events) {
             if (event.getId().equals(id)) {
                 return event;
@@ -31,8 +35,18 @@ public class EventManager extends Model implements DBListener<Event> {
         }
         return null;
     }
-    public List<Event> getEvents() {
-        return events;
+
+    public Event getEventByName(String name) {
+        for (Event event : events) {
+            if (event.getName().equals(name)) {
+                return event;
+            }
+        }
+        return null;
+    }
+
+    public boolean doesEventExist(String name) {
+        return getEventByName(name) != null;
     }
 
     // Create, update, delete operations for organizers and admins
@@ -44,9 +58,6 @@ public class EventManager extends Model implements DBListener<Event> {
     public void readAllAsync_Complete(List<Event> objects) {
         Log.d(TAG, "EventManager read all complete, notifying views");
         events = objects;
-        for (Event e : objects) {
-            Log.d(TAG, e.getId());
-        }
         // Notify views of event changes
         notifyViews();
     }
