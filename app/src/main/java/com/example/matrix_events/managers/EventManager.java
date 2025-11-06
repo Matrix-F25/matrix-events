@@ -23,9 +23,7 @@ public class EventManager extends Model implements DBListener<Event> {
     }
 
     // Event getters
-    public List<Event> getEvents() {
-        return events;
-    }
+    public List<Event> getEvents() { return events; }
 
     public Event getEventByDBID(String id) {
         for (Event event : events) {
@@ -47,6 +45,28 @@ public class EventManager extends Model implements DBListener<Event> {
 
     public boolean doesEventExist(String name) {
         return getEventByName(name) != null;
+    }
+
+    public List<Event> getEventsRegistrationNotClosed() {
+        List<Event> eventsNotClosed = new ArrayList<>();
+        for (Event event : events) {
+            if (!event.isRegistrationClosed()) {
+                // Registration closes in the future
+                eventsNotClosed.add(event);
+            }
+        }
+        return eventsNotClosed;
+    }
+
+    public List<Event> getEventsRegistrationClosed() {
+        List<Event> eventsClosed = new ArrayList<>();
+        for (Event event : events) {
+            if (event.isRegistrationClosed()) {
+                // Registration is closed
+                eventsClosed.add(event);
+            }
+        }
+        return eventsClosed;
     }
 
     // Create, update, delete operations for organizers and admins
