@@ -70,6 +70,7 @@ public class DBConnector<T extends DBObject> {
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
+
     public void deleteAsync(T object) {
         Log.d(TAG, "Attempting to delete document");
         if (object == null || object.getId().isEmpty()) {

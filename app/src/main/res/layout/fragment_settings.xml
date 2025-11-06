@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/light_grey"
     android:padding="16dp">
 
     <!-- Container -->
@@ -23,6 +23,7 @@
             android:text="@string/settings_page_title"
             android:textSize="24sp"
             android:textColor="@color/black"
+            android:textStyle="bold"
             android:paddingBottom="8dp" />
 
         <!-- Divider -->
@@ -154,12 +155,12 @@
             app:strokeWidth="2dp"
             android:layout_marginTop="8dp" />
 
-        <!-- Delete Account Button -->
+        <!-- Delete Profile Button -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/profile_delete_account_button"
+            android:id="@+id/profile_delete_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/delete_account_button_text"
+            android:text="@string/delete_profile_button_text"
             android:textSize="20sp"
             android:textColor="@color/white"
             app:backgroundTint="@color/logout_red"

@@ -58,9 +58,6 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     public void updateProfile(Profile profile) {
         connector.updateAsync(profile);
     }
-    public Task<Void> updateNotificationPreference(String deviceId, String field, boolean value) {
-
-    }
     public void deleteProfile(Profile profile) {
         connector.deleteAsync(profile);
     }

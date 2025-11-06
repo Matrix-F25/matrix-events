@@ -2,7 +2,10 @@ package com.example.matrix_events.fragments;
 
 // Imports
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.activities.MainActivity;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.managers.ProfileManager;
 import com.google.android.material.button.MaterialButton;
@@ -33,7 +37,7 @@ public class SettingsFragment extends Fragment {
     private MaterialSwitch phoneAdminSwitch;
     private MaterialSwitch phoneOrganizerSwitch;
     private MaterialButton logoutButton;
-    private MaterialButton deleteAccountButton;
+    private MaterialButton deleteProfileButton;
     private MaterialTextView termsConditionsClickable;
 
     private MaterialButton backButton;
@@ -56,7 +60,7 @@ public class SettingsFragment extends Fragment {
         phoneAdminSwitch = view.findViewById(R.id.phone_admin_switch);
         phoneOrganizerSwitch = view.findViewById(R.id.phone_organizer_switch);
         logoutButton = view.findViewById(R.id.profile_logout_button);
-        deleteAccountButton = view.findViewById(R.id.profile_delete_account_button);
+        deleteProfileButton = view.findViewById(R.id.profile_delete_button);
         termsConditionsClickable = view.findViewById(R.id.terms_conditions_clickable);
         backButton = view.findViewById(R.id.settings_back_button);
 
@@ -67,9 +71,9 @@ public class SettingsFragment extends Fragment {
         @SuppressLint("HardwareIds") String deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // High-Level View of Methods Called
-        // Load and Populate User Profile, Also calls setupSwitchListeners
+        // Load and Populate User Profile, Also Calls setupSwitchListeners
         loadProfile(deviceId);
-        // Set Button On Click Listeners
+        // Setup Button On Click Listeners
         setupButtonListeners();
 
         return view;
@@ -86,36 +90,45 @@ public class SettingsFragment extends Fragment {
 
             setupSwitchListeners(deviceId);
         } else {
-            // Broken Toast
-            // Toast.makeText(this, "No profile found for this device.", Toast.LENGTH_LONG).show();
+            showToast("No profile found for this device");
         }
     }
     // Method to Set Up All Switch Listeners
     private void setupSwitchListeners(String deviceId) {
-        emailAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                showToast("Admin Notifications On " + (isChecked ? "enabled" : "disabled")));
+        emailAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                currentProfile.setEmailAdminNotifications(isChecked);
+                profileManager.updateProfile(currentProfile);
+        });
 
-        emailOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                showToast("Organizer Notifications On " + (isChecked ? "enabled" : "disabled")));
+        emailOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                currentProfile.setEmailOrganizerNotifications(isChecked);
+                profileManager.updateProfile(currentProfile);
+        });
 
-        phoneAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                showToast("Geolocation Enabled " + (isChecked ? "enabled" : "disabled")));
+        phoneAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                currentProfile.setPhoneAdminNotifications(isChecked);
+                profileManager.updateProfile(currentProfile);
+        });
 
-        phoneOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                showToast("Device ID tracking Enabled " + (isChecked ? "enabled" : "disabled")));
+        phoneOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                currentProfile.setPhoneOrganizerNotifications(isChecked);
+                profileManager.updateProfile(currentProfile);
+        });
     }
 
     // Method to Set Up all Button Listeners
     private void setupButtonListeners() {
         logoutButton.setOnClickListener(v ->
-                showToast("Logged out successfully"));
+                Toast.makeText(requireContext(), "Logged Out Successfully!", Toast.LENGTH_LONG).show());
 
-        deleteAccountButton.setOnClickListener(v ->
-                showToast("Account deleted"));
+        deleteProfileButton.setOnClickListener(v ->
+                showDeleteConfirmationDialog());
 
         backButton.setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().popBackStack();
+            } else {
+                showToast("Fragment Not Attached to Activity");
             }
         });
 
@@ -129,9 +142,35 @@ public class SettingsFragment extends Fragment {
         });
     }
 
-    private void showToast(String message) {
-        if (getContext() != null) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-        }
+    // Delete Profile Confirmation Dialog
+    private void showDeleteConfirmationDialog() {
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Delete Profile Confirmation")
+                .setMessage("Are you sure you want to delete your profile? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    if (currentProfile != null) {
+                        profileManager.deleteProfile(currentProfile);
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            showToast("Profile Deleted Successfully");
+                            navigateToMain();
+                        }, 800);
+                    } else {
+                        showToast("No profile found for this device");
+                    }
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    // Redirects User To The Main Page
+    private void navigateToMain() {
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    // Toast Method For Simplicity
+    private void showToast(String message){
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
     }
 }

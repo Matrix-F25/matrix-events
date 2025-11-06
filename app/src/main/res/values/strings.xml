@@ -39,7 +39,7 @@
     <string name="terms_conditions_header">Click Here For Terms &amp; Conditions</string>
     <string name="terms_conditions_text">T</string>
     <string name="logout_button_text">Log Out</string>
-    <string name="delete_account_button_text">Delete Account</string>
+    <string name="delete_profile_button_text">Delete Profile</string>
     <string name="back_button_text">Back</string>
 
     <!-- Strings related to Terms & Conditions -->

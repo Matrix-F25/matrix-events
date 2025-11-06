@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Profile;
@@ -118,9 +117,5 @@ public class ProfileActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, settingsFragment)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    private FragmentActivity requireActivity() {
-        return null;
     }
 }
