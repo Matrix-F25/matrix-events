@@ -15,7 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
-import com.example.matrix_events.adapters.EventArrayAdapter;
+import com.example.matrix_events.adapters.EventRecyclerAdapter;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
@@ -36,7 +36,7 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
     }
     private Selection selection = Selection.Waitlist;
     private ArrayList<Event> eventArray;
-    private EventArrayAdapter eventAdapter;
+    private EventRecyclerAdapter eventAdapter;
     private TextView listTitleTextview;
 
     @Override
@@ -55,7 +55,7 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
                 .commit();
 
         eventArray = new ArrayList<>();
-        eventAdapter = new EventArrayAdapter(getApplicationContext(), eventArray);
+        eventAdapter = new EventRecyclerAdapter(getApplicationContext(), eventArray);
         ListView eventListview = findViewById(R.id.myevents_entrant_listview);
         eventListview.setAdapter(eventAdapter);
 

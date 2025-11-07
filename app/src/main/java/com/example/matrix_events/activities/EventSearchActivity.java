@@ -1,8 +1,11 @@
 package com.example.matrix_events.activities;
 
-import android.content.Intent;
+// Imports
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
@@ -10,67 +13,92 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matrix_events.R;
-import com.example.matrix_events.adapters.EventArrayAdapter;
+import com.example.matrix_events.adapters.EventRecyclerAdapter;
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.entities.Geolocation;
-import com.example.matrix_events.entities.Notification;
-import com.example.matrix_events.entities.Poster;
-import com.example.matrix_events.entities.Profile;
-import com.example.matrix_events.entities.ReoccurringType;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
-import com.example.matrix_events.managers.NotificationManager;
-import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
-import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+
+import com.example.matrix_events.utils.EventFilter;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.button.MaterialButton;
+
+import java.util.*;
 
 public class EventSearchActivity extends AppCompatActivity implements View {
+    // Attributes
+    private TextInputEditText searchBar;
+    private MaterialAutoCompleteTextView filterDropdown;
+    private MaterialButton dateFilterButton, clearFiltersButton;
+    private RecyclerView eventRecyclerView;
 
-    ArrayList<Event> events;
-    EventArrayAdapter eventArrayAdapter;
+
+    private List<Event> allEvents;
+    private List<Event> displayedEvents;
+    private EventRecyclerAdapter eventRecyclerAdapter;
+
+    private EventFilter.FilterCriteria criteria = new EventFilter.FilterCriteria();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_search);
+
+        // Layout Setup
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Navigation Bar
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_event_search))
                 .commit();
 
-        events = new ArrayList<>();
-        eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
-        ListView eventListView = findViewById(R.id.event_listview);
-        eventListView.setAdapter(eventArrayAdapter);
+        // Initializations
+        searchBar = findViewById(R.id.search_bar);
+        filterDropdown = findViewById(R.id.filter_dropdown);
+        dateFilterButton = findViewById(R.id.date_filter_button);
+        clearFiltersButton = findViewById(R.id.clear_filters_button);
+        eventRecyclerView = findViewById(R.id.event_recyclerview);
 
-        eventListView.setOnItemClickListener(((parent, view, position, id) -> {
-            Log.d("DEBUG", "event clicked");
-            Event selectedEvent = events.get(position);
-            EventDetailFragment fragment = EventDetailFragment.newInstance(selectedEvent);
+        // Events list
+        allEvents = new ArrayList<>();
+        eventRecyclerAdapter = new EventRecyclerAdapter(allEvents, event -> {
+            EventDetailFragment fragment = EventDetailFragment.newInstance(event);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main, fragment)
                     .addToBackStack(null)
                     .commit();
-        }));
+        });
 
-        update();
+        eventRecyclerView = findViewById(R.id.event_recyclerview);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        eventRecyclerView.setAdapter(eventRecyclerAdapter);
 
-        // observe event manager
+        // Methods to Set Up Search Bar and Filters
+        setupSearch();
+        setupDropdown();
+        setupDatePicker();
+        setupClearButton();
+
+        // Observe Event Manager
         EventManager.getInstance().addView(this);
-
+        // Initial Update
+        update();
+    }
 
 //        Profile organizer = new Profile(
 //                "Alice Johnson",
@@ -127,7 +155,6 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //        Profile nikolai = ProfileManager.getInstance().getProfileByDeviceId("25053a74eaf65030");
 //        Notification message = new Notification(nikolai, albert, "Test notification, hello!", timestamp);
 //        NotificationManager.getInstance().createNotification(message);
-    }
 
     @Override
     protected void onDestroy() {
@@ -137,8 +164,63 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 
     @Override
     public void update() {
-        events.clear();
-        events.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
-        eventArrayAdapter.notifyDataSetChanged();
+        allEvents.clear();
+        allEvents.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
+        eventRecyclerAdapter.notifyDataSetChanged();
+    }
+
+    private void setupSearch() {
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
+                criteria.query = s.toString();
+                applyFilters();
+            }
+        });
+    }
+
+    private void setupDropdown() {
+        final String[] options = {"All", "Filled", "Available"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, options);
+        filterDropdown.setAdapter(adapter);
+        filterDropdown.setText("All", false);
+        filterDropdown.setOnItemClickListener((p, v, pos, id) -> {
+            criteria.availability = options[pos];
+            applyFilters();
+        });
+    }
+
+    private void setupDatePicker() {
+        dateFilterButton.setOnClickListener(v -> {
+            MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Select Date")
+                    .build();
+            picker.addOnPositiveButtonClickListener(sel -> {
+                criteria.date = new Date(sel);
+                dateFilterButton.setText(android.text.format.DateFormat.format("MMM d", criteria.date));
+                applyFilters();
+            });
+            picker.show(getSupportFragmentManager(), "date_picker");
+        });
+    }
+
+    private void setupClearButton() {
+        clearFiltersButton.setOnClickListener(v -> {
+            criteria.query = "";
+            criteria.availability = "All";
+            criteria.date = null;
+
+            searchBar.setText("");
+            filterDropdown.setText("All", false);
+            dateFilterButton.setText("");
+            applyFilters();
+        });
+    }
+
+    private void applyFilters() {
+        displayedEvents.clear();
+        displayedEvents.addAll(EventFilter.filterEvents(allEvents, criteria));
+        eventRecyclerAdapter.notifyDataSetChanged();
     }
 }

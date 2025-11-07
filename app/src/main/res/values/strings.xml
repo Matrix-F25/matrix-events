@@ -5,7 +5,7 @@
     <string name="login_button_text">LOGIN</string>
     <string name="signup_button_text">SIGN UP</string>
 
-    <!-- Strings related to login -->
+    <!-- Strings related to Login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -77,5 +77,8 @@
 
     <!-- Strings related to Event Search -->
     <string name="event_search_page_title">Event Search Page</string>
+    <string name="search_events_hint">Search events</string>
+    <string name="event_availability">Event Availability</string>
+    <string name="date_filter_button_text">Date</string>
 
 </resources>
