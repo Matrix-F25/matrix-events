@@ -3,6 +3,8 @@ package com.example.matrix_events.entities;
 import androidx.annotation.NonNull;
 
 import com.example.matrix_events.database.DBObject;
+import com.example.matrix_events.managers.NotificationManager;
+import com.example.matrix_events.managers.ProfileManager;
 import com.google.firebase.Timestamp;
 
 import java.io.Serializable;
@@ -197,11 +199,23 @@ public class Event extends DBObject implements Serializable {
         pendingList.remove(deviceId);
         declinedList.add(deviceId);
 
-        // Second Chance! Lottery selected another entrant in the waitlist
+        // Second Chance! Lottery select another entrant in the waitlist
         if (!waitList.isEmpty()) {
             String secondChance = waitList.get(0);
             waitList.remove(secondChance);
             pendingList.add(secondChance);
+
+            // Send notification to winner
+            Profile sender = this.organizer;
+            Profile receiver = ProfileManager.getInstance().getProfileByDeviceId(secondChance);
+            String message = "It's your lucky day! You have been "
+                + "second chance selected for the " + name + " "
+                + "event. Please accept or decline the invitation "
+                + "at your earliest convenience.\n\n"
+                + "This is an automated message.";
+            Timestamp now = Timestamp.now();
+            Notification notification = new Notification(sender, receiver, message, now);
+            NotificationManager.getInstance().createNotification(notification);
         }
     }
 
