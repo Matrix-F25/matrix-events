@@ -333,9 +333,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the name of the event.
-     * @param name The new event name.
+     * @param name The new event name. Cannot be null.
      */
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
@@ -349,9 +349,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the description of the event.
-     * @param description The new event description.
+     * @param description The new event description. Cannot be null.
      */
-    public void setDescription(String description) {
+    public void setDescription(@NonNull String description) {
         this.description = description;
     }
 
@@ -365,9 +365,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the profile of the event organizer.
-     * @param organizer The new organizer's profile.
+     * @param organizer The new organizer's profile. Cannot be null.
      */
-    public void setOrganizer(Profile organizer) {
+    public void setOrganizer(@NonNull Profile organizer) {
         this.organizer = organizer;
     }
 
@@ -381,9 +381,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the location of the event.
-     * @param location The new event's geolocation.
+     * @param location The new event's geolocation. Cannot be null.
      */
-    public void setLocation(Geolocation location) {
+    public void setLocation(@NonNull Geolocation location) {
         this.location = location;
     }
 
@@ -397,9 +397,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the start date and time of the event.
-     * @param eventStartDateTime The new event start timestamp.
+     * @param eventStartDateTime The new event start timestamp. Cannot be null.
      */
-    public void setEventStartDateTime(Timestamp eventStartDateTime) {
+    public void setEventStartDateTime(@NonNull Timestamp eventStartDateTime) {
         this.eventStartDateTime = eventStartDateTime;
     }
 
@@ -413,9 +413,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the end date and time of the event.
-     * @param eventEndDateTime The new event end timestamp.
+     * @param eventEndDateTime The new event end timestamp. Cannot be null.
      */
-    public void setEventEndDateTime(Timestamp eventEndDateTime) {
+    public void setEventEndDateTime(@NonNull Timestamp eventEndDateTime) {
         this.eventEndDateTime = eventEndDateTime;
     }
 
@@ -429,9 +429,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the maximum capacity of the event.
-     * @param eventCapacity The new event capacity.
+     * @param eventCapacity The new event capacity. Cannot be null.
      */
-    public void setEventCapacity(Integer eventCapacity) {
+    public void setEventCapacity(@NonNull Integer eventCapacity) {
         this.eventCapacity = eventCapacity;
     }
 
@@ -459,9 +459,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the registration start date and time.
-     * @param registrationStartDateTime The new registration start timestamp.
+     * @param registrationStartDateTime The new registration start timestamp. Cannot be null.
      */
-    public void setRegistrationStartDateTime(Timestamp registrationStartDateTime) {
+    public void setRegistrationStartDateTime(@NonNull Timestamp registrationStartDateTime) {
         this.registrationStartDateTime = registrationStartDateTime;
     }
 
@@ -475,9 +475,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets the registration end date and time.
-     * @param registrationEndDateTime The new registration end timestamp.
+     * @param registrationEndDateTime The new registration end timestamp. Cannot be null.
      */
-    public void setRegistrationEndDateTime(Timestamp registrationEndDateTime) {
+    public void setRegistrationEndDateTime(@NonNull Timestamp registrationEndDateTime) {
         this.registrationEndDateTime = registrationEndDateTime;
     }
 
@@ -489,9 +489,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets whether the event is reoccurring.
-     * @param reoccurring The new reoccurring status.
+     * @param reoccurring The new reoccurring status. Cannot be null.
      */
-    public void setReoccurring(Boolean reoccurring) { isReoccurring = reoccurring; }
+    public void setReoccurring(@NonNull Boolean reoccurring) { isReoccurring = reoccurring; }
 
     /**
      * Gets the end date and time for a reoccurring event.
@@ -531,9 +531,9 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Sets whether geolocation tracking is enabled for the event.
-     * @param geolocationTrackingEnabled The new geolocation tracking status.
+     * @param geolocationTrackingEnabled The new geolocation tracking status. Cannot be null.
      */
-    public void setGeolocationTrackingEnabled(Boolean geolocationTrackingEnabled) {
+    public void setGeolocationTrackingEnabled(@NonNull Boolean geolocationTrackingEnabled) {
         this.geolocationTrackingEnabled = geolocationTrackingEnabled;
     }
 

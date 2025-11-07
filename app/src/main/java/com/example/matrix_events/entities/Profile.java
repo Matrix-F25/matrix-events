@@ -1,5 +1,7 @@
 package com.example.matrix_events.entities;
 
+import androidx.annotation.NonNull;
+
 import com.example.matrix_events.database.DBObject;
 
 import java.io.Serializable;
@@ -7,12 +9,12 @@ import java.io.Serializable;
 public class Profile extends DBObject implements Serializable {
     private String name;
     private String email;
-    private String phoneNumber; // Optional
+    private String phoneNumber;         // optional, can be null
     private String deviceId;
-    private boolean notificationsEnabled = true; // Default is true
+    private boolean notificationsEnabled = true;
 
     public Profile() {}       // Required for Firestore
-    public Profile(String name, String email, String phoneNumber, String deviceId) {
+    public Profile(@NonNull String name, @NonNull String email, String phoneNumber, @NonNull String deviceId) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -22,13 +24,13 @@ public class Profile extends DBObject implements Serializable {
     public String getName() {
         return name;
     }
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
     public String getEmail() {
         return email;
     }
-    public void setEmail(String email) {
+    public void setEmail(@NonNull String email) {
         this.email = email;
     }
     public String getPhoneNumber() {

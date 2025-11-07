@@ -1,5 +1,7 @@
 package com.example.matrix_events.entities;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
 /**
@@ -20,11 +22,11 @@ public class Geolocation implements Serializable {
     /**
      * Constructs a new Geolocation object.
      *
-     * @param name      The descriptive name of the location (e.g., "Main Hall").
+     * @param name      The descriptive name of the location (e.g., "Main Hall"). Cannot be null.
      * @param longitude The longitude coordinate of the location.
      * @param latitude  The latitude coordinate of the location.
      */
-    public Geolocation(String name, double longitude, double latitude) {
+    public Geolocation(@NonNull String name, double longitude, double latitude) {
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -44,7 +46,7 @@ public class Geolocation implements Serializable {
      *
      * @param name The new location name string.
      */
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
