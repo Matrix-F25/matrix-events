@@ -25,13 +25,27 @@ import com.example.matrix_events.mvc.View;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity for entrants (attendees) to view events they have signed up for.
+ * This screen categorizes events based on the user's status, such as waitlisted,
+ * accepted, declined, etc. It implements the {@link View} interface to update
+ * its display when the underlying event data changes.
+ */
 public class EntrantMyEventsActivity extends AppCompatActivity implements View {
 
+    /**
+     * Enum to manage the different filtering states for the event list.
+     */
     enum Selection {
+        /** User is on the waitlist for the event, and registration is still open. */
         Waitlist,
+        /** User was on the waitlist, but registration closed and they were not chosen. */
         NotSelected,
+        /** User has been accepted and is confirmed to attend the event. */
         Accepted,
+        /** User has declined their invitation to the event. */
         Declined,
+        /** User has been selected from the waitlist and must accept or decline. */
         Pending
     }
     private Selection selection = Selection.Waitlist;
@@ -39,6 +53,15 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
     private EventArrayAdapter eventAdapter;
     private TextView listTitleTextview;
 
+    /**
+     * Called when the activity is first created.
+     * Initializes the UI components, sets up the event list adapter, configures button listeners
+     * for filtering the event list, and registers this activity as a view with the EventManager.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,12 +134,23 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
         EventManager.getInstance().addView(this);
     }
 
+    /**
+     * Called when the activity is about to be destroyed.
+     * Unregisters this activity from the EventManager to prevent memory leaks.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventManager.getInstance().removeView(this);
     }
 
+    /**
+     * Updates the UI in response to data changes.
+     * This method is called by the {@link EventManager} when the list of events is updated.
+     * It fetches the user's device ID, clears the current event list, and repopulates it
+     * based on the currently selected filter (e.g., Waitlist, Accepted). It then notifies
+     * the adapter to refresh the {@link ListView}.
+     */
     @Override
     public void update() {
         String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
