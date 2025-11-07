@@ -11,6 +11,7 @@
         android:id="@+id/button_switch_to_org"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Go to Organizer View"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="parent"
@@ -18,15 +19,94 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/page_title"
+        android:id="@+id/my_events_title_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="entrant my events page"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="My Events"
+        android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_switch_to_org" />
+
+    <Button
+        android:id="@+id/myevents_waitlisted_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Waitlisted"
+        app:layout_constraintEnd_toStartOf="@+id/myevents_not_selected_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_events_title_static" />
+
+    <Button
+        android:id="@+id/myevents_not_selected_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="Not Selected"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/myevents_waitlisted_button"
+        app:layout_constraintTop_toBottomOf="@+id/my_events_title_static" />
+
+    <Button
+        android:id="@+id/myevents_pending_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Pending"
+        app:layout_constraintEnd_toStartOf="@+id/myevents_accepted_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myevents_waitlisted_button" />
+
+    <Button
+        android:id="@+id/myevents_accepted_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Accepted"
+        app:layout_constraintEnd_toStartOf="@+id/myevents_declined_button"
+        app:layout_constraintStart_toEndOf="@+id/myevents_pending_button"
+        app:layout_constraintTop_toBottomOf="@+id/myevents_waitlisted_button" />
+
+    <Button
+        android:id="@+id/myevents_declined_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Declined"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/myevents_accepted_button"
+        app:layout_constraintTop_toBottomOf="@+id/myevents_waitlisted_button" />
+
+    <TextView
+        android:id="@+id/myevents_list_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:text="Waitlisted"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myevents_pending_button" />
+
+    <ListView
+        android:id="@+id/myevents_entrant_listview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
+        android:focusable="true"
+        app:layout_constraintBottom_toTopOf="@+id/navigation_bar_fragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.559"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myevents_list_title_textview" />
 
     <FrameLayout
         android:id="@+id/navigation_bar_fragment"

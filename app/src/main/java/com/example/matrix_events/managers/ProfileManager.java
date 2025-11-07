@@ -27,7 +27,7 @@ public class ProfileManager extends Model implements DBListener<Profile> {
         return profiles;
     }
 
-    public Profile getProfile(String id) {
+    public Profile getProfileByDBID(String id) {
         for (Profile profile : profiles) {
             if (profile.getId().equals(id)) {
                 return profile;
