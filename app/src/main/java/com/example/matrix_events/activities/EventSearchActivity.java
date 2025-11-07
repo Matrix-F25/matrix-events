@@ -31,11 +31,26 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Activity that displays a list of available events for users to browse and sign up for.
+ * It shows events for which registration has not yet closed. Implements the {@link View}
+ * interface to stay synchronized with the {@link EventManager}.
+ */
 public class EventSearchActivity extends AppCompatActivity implements View {
 
     ArrayList<Event> events;
     EventArrayAdapter eventArrayAdapter;
 
+    /**
+     * Called when the activity is first created.
+     * This method initializes the user interface, sets up the list view and its adapter,
+     * configures the navigation bar, and registers the activity to receive updates from
+     * the {@link EventManager}.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +86,10 @@ public class EventSearchActivity extends AppCompatActivity implements View {
         // observe event manager
         EventManager.getInstance().addView(this);
 
+
+        // -----------------------------
+        // --- TESTING PURPOSES ONLY ---
+        // -----------------------------
 
 //        Profile organizer = new Profile(
 //                "Alice Johnson",
@@ -127,14 +146,26 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //        Profile nikolai = ProfileManager.getInstance().getProfileByDeviceId("25053a74eaf65030");
 //        Notification message = new Notification(albert, nikolai, "Test notification, hello!", timestamp);
 //        NotificationManager.getInstance().createNotification(message);
+
+        // -----------------------------
     }
 
+    /**
+     * Called when the activity is being destroyed.
+     * This method unregisters the activity from the {@link EventManager} to prevent
+     * memory leaks and stop receiving updates.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventManager.getInstance().removeView(this);
     }
 
+    /**
+     * Updates the UI in response to data changes from the model.
+     * This method is called by the {@link EventManager} whenever the event data is modified.
+     * It refreshes the list of events to show only those with open registration.
+     */
     @Override
     public void update() {
         events.clear();
