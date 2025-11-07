@@ -64,13 +64,70 @@ def run_event_lottery(data, context) -> None:
         slots_to_fill = max(0, event_capacity - len(accepted_list))
         num_winners = min(slots_to_fill, len(wait_list))
         
+        print(f"Selecting {num_winners} winners for event {doc.id}.")
+        
         # Lottery select winners
         random.shuffle(wait_list)
         winners = wait_list[:num_winners]
         remaining_waitlist = wait_list[num_winners:]
-
-        print(f"Selecting {num_winners} winners for event {doc.id}.")
-
+        
+        # Send out automated notifications
+        batch = db.batch()
+        sender_profile = event_data.get("organizer")
+        
+        # Notify winners
+        for winner in winners:
+            query = db.collection("profiles").where("deviceId", "==", winner).limit(1)
+            profile_docs = list(query.stream())
+            if not profile_docs:
+                print(f"Error: Profile for winner deviceId {winner} not found. Skipping notification for this user.")
+                continue
+            recv_profile = profile_docs[0].to_dict()
+            message = "Congrats! You have been selected for the " \
+                    + f"{event_data.get('name')} event. Please " \
+                    + "accept or decline the invitation at your " \
+                    + "earliest convenience.\n\n" \
+                    + "This is an automated message."
+            read_flag = False
+            notification_data = {
+                "sender": sender_profile,
+                "receiver": recv_profile,
+                "message": message,
+                "readFlag": read_flag,
+                "timestamp": now
+            }
+            new_doc = db.collection("notifications").document()
+            notification_data["id"] = new_doc.id
+            batch.set(new_doc, notification_data)
+        
+        # Notify losers
+        for loser in remaining_waitlist:
+            query = db.collection("profiles").where("deviceId", "==", loser).limit(1)
+            profile_docs = list(query.stream())
+            if not profile_docs:
+                print(f"Error: Profile for loser deviceId {loser} not found. Skipping notification for this user.")
+                continue
+            recv_profile = profile_docs[0].to_dict()
+            message = "Sorry! You have NOT been selected for the " \
+                    + f"{event_data.get('name')} event. Please " \
+                    + "keep in mind selected entrants may choose " \
+                    + "to decline their spot, resulting in a second " \
+                    + "chance for you.\n\n" \
+                    + "This is an automated message."
+            read_flag = False
+            notification_data = {
+                "sender": sender_profile,
+                "receiver": recv_profile,
+                "message": message,
+                "readFlag": read_flag,
+                "timestamp": now
+            }
+            new_doc = db.collection("notifications").document()
+            notification_data["id"] = new_doc.id
+            batch.set(new_doc, notification_data)
+            
+        batch.commit()
+            
         # Update the event
         doc.reference.update({
             "waitList": remaining_waitlist,
