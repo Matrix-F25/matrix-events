@@ -14,18 +14,27 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.EventArrayAdapter;
 import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Geolocation;
+import com.example.matrix_events.entities.Notification;
+import com.example.matrix_events.entities.Poster;
+import com.example.matrix_events.entities.Profile;
+import com.example.matrix_events.entities.ReoccurringType;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.NotificationManager;
+import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class EventSearchActivity extends AppCompatActivity implements View {
 
     ArrayList<Event> events;
     EventArrayAdapter eventArrayAdapter;
-    ListView eventListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +53,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 
         events = new ArrayList<>();
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
-        eventListView = findViewById(R.id.event_listview);
+        ListView eventListView = findViewById(R.id.event_listview);
         eventListView.setAdapter(eventArrayAdapter);
 
         eventListView.setOnItemClickListener(((parent, view, position, id) -> {
@@ -75,28 +84,49 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //                53.5232
 //        );
 //        Poster poster = new Poster("https://example.com/posters/hackathon2025.png");
-//        Timestamp eventStart = Timestamp.now();
-//        Timestamp eventEnd = Timestamp.now();
-//        Timestamp registrationStart = Timestamp.now();
-//        Timestamp registrationEnd = Timestamp.now();
+//        // Start from current time
+//        Calendar calendar = Calendar.getInstance();
+//        // Registration starts in 2 minutes
+//        calendar.add(Calendar.MINUTE, 1);
+//        Timestamp registrationStart = new Timestamp(calendar.getTime());
+//        // Registration ends 2 minutes after it starts
+//        calendar.add(Calendar.MINUTE, 1);
+//        Timestamp registrationEnd = new Timestamp(calendar.getTime());
+//        // Event starts 2 minutes after registration closes
+//        calendar.add(Calendar.MINUTE, 1);
+//        Timestamp eventStart = new Timestamp(calendar.getTime());
+//        // Event ends 2 minutes after it starts
+//        calendar.add(Calendar.MINUTE, 1);
+//        Timestamp eventEnd = new Timestamp(calendar.getTime());
+//        // Reoccurring end is 2 minutes after event ends
+//        calendar.add(Calendar.MINUTE, 1);
+//        Timestamp reoccurringEnd = new Timestamp(calendar.getTime());
+//        // Create event (chronologically valid)
 //        Event sampleEvent = new Event(
 //                "Campus Hackathon 2025",             // name
-//                "A 24-hour hackathon for students",  // description
+//                "A short test hackathon for debugging",  // description
 //                organizer,                           // organizer
 //                location,                            // location
-//                eventStart,                          // start time
-//                eventEnd,                            // end time
+//                eventStart,                          // event start
+//                eventEnd,                            // event end
 //                200,                                 // event capacity
 //                50,                                  // waitlist capacity
 //                registrationStart,                   // registration start
 //                registrationEnd,                     // registration end
 //                true,                                // is reoccurring
-//                null,                                // reoccurring end date (none yet)
+//                reoccurringEnd,                      // reoccurring end
 //                ReoccurringType.Weekly,              // reoccurring type
-//                true,                                // geolocation tracking enabled
+//                true,                                // geolocation tracking
 //                poster                               // poster
 //        );
+//        // Add to manager
 //        EventManager.getInstance().createEvent(sampleEvent);
+
+//        Timestamp timestamp = Timestamp.now();
+//        Profile albert = ProfileManager.getInstance().getProfileByDeviceId("9bef0d831b027a09");
+//        Profile nikolai = ProfileManager.getInstance().getProfileByDeviceId("25053a74eaf65030");
+//        Notification message = new Notification(nikolai, albert, "Test notification, hello!", timestamp);
+//        NotificationManager.getInstance().createNotification(message);
     }
 
     @Override
@@ -108,7 +138,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
     @Override
     public void update() {
         events.clear();
-        events.addAll(EventManager.getInstance().getEvents());
+        events.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
         eventArrayAdapter.notifyDataSetChanged();
     }
 }

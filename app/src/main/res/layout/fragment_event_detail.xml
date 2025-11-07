@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
+    android:clickable="true"
     android:padding="16dp">
 
     <!-- title -->
@@ -30,17 +31,39 @@
         app:layout_constraintTop_toTopOf="parent"
         app:strokeWidth="2dp" />
 
+    <!-- organizer details -->
+    <TextView
+        android:id="@+id/organizer_name_static"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Organizer: "
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_title_textview" />
+
+    <TextView
+        android:id="@+id/event_organizer_name_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="String"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/organizer_name_static"
+        app:layout_constraintStart_toEndOf="@+id/organizer_name_static"
+        app:layout_constraintTop_toTopOf="@+id/organizer_name_static" />
+
     <!-- description -->
     <TextView
         android:id="@+id/event_description_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="16dp"
         android:text="Description: "
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/event_title_textview" />
+        app:layout_constraintTop_toBottomOf="@id/organizer_name_static" />
 
     <TextView
         android:id="@+id/event_description_textview"
@@ -55,30 +78,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/event_description_static" />
 
-    <!-- organizer details -->
+    <!-- location details -->
     <TextView
-        android:id="@+id/organizer_name_static"
+        android:id="@+id/location_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Organizer: "
+        android:text="Location: "
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_description_textview" />
 
     <TextView
-        android:id="@+id/event_organizer_name_textview"
+        android:id="@+id/event_location_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="String"
+        android:text="Location String"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/organizer_name_static"
-        app:layout_constraintStart_toEndOf="@+id/organizer_name_static"
-        app:layout_constraintTop_toTopOf="@+id/organizer_name_static" />
+        app:layout_constraintBottom_toBottomOf="@+id/location_static"
+        app:layout_constraintStart_toEndOf="@+id/location_static"
+        app:layout_constraintTop_toTopOf="@+id/location_static" />
 
     <!-- date and time details -->
-
     <TextView
         android:id="@+id/event_start_date_static"
         android:layout_width="wrap_content"
@@ -88,7 +110,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizer_name_static" />
+        app:layout_constraintTop_toBottomOf="@+id/location_static" />
 
     <TextView
         android:id="@+id/event_start_date_textview"
@@ -121,6 +143,29 @@
         app:layout_constraintStart_toEndOf="@+id/event_end_date_static"
         app:layout_constraintTop_toTopOf="@+id/event_end_date_static" />
 
+    <!-- Reoccuring details -->
+    <TextView
+        android:id="@+id/reoccuring_static"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Reoccurring: "
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_end_date_static" />
+
+    <TextView
+        android:id="@+id/reoccuring_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Boolean/String"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/reoccuring_static"
+        app:layout_constraintStart_toEndOf="@+id/reoccuring_static"
+        app:layout_constraintTop_toTopOf="@+id/reoccuring_static" />
+
+    <!-- registration details -->
     <TextView
         android:id="@+id/registration_open_static"
         android:layout_width="wrap_content"
@@ -130,7 +175,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_end_date_static" />
+        app:layout_constraintTop_toBottomOf="@+id/reoccuring_static" />
 
     <TextView
         android:id="@+id/registration_open_textview"
@@ -163,6 +208,7 @@
         app:layout_constraintStart_toEndOf="@+id/registration_closes_static"
         app:layout_constraintTop_toTopOf="@+id/registration_closes_static" />
 
+    <!-- capacity details -->
     <TextView
         android:id="@+id/event_max_waitlist_cap_static"
         android:layout_width="wrap_content"
@@ -205,26 +251,110 @@
         app:layout_constraintStart_toEndOf="@id/event_max_cap_static"
         app:layout_constraintTop_toTopOf="@+id/event_max_cap_static" />
 
+    <!-- current waitlist -->
     <TextView
-        android:id="@+id/waitlist_status_static"
+        android:id="@+id/current_waitlist_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="Waitlist Status: "
+        android:text="Current Waitlist: "
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_max_cap_static" />
 
     <TextView
-        android:id="@+id/waitlist_status_textview"
+        android:id="@+id/current_waitlist_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Int"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/current_waitlist_static"
+        app:layout_constraintStart_toEndOf="@id/current_waitlist_static"
+        app:layout_constraintTop_toTopOf="@+id/current_waitlist_static" />
+
+    <!-- current accepted -->
+    <TextView
+        android:id="@+id/current_accepted_static"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Current Accepted: "
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_waitlist_static" />
+
+    <TextView
+        android:id="@+id/current_accepted_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Int"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/current_accepted_static"
+        app:layout_constraintStart_toEndOf="@id/current_accepted_static"
+        app:layout_constraintTop_toTopOf="@+id/current_accepted_static" />
+
+    <TextView
+        android:id="@+id/list_status_static"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Status: "
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_accepted_static" />
+
+    <TextView
+        android:id="@+id/list_status_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Boolean"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/waitlist_status_static"
-        app:layout_constraintStart_toEndOf="@id/waitlist_status_static"
-        app:layout_constraintTop_toTopOf="@+id/waitlist_status_static" />
+        app:layout_constraintBottom_toBottomOf="@+id/list_status_static"
+        app:layout_constraintStart_toEndOf="@id/list_status_static"
+        app:layout_constraintTop_toTopOf="@+id/list_status_static" />
+
+    <!-- Buttons -->
+
+    <TextView
+        android:id="@+id/message_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Optional Message"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/accept_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_status_textview" />
+
+    <Button
+        android:id="@+id/accept_button"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Accept"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/event_waitlist_join_button"
+        app:layout_constraintEnd_toStartOf="@+id/decline_button"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeWidth="2dp" />
+
+    <Button
+        android:id="@+id/decline_button"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:text="Decline"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/accept_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/accept_button"
+        app:strokeWidth="2dp" />
 
     <Button
         android:id="@+id/event_waitlist_join_button"
