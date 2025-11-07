@@ -48,8 +48,16 @@ public class NotificationActivity extends AppCompatActivity implements View {
         notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);
         notificationListView.setAdapter(notificationArrayAdapter);
 
-        NotificationManager.getInstance().addView(this);
         update();
+
+        // observe notification manager
+        NotificationManager.getInstance().addView(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NotificationManager.getInstance().removeView(this);
     }
 
     @Override
