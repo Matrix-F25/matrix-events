@@ -67,13 +67,36 @@ public class Profile extends DBObject implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public boolean isEmailAdminNotifications() {return emailAdminNotifications;}
-    public void setEmailAdminNotifications(boolean emailAdminNotifications) {this.emailAdminNotifications = emailAdminNotifications;}
-    public boolean isEmailOrganizerNotifications() {return emailOrganizerNotifications;}
-    public void setEmailOrganizerNotifications(boolean emailOrganizerNotifications) {this.emailOrganizerNotifications = emailOrganizerNotifications;}
-    public boolean isPhoneAdminNotifications() {return phoneAdminNotifications;}
-    public void setPhoneAdminNotifications(boolean phoneAdminNotifications) {this.phoneAdminNotifications = phoneAdminNotifications;}
-    public boolean isPhoneOrganizerNotifications() {return phoneOrganizerNotifications;}
-    public void setPhoneOrganizerNotifications(boolean phoneOrganizerNotifications) {this.phoneOrganizerNotifications = phoneOrganizerNotifications;}
+    public boolean isEmailAdminNotifications() {
+        return emailAdminNotifications;
+    }
+
+    public void setEmailAdminNotifications(boolean emailAdminNotifications) {
+        this.emailAdminNotifications = emailAdminNotifications;
+    }
+
+    public boolean isEmailOrganizerNotifications() {
+        return emailOrganizerNotifications;
+    }
+
+    public void setEmailOrganizerNotifications(boolean emailOrganizerNotifications) {
+        this.emailOrganizerNotifications = emailOrganizerNotifications;
+    }
+
+    public boolean isPhoneAdminNotifications() {
+        return phoneAdminNotifications;
+    }
+
+    public void setPhoneAdminNotifications(boolean phoneAdminNotifications) {
+        this.phoneAdminNotifications = phoneAdminNotifications;
+    }
+
+    public boolean isPhoneOrganizerNotifications() {
+        return phoneOrganizerNotifications;
+    }
+
+    public void setPhoneOrganizerNotifications(boolean phoneOrganizerNotifications) {
+        this.phoneOrganizerNotifications = phoneOrganizerNotifications;
+    }
 }
 
