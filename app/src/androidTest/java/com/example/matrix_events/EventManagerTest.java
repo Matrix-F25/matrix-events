@@ -30,8 +30,8 @@ public class EventManagerTest {
     private View testView;
     private Event testEvent;
     private String uniqueEventName;
-    private volatile String expectedDescription; // Used to check for specific updates
-    private volatile boolean testingDeletion = false; // Flag to change listener behavior for deletion test
+    private volatile String expectedDescription;
+    private volatile boolean testingDeletion = false;
 
     @Before
     public void setUp() {
@@ -43,7 +43,7 @@ public class EventManagerTest {
             @Override
             public void update() {
                 if (testingDeletion) {
-                    // For deletion, we confirm the event is GONE.
+                    // For deletion to confirm the event is gone.
                     boolean eventFound = false;
                     for (Event e : eventManager.getEvents()) {
                         if (uniqueEventName.equals(e.getName())) {
@@ -55,11 +55,11 @@ public class EventManagerTest {
                         latch.countDown(); // Signal that deletion is confirmed.
                     }
                 } else {
-                    // For creation/update, we confirm the event is PRESENT.
+                    // For creation/update, confirm the event is present.
                     for (Event e : eventManager.getEvents()) {
                         if (uniqueEventName.equals(e.getName()) && expectedDescription.equals(e.getDescription())) {
-                            testEvent.setId(e.getId()); // Always keep the ID updated
-                            latch.countDown(); // Signal that creation/update is confirmed.
+                            testEvent.setId(e.getId());
+                            latch.countDown();
                             break;
                         }
                     }
