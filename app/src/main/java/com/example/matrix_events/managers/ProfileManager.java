@@ -10,8 +10,6 @@ import com.example.matrix_events.mvc.Model;
 import java.util.ArrayList;
 import java.util.List;
 
-import kotlinx.coroutines.scheduling.Task;
-
 /**
  * Manages all user profile data and operations within the application.
  * This class follows the singleton pattern to provide a single point of access to profile data.
