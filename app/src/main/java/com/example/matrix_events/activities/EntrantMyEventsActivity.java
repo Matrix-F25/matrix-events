@@ -144,18 +144,21 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
                 }
                 break;
             }
-            case Pending:
+            case Pending: {
                 listTitleTextview.setText("Pending:");
                 eventArray.addAll(EventManager.getInstance().getEventsInPending(deviceId));
                 break;
-            case Accepted:
+            }
+            case Accepted: {
                 listTitleTextview.setText("Accepted:");
                 eventArray.addAll(EventManager.getInstance().getEventsInAccepted(deviceId));
                 break;
-            case Declined:
+            }
+            case Declined: {
                 listTitleTextview.setText("Declined:");
                 eventArray.addAll(EventManager.getInstance().getEventsInDeclined(deviceId));
                 break;
+            }
         }
 
         eventAdapter.notifyDataSetChanged();

@@ -109,7 +109,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //                location,                            // location
 //                eventStart,                          // event start
 //                eventEnd,                            // event end
-//                200,                                 // event capacity
+//                1,                                   // event capacity
 //                50,                                  // waitlist capacity
 //                registrationStart,                   // registration start
 //                registrationEnd,                     // registration end
