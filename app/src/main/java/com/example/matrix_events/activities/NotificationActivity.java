@@ -23,7 +23,6 @@ public class NotificationActivity extends AppCompatActivity implements View {
 
     private ArrayList<Notification> notifications;
     private NotificationArrayAdapter notificationArrayAdapter;
-    private ListView notificationListView;
     private String deviceId;
 
     @Override
@@ -44,7 +43,7 @@ public class NotificationActivity extends AppCompatActivity implements View {
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         notifications = new ArrayList<>();
-        notificationListView = findViewById(R.id.notification_listview);
+        ListView notificationListView = findViewById(R.id.notification_listview);
         notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);
         notificationListView.setAdapter(notificationArrayAdapter);
 
