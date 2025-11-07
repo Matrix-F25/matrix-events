@@ -19,13 +19,27 @@ import com.example.matrix_events.mvc.View;
 
 import java.util.ArrayList;
 
+/**
+ * Activity responsible for displaying a list of notifications received by the current user.
+ * It implements the {@link View} interface to automatically update the list when new
+ * notifications are received or existing ones are changed.
+ */
 public class NotificationActivity extends AppCompatActivity implements View {
 
     private ArrayList<Notification> notifications;
     private NotificationArrayAdapter notificationArrayAdapter;
-    private ListView notificationListView;
     private String deviceId;
 
+    /**
+     * Called when the activity is first created.
+     * This method sets up the user interface, initializes the notification list and its adapter,
+     * retrieves the user's device ID, and registers with the {@link NotificationManager}
+     * to receive updates.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +58,33 @@ public class NotificationActivity extends AppCompatActivity implements View {
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         notifications = new ArrayList<>();
-        notificationListView = findViewById(R.id.notification_listview);
+        ListView notificationListView = findViewById(R.id.notification_listview);
         notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);
         notificationListView.setAdapter(notificationArrayAdapter);
 
-        NotificationManager.getInstance().addView(this);
         update();
+
+        // observe notification manager
+        NotificationManager.getInstance().addView(this);
     }
 
+    /**
+     * Called when the activity is about to be destroyed.
+     * This method unregisters the activity from the {@link NotificationManager} to prevent
+     * memory leaks.
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NotificationManager.getInstance().removeView(this);
+    }
+
+    /**
+     * Updates the UI by fetching the latest notifications for the current user.
+     * This method is called by the {@link NotificationManager} whenever the notification data changes.
+     * It clears the existing list, retrieves the new list of received notifications, and notifies
+     * the adapter to refresh the display.
+     */
     @Override
     public void update() {
         notifications.clear();

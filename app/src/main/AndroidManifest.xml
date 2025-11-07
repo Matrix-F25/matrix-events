@@ -15,8 +15,6 @@
             android:name=".activities.OrganizerMyEventsActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.EventCreateActivity" />
-        <activity
             android:name=".activities.ProfileActivity"
             android:exported="false" />
         <activity
