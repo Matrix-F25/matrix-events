@@ -4,23 +4,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:background="#80000000">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/message_card_view"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="12dp"
         app:cardElevation="2dp"
         app:strokeColor="@color/material_on_surface_disabled"
         app:strokeWidth="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -32,7 +33,6 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_notification_logo"
-                android:contentDescription="Info"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="?android:attr/textColorPrimary" />
@@ -47,9 +47,19 @@
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textStyle="bold"
                 android:textColor="?android:attr/textColorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_close"
                 app:layout_constraintStart_toEndOf="@id/icon_info"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/button_close"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_notification_x"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?android:attr/textColorPrimary" />
 
             <TextView
                 android:id="@+id/text_message_body"
@@ -61,28 +71,28 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 app:layout_constraintEnd_toEndOf="@id/text_message_title"
                 app:layout_constraintStart_toStartOf="@id/text_message_title"
-                app:layout_constraintTop_toBottomOf="@id/text_message_title" />
+                app:layout_constraintTop_toBottomOf="@+id/text_message_title" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Sept 19, 2025"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="5:41 PM"
+                app:layout_constraintBottom_toBottomOf="@id/chip_date"
+                app:layout_constraintStart_toEndOf="@id/chip_date"
+                app:layout_constraintTop_toTopOf="@id/chip_date" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chip_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Sept 19, 2025"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/message_card_view" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chip_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="5:41 PM"
-        app:layout_constraintBottom_toBottomOf="@id/chip_date"
-        app:layout_constraintStart_toEndOf="@id/chip_date"
-        app:layout_constraintTop_toTopOf="@id/chip_date" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
