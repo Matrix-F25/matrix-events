@@ -121,11 +121,11 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //        );
 //        // Add to manager
 //        EventManager.getInstance().createEvent(sampleEvent);
-
+//
 //        Timestamp timestamp = Timestamp.now();
 //        Profile albert = ProfileManager.getInstance().getProfileByDeviceId("9bef0d831b027a09");
 //        Profile nikolai = ProfileManager.getInstance().getProfileByDeviceId("25053a74eaf65030");
-//        Notification message = new Notification(nikolai, albert, "Test notification, hello!", timestamp);
+//        Notification message = new Notification(albert, nikolai, "Test notification, hello!", timestamp);
 //        NotificationManager.getInstance().createNotification(message);
     }
 
