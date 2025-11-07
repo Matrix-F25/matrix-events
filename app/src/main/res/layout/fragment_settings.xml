@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Could use fixing, so that it fills the entire screen no matter the screen dimensions -->
+<!-- Attributes will need id's if switched to constraint layout -->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey"
+    android:padding="16dp">
+
+    <!-- Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:spacing="12dp">
+
+        <!-- Settings Page Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_page_title"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Out-of-app Notification Settings Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/out_of_app_notification_settings_page_header"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:drawableLeftCompat="@drawable/ic_blank_notification"/>
+
+        <!-- Divider -->
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Email Notifications Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email_notifications_header"
+            android:textSize="18sp"/>
+
+        <!-- Email Admin Switch -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/email_admin_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_switch"
+            android:paddingStart="20dp"
+            app:trackTint="@color/switch_track_color"
+            tools:ignore="RtlSymmetry" />
+
+        <!-- Email Organizer Switch -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/email_organizer_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/organizer_switch"
+            android:paddingStart="20dp"
+            app:trackTint="@color/switch_track_color"
+            tools:ignore="RtlSymmetry" />
+
+        <!-- Phone Notifications Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phone_notifications_header"
+            android:textSize="18sp"/>
+
+        <!-- Phone Admin Switch -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/phone_admin_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_switch"
+            android:paddingStart="20dp"
+            app:trackTint="@color/switch_track_color"
+            tools:ignore="RtlSymmetry" />
+
+        <!-- Phone Organizer Switch -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/phone_organizer_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/organizer_switch"
+            android:paddingStart="20dp"
+            app:trackTint="@color/switch_track_color"
+            tools:ignore="RtlSymmetry" />
+
+    <!--
+        Account Settings Header
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/account_settings_page_header"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:drawableLeftCompat="@drawable/ic_profile"/>
+
+        Divider
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"/>
+
+        Geolocation Switch
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/geolocation_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/geolocation_switch"
+            app:trackTint="@color/switch_track_color"/>
+
+        Device Id Switch
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/device_id_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/device_id_switch"
+            app:trackTint="@color/switch_track_color"/>
+    -->
+
+        <!-- Divider -->
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Logout Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profile_logout_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/logout_button_text"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/black"
+            app:cornerRadius="10dp"
+            app:strokeWidth="2dp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Delete Profile Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profile_delete_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_profile_button_text"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/logout_red"
+            app:cornerRadius="10dp"
+            app:strokeWidth="2dp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Terms & Conditions Clickable Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/terms_conditions_clickable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/terms_conditions_header"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="10dp"
+            app:drawableLeftCompat="@drawable/ic_terms_conditions" />
+
+        <!-- Back Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/settings_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back_button_text"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/black"
+            app:cornerRadius="10dp"
+            app:strokeWidth="2dp"
+            android:layout_marginTop="140dp" />
+
+    </LinearLayout>
+
+</ScrollView>
