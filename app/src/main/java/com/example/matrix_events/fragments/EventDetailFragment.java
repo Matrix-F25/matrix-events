@@ -2,7 +2,6 @@ package com.example.matrix_events.fragments;
 
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -168,7 +167,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
                 listStatusTextview.setText("On the Waitlist");
                 waitlistButton.setText("Leave Waitlist");
                 waitlistButton.setOnClickListener(v -> {
-                    event.leaveWaitlist(deviceId);
+                    event.leaveWaitList(deviceId);
                     EventManager.getInstance().updateEvent(event);
                 });
             } else {

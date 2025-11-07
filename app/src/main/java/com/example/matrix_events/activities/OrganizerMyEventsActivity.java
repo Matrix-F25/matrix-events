@@ -9,8 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.fragments.EventCreateFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 
 public class OrganizerMyEventsActivity extends AppCompatActivity {
@@ -51,10 +53,12 @@ public class OrganizerMyEventsActivity extends AppCompatActivity {
         }
 
         // Create Event
-        Button createEventButton = findViewById(R.id.btn_create_event);
+        Button createEventButton = findViewById(R.id.create_event_button);
         if (createEventButton != null) {
             createEventButton.setOnClickListener(v -> {
-                startActivity(new Intent(OrganizerMyEventsActivity.this, EventCreateActivity.class));
+                Fragment fragment = new EventCreateFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main, fragment).addToBackStack(null).commit();
             });
         }
     }
