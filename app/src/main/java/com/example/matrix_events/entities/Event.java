@@ -29,6 +29,7 @@ public class Event extends DBObject implements Serializable {
     private List<String> pendingList = new ArrayList<>();
     private List<String> acceptedList = new ArrayList<>();
     private List<String> declinedList = new ArrayList<>();
+    private boolean registrationOpened = false;
     private boolean lotteryProcessed = false;
     private boolean pendingExpired = false;
 
@@ -195,6 +196,13 @@ public class Event extends DBObject implements Serializable {
         }
         pendingList.remove(deviceId);
         declinedList.add(deviceId);
+
+        // Second Chance! Lottery selected another entrant in the waitlist
+        if (!waitList.isEmpty()) {
+            String secondChance = waitList.get(0);
+            waitList.remove(secondChance);
+            pendingList.add(secondChance);
+        }
     }
 
     // Event getters and setters
@@ -320,6 +328,10 @@ public class Event extends DBObject implements Serializable {
     public List<String> getDeclinedList() { return declinedList; }
 
     public void setDeclinedList(List<String> declinedList) { this.declinedList = declinedList; }
+
+    public boolean isRegistrationOpened() { return registrationOpened; }
+
+    public void setRegistrationOpened(boolean registrationOpened) { this.registrationOpened = registrationOpened; }
 
     public boolean isLotteryProcessed() { return lotteryProcessed; }
 
