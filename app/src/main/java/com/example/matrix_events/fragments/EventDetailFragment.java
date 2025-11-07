@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.managers.EventManager;
@@ -66,6 +68,20 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
     }
 
     public void render() {
+        // Display poster image if available
+        ImageView posterImage = view.findViewById(R.id.event_poster_image);
+
+        if (event.getPoster() != null && event.getPoster().getImageUrl() != null) {
+            String posterUrl = event.getPoster().getImageUrl();
+            Glide.with(requireContext())
+                    .load(posterUrl)
+                    .placeholder(R.drawable.placeholder) // optional
+                    .error(R.drawable.placeholder)             // optional
+                    .into(posterImage);
+        } else {
+            posterImage.setImageResource(R.drawable.placeholder);
+        }
+
         // Organizer Name
         TextView organizer = view.findViewById(R.id.event_organizer_name_textview);
         if (event.getOrganizer() != null) {
