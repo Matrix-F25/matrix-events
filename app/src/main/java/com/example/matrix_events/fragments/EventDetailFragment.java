@@ -2,7 +2,6 @@ package com.example.matrix_events.fragments;
 
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -49,12 +48,6 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
-        });
-
-        // Back Button Functionality
-        Button waitlistButton = view.findViewById(R.id.event_waitlist_join_button);
-        waitlistButton.setOnClickListener(v -> {
-            Log.d("DEBUG", "waitlist button clicked");
         });
 
         // observe event manager
@@ -190,7 +183,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
                 listStatusTextview.setText("On the Waitlist");
                 waitlistButton.setText("Leave Waitlist");
                 waitlistButton.setOnClickListener(v -> {
-                    event.leaveWaitlist(deviceId);
+                    event.leaveWaitList(deviceId);
                     EventManager.getInstance().updateEvent(event);
                 });
             } else {
