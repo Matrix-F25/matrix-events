@@ -5,26 +5,26 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ProfileActivity">
+    tools:context=".activities.AdminActivity">
 
-    <TextView
-        android:id="@+id/profile_title_static"
+    <Button
+        android:id="@+id/admin_switch_to_org_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Profile Page"
-        android:textSize="32sp"
+        android:layout_marginTop="8dp"
+        android:text="Go to Organizer View"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/navigation_bar_fragment"
-        android:name="com.example.matrix_events.fragments.NavigationBarFragment"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/admin_title_static"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Admin"
+        android:textSize="32sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/admin_switch_to_org_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,7 @@ public class Profile extends DBObject implements Serializable {
     private String phoneNumber;         // optional, can be null
     private String deviceId;
     private boolean notificationsEnabled = true;
+    private boolean isAdmin = false;
 
     public Profile() {}       // Required for Firestore
     public Profile(@NonNull String name, @NonNull String email, String phoneNumber, @NonNull String deviceId) {
@@ -48,4 +49,6 @@ public class Profile extends DBObject implements Serializable {
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
+    public boolean isAdmin() { return isAdmin; }
+    public void setAdmin(boolean admin) { isAdmin = admin; }
 }
