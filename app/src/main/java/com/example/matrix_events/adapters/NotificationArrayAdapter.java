@@ -23,8 +23,15 @@ import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 
 public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
+
+    private final String adapterType;
     public NotificationArrayAdapter(@NonNull Context context, @NonNull ArrayList<Notification> arrayList) {
+        this(context, arrayList, "entrant");
+    }
+
+    public NotificationArrayAdapter(@NonNull Context context, @NonNull ArrayList<Notification> arrayList, @NonNull String adapterType) {
         super(context, 0, arrayList);
+        this.adapterType = adapterType;
     }
 
     @NonNull
@@ -39,7 +46,14 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
 
         TextView titleTextview = convertView.findViewById(R.id.text_message_title);
         if (titleTextview != null && notification != null) {
-            String title = "New message from: " + notification.getSender().getName();
+            String title;
+            // the notification title the admin sees
+            if ("admin".equals(adapterType)) {
+                title = notification.getSender().getName() + " sent to " + notification.getReceiver().getName();
+                // the notification title the entrant sees
+            } else {
+                title = "New message from: " + notification.getSender().getName();
+            }
             titleTextview.setText(title);
         }
 
