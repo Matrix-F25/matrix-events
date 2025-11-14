@@ -15,6 +15,9 @@
             android:name=".activities.AdminActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.AdminNotificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.OrganizerMyEventsActivity"
             android:exported="false" />
         <activity
