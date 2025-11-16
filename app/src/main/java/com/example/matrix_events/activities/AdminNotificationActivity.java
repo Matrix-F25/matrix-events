@@ -58,9 +58,8 @@ public class AdminNotificationActivity extends AppCompatActivity implements View
     public void update() {
         notifications.clear();
         notifications.addAll(NotificationManager.getInstance().getNotifications());
-
         if (notificationArrayAdapter != null) {
             notificationArrayAdapter.notifyDataSetChanged();
-    }
         }
+    }
 }
