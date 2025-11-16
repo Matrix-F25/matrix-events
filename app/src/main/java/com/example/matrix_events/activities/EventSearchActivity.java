@@ -69,7 +69,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //                "Alice Johnson",
 //                "alice.johnson@example.com",
 //                "+1-780-555-0123",
-//                "device123"
+//                Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
 //        );
 //        Geolocation location = new Geolocation(
 //                "Yo Mamas House",
