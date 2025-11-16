@@ -63,6 +63,8 @@ public class NotificationActivity extends AppCompatActivity implements View {
     public void update() {
         notifications.clear();
         notifications.addAll(NotificationManager.getInstance().getReceivedNotificationsByDeviceID(deviceId));
-        notificationArrayAdapter.notifyDataSetChanged();
+        if (notificationArrayAdapter != null) {
+            notificationArrayAdapter.notifyDataSetChanged();
+        }
     }
 }
