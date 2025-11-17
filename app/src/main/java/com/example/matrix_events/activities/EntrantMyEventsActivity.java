@@ -160,7 +160,6 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
                 break;
             }
         }
-
         eventAdapter.notifyDataSetChanged();
     }
 }
