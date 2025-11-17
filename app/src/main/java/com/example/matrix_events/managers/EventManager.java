@@ -98,6 +98,17 @@ public class EventManager extends Model implements DBListener<Event> {
         return eventsNotClosed;
     }
 
+    public List<Event> getOrganizerEventsRegistrationNotClosed(String deviceID) {
+        List<Event> organizerEventsNotClosed = new ArrayList<>();
+        for (Event event : events) {
+            if (!event.isRegistrationClosed() && event.getOrganizer().getDeviceId().equals(deviceID)) {
+                // Registration closes in the future and deviceID is the organizer
+                organizerEventsNotClosed.add(event);
+            }
+        }
+        return organizerEventsNotClosed;
+    }
+
     /**
      * Filters and returns a list of events for which the registration period has closed.
      *
@@ -112,6 +123,17 @@ public class EventManager extends Model implements DBListener<Event> {
             }
         }
         return eventsClosed;
+    }
+
+    public List<Event> getOrganizerEventsRegistrationClosed(String deviceID) {
+        List<Event> organizerEventsClosed = new ArrayList<>();
+        for (Event event : events) {
+            if (event.isRegistrationClosed() && event.getOrganizer().getDeviceId().equals(deviceID)) {
+                // Registration is closed and deviceID is the organizer
+                organizerEventsClosed.add(event);
+            }
+        }
+        return organizerEventsClosed;
     }
 
     /**
