@@ -41,11 +41,11 @@ public class AdminPostersActivity extends AppCompatActivity implements View {
                 .replace(R.id.admin_navigation_bar_fragment, AdminNavigationBarFragment.newInstance(R.id.nav_admin_posters))
                 .commit();
 
-        postersRecyclerView = findViewById(R.id.posters_recycler_view);
         posterList = new ArrayList<>(PosterManager.getInstance().getPosters());
         posterAdapter = new PosterAdapter(this, posterList);
 
-        GridLayoutManager posterLayout = new GridLayoutManager(this, 2);
+        postersRecyclerView = findViewById(R.id.posters_recycler_view);
+        GridLayoutManager posterLayout = new GridLayoutManager(this, 2); // how many columns we want
 
         postersRecyclerView.setLayoutManager(posterLayout);
         postersRecyclerView.setAdapter(posterAdapter);
