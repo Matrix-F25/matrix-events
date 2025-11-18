@@ -87,8 +87,13 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (notification != null) {
+                    // if we're currently an admin trying to delete a message
+                    if ("admin".equals(adapterType)) {
                         NotificationManager.getInstance().deleteNotification(notification);
+                        // if we're currently an entrant trying to delete a message
+                    } else {
+                        notification.setReadFlag(true);
+                        NotificationManager.getInstance().updateNotification(notification);
                     }
                 }
             });
