@@ -45,5 +45,17 @@ public class AdminActivity extends AppCompatActivity {
             Intent intent = new Intent(AdminActivity.this, AdminPostersActivity.class);
             startActivity(intent);
         });
+
+        ImageView adminEventsButton = findViewById(R.id.event_admin_logo);
+        adminEventsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminActivity.this, AdminEventsActivity.class);
+            startActivity(intent);
+        });
+
+        ImageView adminProfileButton = findViewById(R.id.profile_admin_logo);
+        adminProfileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminActivity.this, AdminProfileActivity.class);
+            startActivity(intent);
+        });
     }
 }
