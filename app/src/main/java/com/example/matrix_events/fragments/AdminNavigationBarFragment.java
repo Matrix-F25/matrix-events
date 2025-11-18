@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.activities.AdminActivity;
+import com.example.matrix_events.activities.AdminEventsActivity;
 import com.example.matrix_events.activities.AdminNotificationActivity;
 import com.example.matrix_events.activities.AdminPostersActivity;
+import com.example.matrix_events.activities.AdminProfileActivity;
 import com.example.matrix_events.activities.EventSearchActivity;
 import com.example.matrix_events.activities.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -54,13 +56,13 @@ public class AdminNavigationBarFragment extends Fragment {
                 intent = new Intent(requireContext(), AdminNotificationActivity.class);
             }
             else if (id == R.id.nav_admin_profile) {
-                intent = new Intent(requireContext(), ProfileActivity.class); // not working rn
+                intent = new Intent(requireContext(), AdminProfileActivity.class);
             }
             else if (id == R.id.nav_admin_events) {
-                intent = new Intent(requireContext(), EventSearchActivity.class); // not working rn
+                intent = new Intent(requireContext(), AdminEventsActivity.class);
             }
             else if (id == R.id.nav_admin_posters) {
-                intent = new Intent(requireContext(), AdminPostersActivity.class); // not working rn
+                intent = new Intent(requireContext(), AdminPostersActivity.class);
             }
             else if (id == R.id.nav_admin_home) {
                 intent = new Intent(requireContext(), AdminActivity.class);
