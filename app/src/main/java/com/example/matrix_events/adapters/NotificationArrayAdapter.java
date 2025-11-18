@@ -71,7 +71,7 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
                     AppCompatActivity activity = (AppCompatActivity) getContext();
                     FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
-                    NotificationSeeMore fragment = NotificationSeeMore.newInstance(notification);
+                    NotificationSeeMore fragment = NotificationSeeMore.newInstance(notification, adapterType);
 
                     fragmentManager.beginTransaction()
                             .replace(R.id.main, fragment)
