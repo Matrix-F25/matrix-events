@@ -18,6 +18,7 @@ import com.example.matrix_events.managers.NotificationManager;
 import com.example.matrix_events.mvc.View;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationActivity extends AppCompatActivity implements View {
 
@@ -62,7 +63,15 @@ public class NotificationActivity extends AppCompatActivity implements View {
     @Override
     public void update() {
         notifications.clear();
-        notifications.addAll(NotificationManager.getInstance().getReceivedNotificationsByDeviceID(deviceId));
+
+        List<Notification> allRecvNotifications = NotificationManager.getInstance().getReceivedNotificationsByDeviceID(deviceId);
+
+        for (Notification notification : allRecvNotifications) {
+            if (!notification.getReadFlag()) {
+                notifications.add(notification);
+            }
+        }
+
         if (notificationArrayAdapter != null) {
             notificationArrayAdapter.notifyDataSetChanged();
         }
