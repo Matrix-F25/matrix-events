@@ -1,5 +1,7 @@
 package com.example.matrix_events.entities;
 
+import androidx.annotation.NonNull;
+
 import com.example.matrix_events.database.DBObject;
 
 import java.io.Serializable;
@@ -26,12 +28,12 @@ public class Notification extends DBObject implements Serializable {
     /**
      * Constructs a new Notification object.
      *
-     * @param sender    The {@link Profile} of the user sending the notification.
-     * @param receiver  The {@link Profile} of the user receiving the notification.
-     * @param message   The content of the notification message.
-     * @param timestamp The time at which the notification was sent.
+     * @param sender    The {@link Profile} of the user sending the notification. Cannot be null.
+     * @param receiver  The {@link Profile} of the user receiving the notification. Cannot be null.
+     * @param message   The content of the notification message. Cannot be null.
+     * @param timestamp The time at which the notification was sent. Cannot be null.
      */
-    public Notification(Profile sender, Profile receiver, String message, Timestamp timestamp) {
+    public Notification(@NonNull Profile sender, @NonNull Profile receiver, @NonNull String message, @NonNull Timestamp timestamp) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
@@ -50,9 +52,9 @@ public class Notification extends DBObject implements Serializable {
     /**
      * Sets the sender's profile.
      *
-     * @param sender The {@link Profile} of the sender.
+     * @param sender The {@link Profile} of the sender. Cannot be null.
      */
-    public void setSender(Profile sender) {
+    public void setSender(@NonNull Profile sender) {
         this.sender = sender;
     }
 
@@ -68,9 +70,9 @@ public class Notification extends DBObject implements Serializable {
     /**
      * Sets the receiver's profile.
      *
-     * @param receiver The {@link Profile} of the receiver.
+     * @param receiver The {@link Profile} of the receiver. Cannot be null.
      */
-    public void setReceiver(Profile receiver) {
+    public void setReceiver(@NonNull Profile receiver) {
         this.receiver = receiver;
     }
 
@@ -86,9 +88,9 @@ public class Notification extends DBObject implements Serializable {
     /**
      * Sets the message content of the notification.
      *
-     * @param message The message string.
+     * @param message The message string. Cannot be null.
      */
-    public void setMessage(String message) {
+    public void setMessage(@NonNull String message) {
         this.message = message;
     }
 
@@ -104,9 +106,9 @@ public class Notification extends DBObject implements Serializable {
     /**
      * Sets the timestamp of the notification.
      *
-     * @param timestamp The {@link Timestamp} to set.
+     * @param timestamp The {@link Timestamp} to set. Cannot be null.
      */
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(@NonNull Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 

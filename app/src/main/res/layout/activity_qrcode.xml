@@ -8,12 +8,12 @@
     tools:context=".activities.QRCodeActivity">
 
     <TextView
-        android:id="@+id/page_title"
+        android:id="@+id/qrcode_title_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="qrcode page"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="16dp"
+        android:text="QRCode Page"
+        android:textSize="32sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

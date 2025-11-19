@@ -1,6 +1,5 @@
 package com.example.matrix_events.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
@@ -14,22 +13,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.EventArrayAdapter;
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.entities.Geolocation;
-import com.example.matrix_events.entities.Notification;
-import com.example.matrix_events.entities.Poster;
-import com.example.matrix_events.entities.Profile;
-import com.example.matrix_events.entities.ReoccurringType;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
-import com.example.matrix_events.managers.NotificationManager;
-import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
-import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class EventSearchActivity extends AppCompatActivity implements View {
 
@@ -53,7 +42,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 
         events = new ArrayList<>();
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
-        ListView eventListView = findViewById(R.id.event_listview);
+        ListView eventListView = findViewById(R.id.event_search_listview);
         eventListView.setAdapter(eventArrayAdapter);
 
         eventListView.setOnItemClickListener(((parent, view, position, id) -> {
@@ -72,18 +61,21 @@ public class EventSearchActivity extends AppCompatActivity implements View {
         EventManager.getInstance().addView(this);
 
 
+        // -----------------------------
+        // --- TESTING PURPOSES ONLY ---
+        // -----------------------------
+
 //        Profile organizer = new Profile(
 //                "Alice Johnson",
 //                "alice.johnson@example.com",
 //                "+1-780-555-0123",
-//                "device123"
+//                Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
 //        );
 //        Geolocation location = new Geolocation(
-//                "University Hall",
+//                "Yo Mamas House",
 //                -113.5244,
 //                53.5232
 //        );
-//        Poster poster = new Poster("https://example.com/posters/hackathon2025.png");
 //        // Start from current time
 //        Calendar calendar = Calendar.getInstance();
 //        // Registration starts in 2 minutes
@@ -117,7 +109,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //                reoccurringEnd,                      // reoccurring end
 //                ReoccurringType.Weekly,              // reoccurring type
 //                true,                                // geolocation tracking
-//                poster                               // poster
+//                null                               // poster
 //        );
 //        // Add to manager
 //        EventManager.getInstance().createEvent(sampleEvent);
@@ -127,6 +119,8 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //        Profile nikolai = ProfileManager.getInstance().getProfileByDeviceId("25053a74eaf65030");
 //        Notification message = new Notification(albert, nikolai, "Test notification, hello!", timestamp);
 //        NotificationManager.getInstance().createNotification(message);
+
+        // -----------------------------
     }
 
     @Override

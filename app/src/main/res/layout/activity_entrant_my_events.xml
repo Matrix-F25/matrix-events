@@ -8,7 +8,7 @@
     tools:context=".activities.EntrantMyEventsActivity">
 
     <Button
-        android:id="@+id/button_switch_to_org"
+        android:id="@+id/entrant_switch_to_org_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/my_events_title_static"
+        android:id="@+id/entrant_title_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -27,74 +27,74 @@
         android:text="My Events"
         android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_switch_to_org" />
+        app:layout_constraintTop_toBottomOf="@+id/entrant_switch_to_org_button" />
 
     <Button
-        android:id="@+id/myevents_waitlisted_button"
+        android:id="@+id/entrant_waitlisted_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="Waitlisted"
-        app:layout_constraintEnd_toStartOf="@+id/myevents_not_selected_button"
+        app:layout_constraintEnd_toStartOf="@+id/entrant_not_selected_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_events_title_static" />
+        app:layout_constraintTop_toBottomOf="@+id/entrant_title_static" />
 
     <Button
-        android:id="@+id/myevents_not_selected_button"
+        android:id="@+id/entrant_not_selected_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:text="Not Selected"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/myevents_waitlisted_button"
-        app:layout_constraintTop_toBottomOf="@+id/my_events_title_static" />
+        app:layout_constraintStart_toEndOf="@+id/entrant_waitlisted_button"
+        app:layout_constraintTop_toBottomOf="@+id/entrant_title_static" />
 
     <Button
-        android:id="@+id/myevents_pending_button"
+        android:id="@+id/entrant_pending_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Pending"
-        app:layout_constraintEnd_toStartOf="@+id/myevents_accepted_button"
+        app:layout_constraintEnd_toStartOf="@+id/entrant_accepted_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myevents_waitlisted_button" />
+        app:layout_constraintTop_toBottomOf="@+id/entrant_waitlisted_button" />
 
     <Button
-        android:id="@+id/myevents_accepted_button"
+        android:id="@+id/entrant_accepted_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Accepted"
-        app:layout_constraintEnd_toStartOf="@+id/myevents_declined_button"
-        app:layout_constraintStart_toEndOf="@+id/myevents_pending_button"
-        app:layout_constraintTop_toBottomOf="@+id/myevents_waitlisted_button" />
+        app:layout_constraintEnd_toStartOf="@+id/entrant_declined_button"
+        app:layout_constraintStart_toEndOf="@+id/entrant_pending_button"
+        app:layout_constraintTop_toBottomOf="@+id/entrant_waitlisted_button" />
 
     <Button
-        android:id="@+id/myevents_declined_button"
+        android:id="@+id/entrant_declined_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Declined"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/myevents_accepted_button"
-        app:layout_constraintTop_toBottomOf="@+id/myevents_waitlisted_button" />
+        app:layout_constraintStart_toEndOf="@+id/entrant_accepted_button"
+        app:layout_constraintTop_toBottomOf="@+id/entrant_waitlisted_button" />
 
     <TextView
-        android:id="@+id/myevents_list_title_textview"
+        android:id="@+id/entrant_list_title_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
         android:text="Waitlisted"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myevents_pending_button" />
+        app:layout_constraintTop_toBottomOf="@+id/entrant_pending_button" />
 
     <ListView
-        android:id="@+id/myevents_entrant_listview"
+        android:id="@+id/entrant_listview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -106,7 +106,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.559"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myevents_list_title_textview" />
+        app:layout_constraintTop_toBottomOf="@+id/entrant_list_title_textview" />
 
     <FrameLayout
         android:id="@+id/navigation_bar_fragment"
