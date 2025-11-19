@@ -39,7 +39,7 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_notification_message, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_notification_message, parent, false);
         }
 
         Notification notification = getItem(position);

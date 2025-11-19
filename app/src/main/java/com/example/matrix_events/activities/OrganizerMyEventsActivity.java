@@ -24,6 +24,7 @@ import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.EventCreateFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
+import com.example.matrix_events.fragments.OrganizerEventFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
@@ -65,6 +66,12 @@ public class OrganizerMyEventsActivity extends AppCompatActivity implements View
 
         eventListview.setOnItemClickListener(((parent, view, position, id) -> {
             Log.d("DEBUG", "event clicked");
+            Event selectedEvent = eventArray.get(position);
+            OrganizerEventFragment fragment = OrganizerEventFragment.newInstance(selectedEvent);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
         }));
 
         // Go to the Entrant "My Events" Activity
