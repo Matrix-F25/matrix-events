@@ -3,6 +3,7 @@ package com.example.matrix_events.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +20,7 @@ public class AdminActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.admin_main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -31,6 +32,30 @@ public class AdminActivity extends AppCompatActivity {
             Intent intent = new Intent(AdminActivity.this, OrganizerMyEventsActivity.class);
             startActivity(intent);
             finish();
+        });
+
+        ImageView adminNotificationsButton = findViewById(R.id.notifications_admin_logo);
+        adminNotificationsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminActivity.this, AdminNotificationActivity.class);
+            startActivity(intent);
+        });
+
+        ImageView adminPostersButton = findViewById(R.id.poster_admin_logo);
+        adminPostersButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminActivity.this, AdminPostersActivity.class);
+            startActivity(intent);
+        });
+
+        ImageView adminEventsButton = findViewById(R.id.event_admin_logo);
+        adminEventsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminActivity.this, AdminEventsActivity.class);
+            startActivity(intent);
+        });
+
+        ImageView adminProfileButton = findViewById(R.id.profile_admin_logo);
+        adminProfileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminActivity.this, AdminProfileActivity.class);
+            startActivity(intent);
         });
     }
 }

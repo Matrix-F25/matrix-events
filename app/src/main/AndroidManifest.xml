@@ -15,6 +15,18 @@
             android:name=".activities.AdminActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.AdminNotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminPostersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminEventsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.OrganizerMyEventsActivity"
             android:exported="false" />
         <activity

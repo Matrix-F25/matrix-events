@@ -23,12 +23,15 @@ import java.util.Locale;
 public class NotificationSeeMore extends Fragment {
 
     private static final String ARG_NOTIFICATION = "notification";
+    private static final String ARG_ADAPTER_TYPE = "adapterType";
     private Notification notification;
+    private String adapterType;
 
-    public static NotificationSeeMore newInstance(Notification notification) {
+    public static NotificationSeeMore newInstance(Notification notification, String adapterType) {
         NotificationSeeMore fragment = new NotificationSeeMore();
         Bundle args = new Bundle();
         args.putSerializable(ARG_NOTIFICATION, notification);
+        args.putString(ARG_ADAPTER_TYPE, adapterType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -38,6 +41,7 @@ public class NotificationSeeMore extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             notification = (Notification) getArguments().getSerializable(ARG_NOTIFICATION);
+            adapterType = getArguments().getString(ARG_ADAPTER_TYPE);
         }
     }
 
@@ -53,7 +57,14 @@ public class NotificationSeeMore extends Fragment {
             Chip timeChip = view.findViewById(R.id.chip_time);
             ImageButton closeButton = view.findViewById(R.id.button_close);
 
-            String title = "New message from: " + notification.getSender().getName();
+            String title;
+
+            if ("admin".equals(adapterType)) {
+                title = notification.getSender().getName() + " sent to " + notification.getReceiver().getName();
+            } else {
+                title = "New message from: " + notification.getSender().getName();
+            }
+
             titleTextView.setText(title);
             bodyTextView.setText(notification.getMessage());
 
