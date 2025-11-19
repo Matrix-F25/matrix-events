@@ -2,10 +2,8 @@ package com.example.matrix_events.activities;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,9 +16,9 @@ import com.example.matrix_events.adapters.AdminUserProfileListAdapter;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.AdminNavigationBarFragment;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.ProfileManager;
+import com.example.matrix_events.mvc.View;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AdminProfileActivity extends AppCompatActivity {
+public class AdminProfileActivity extends AppCompatActivity implements View {
 
     private static final String TAG = "AdminProfileActivity";
 
@@ -39,10 +37,10 @@ public class AdminProfileActivity extends AppCompatActivity {
     private ProgressBar loadingIndicator;
 
     private AdminUserProfileListAdapter adapter;
-    private final List<Profile> profiles = new ArrayList<>();
     private final Set<String> organizerDeviceIds = new HashSet<>();
-
-    private FirebaseFirestore db;
+    private final List<Profile> profileList = new ArrayList<>();
+    private ProfileManager profileManager;
+    private EventManager eventManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,101 +54,78 @@ public class AdminProfileActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Nav bar fragment
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.admin_navigation_bar_fragment,
-                        AdminNavigationBarFragment.newInstance(R.id.nav_admin_profile))
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.admin_navigation_bar_fragment, AdminNavigationBarFragment.newInstance(R.id.nav_admin_profile))
                 .commit();
-
-        db = FirebaseFirestore.getInstance();
 
         profileListView = findViewById(R.id.admin_profile_list_view);
         loadingIndicator = findViewById(R.id.admin_profile_loading_indicator);
 
-        adapter = new AdminUserProfileListAdapter(this, profiles, organizerDeviceIds);
+        profileManager = ProfileManager.getInstance();
+        eventManager = EventManager.getInstance();
+
+        profileManager.addView(this);
+        eventManager.addView(this);
+
+        adapter = new AdminUserProfileListAdapter(
+                this,
+                profileList,
+                organizerDeviceIds
+        );
         profileListView.setAdapter(adapter);
-
-
         showLoading(true);
-        loadProfilesThenEvents();
     }
 
-    private void showLoading(boolean isLoading) {
-        if (isLoading) {
-            loadingIndicator.setVisibility(View.VISIBLE);
-            profileListView.setVisibility(View.GONE);
-        } else {
-            loadingIndicator.setVisibility(View.GONE);
-            profileListView.setVisibility(View.VISIBLE);
+    @Override
+    public void update() {
+        Log.d(TAG, "AdminProfileActivity.update() – refreshing profiles from managers");
+        profileList.clear();
+        List<Profile> profilesFromManager = profileManager.getProfiles();
+        if (profilesFromManager != null) {
+            profileList.addAll(profilesFromManager);
         }
-    }
 
-    private void loadProfilesThenEvents() {
-        db.collection(PROFILES_COLLECTION)
-                .get()
-                .addOnSuccessListener(this::handleProfilesLoaded)
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to load profiles", e);
-                    Toast.makeText(this, "Failed to load profiles: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                    showLoading(false);
-                });
-    }
-
-    private void handleProfilesLoaded(QuerySnapshot snapshot) {
-        profiles.clear();
-
-        for (DocumentSnapshot doc : snapshot) {
-            Profile profile = doc.toObject(Profile.class);
-            if (profile != null) {
-                profile.setId(doc.getId());
-
-                Boolean adminVal = doc.getBoolean("admin");
-                if (adminVal != null) {
-                    profile.setAdmin(adminVal);
-                }
-
-                profiles.add(profile);
-            }
-        }
-        loadEventsAndMarkOrganizers();
-    }
-
-    private void loadEventsAndMarkOrganizers() {
-        db.collection(EVENTS_COLLECTION)
-                .get()
-                .addOnSuccessListener(this::handleEventsLoaded)
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to load events", e);
-                    Toast.makeText(this, "Failed to load events: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                    // Even if events fail, show profiles list
-                    showLoading(false);
-                    adapter.notifyDataSetChanged();
-                });
-    }
-
-    @SuppressWarnings("unchecked")
-    private void handleEventsLoaded(QuerySnapshot snapshot) {
         organizerDeviceIds.clear();
+        List<Event> eventsFromManager = eventManager.getEvents();
+        if (eventsFromManager != null) {
+            for (Event event : eventsFromManager) {
+                if (event == null || event.getOrganizer() == null) continue;
 
-        for (DocumentSnapshot doc : snapshot) {
-            Map<String, Object> organizerMap = (Map<String, Object>) doc.get("organizer");
-            if (organizerMap == null) continue;
-
-            Object deviceIdObj = organizerMap.get("deviceId");
-            if (deviceIdObj instanceof String) {
-                String deviceId = (String) deviceIdObj;
+                String deviceId = event.getOrganizer().getDeviceId();
                 if (deviceId != null && !deviceId.trim().isEmpty()) {
                     organizerDeviceIds.add(deviceId);
                 }
             }
         }
 
-        Log.d(TAG, "Organizer device IDs: " + organizerDeviceIds);
+        Log.d(TAG, "Organizer device IDs: " + organizerDeviceIds.toString());
 
-        adapter.notifyDataSetChanged();
-        showLoading(false);
+        runOnUiThread(() -> {
+            adapter.notifyDataSetChanged();
+            showLoading(false);
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (profileManager != null) {
+            profileManager.removeView(this);
+        }
+        if (eventManager != null) {
+            eventManager.removeView(this);
+        }
+    }
+
+
+    private void showLoading(boolean isLoading) {
+        if (isLoading) {
+            loadingIndicator.setVisibility(android.view.View.VISIBLE);
+            profileListView.setVisibility(android.view.View.GONE);
+        } else {
+            loadingIndicator.setVisibility(android.view.View.GONE);
+            profileListView.setVisibility(android.view.View.VISIBLE);
+        }
     }
 }
