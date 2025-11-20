@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#FFFFFF">
+
+
+    <TextView
+        android:id="@+id/admin_list_item_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name: John Doe"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+
+    <TextView
+        android:id="@+id/admin_list_item_user_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email: john@example.com"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+
+    <TextView
+        android:id="@+id/admin_list_item_user_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Phone: 780-555-1234"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+
+    <TextView
+        android:id="@+id/admin_list_item_user_is_organizer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Organizer: Yes"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:textStyle="italic" />
+
+</LinearLayout>
