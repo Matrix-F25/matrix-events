@@ -1,0 +1,149 @@
+package com.example.matrix_events.fragments;
+
+import android.os.Bundle;
+import android.provider.Settings;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import com.bumptech.glide.Glide;
+import com.example.matrix_events.R;
+import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.utils.TimestampConverter;
+
+public class OrganizerEventFragment extends Fragment implements com.example.matrix_events.mvc.View {
+
+    View view = null;
+    private Event event = null;
+
+    public OrganizerEventFragment() {
+        super(R.layout.fragment_organizer_event);
+    }
+
+    public static OrganizerEventFragment newInstance(Event event) {
+        OrganizerEventFragment fragment = new OrganizerEventFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("event", event);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.view = view;
+        if (getArguments() != null) {
+            event = (Event) getArguments().getSerializable("event");
+        }
+        assert event != null;
+        render();
+
+        Button backButton = view.findViewById(R.id.org_event_back_button);
+        backButton.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
+        // observe event manager
+        EventManager.getInstance().addView(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+        event = EventManager.getInstance().getEventByDBID(event.getId());
+        assert event != null;
+        render();
+    }
+
+    public void render() {
+        // Display poster image if available
+        ImageView posterImage = view.findViewById(R.id.org_event_poster_image);
+
+        if (event.getPoster() != null && event.getPoster().getImageUrl() != null) {
+            String posterUrl = event.getPoster().getImageUrl();
+            Glide.with(requireContext())
+                    .load(posterUrl)
+                    .placeholder(R.drawable.placeholder) // optional
+                    .error(R.drawable.placeholder)             // optional
+                    .into(posterImage);
+        } else {
+            posterImage.setImageResource(R.drawable.placeholder);
+        }
+
+        // Event Title
+        TextView eventTitleTextview = view.findViewById(R.id.org_event_title_textview);
+        eventTitleTextview.setText(event.getName());
+
+        // Event Description
+        TextView eventDescriptionTextview = view.findViewById(R.id.org_event_description_textview);
+        eventDescriptionTextview.setText(event.getDescription());
+
+        // Event Location
+        TextView eventLocation = view.findViewById(R.id.org_event_location_textview);
+        eventLocation.setText(event.getLocation().getName());
+
+        // Event Start Date/Time
+        TextView eventStartDateTextview = view.findViewById(R.id.org_event_start_date_textview);
+        eventStartDateTextview.setText(TimestampConverter.convertFirebaseTimestampToString(event.getEventStartDateTime()));
+
+        // Event End Date/Time
+        TextView eventEndDateTextview = view.findViewById(R.id.org_event_end_date_textview);
+        eventEndDateTextview.setText(TimestampConverter.convertFirebaseTimestampToString(event.getEventEndDateTime()));
+
+        // Event Reoccurring Details
+        TextView eventReoccurringTextview = view.findViewById(R.id.org_reoccuring_textview);
+        if (event.isReoccurring()) {
+            String output = String.valueOf(event.getReoccurringType()) + ", until " + TimestampConverter.convertFirebaseTimestampToString(event.getReoccurringEndDateTime());
+            eventReoccurringTextview.setText(output);
+        } else {
+            eventReoccurringTextview.setText("Event is not reoccurring");
+        }
+
+        // Registration Open Date/Time
+        TextView registrationOpenTextview = view.findViewById(R.id.org_registration_open_textview);
+        registrationOpenTextview.setText(TimestampConverter.convertFirebaseTimestampToString(event.getRegistrationStartDateTime()));
+
+        // Registration Close Date/Time
+        TextView registrationClosesTextview = view.findViewById(R.id.org_registration_closes_textview);
+        registrationClosesTextview.setText(TimestampConverter.convertFirebaseTimestampToString(event.getRegistrationEndDateTime()));
+
+        // Max Waitlist Capacity
+        TextView maxWaitlistCapTextview = view.findViewById(R.id.org_event_max_waitlist_cap_textview);
+        if (event.getWaitlistCapacity() != null) {
+            maxWaitlistCapTextview.setText(String.valueOf(event.getWaitlistCapacity()));
+        } else {
+            maxWaitlistCapTextview.setText("No limit");
+        }
+
+        // Max Event Capacity
+        TextView maxEventCapTextview = view.findViewById(R.id.org_event_max_cap_textview);
+        maxEventCapTextview.setText(String.valueOf(event.getEventCapacity()));
+
+        // Current Waitlist Size
+        int waitListSize = event.getWaitList().size();
+        TextView currentWaitlistTextview = view.findViewById(R.id.org_current_waitlist_textview);
+        if (event.getWaitlistCapacity() != null) {
+            currentWaitlistTextview.setText(waitListSize + "/" + event.getWaitlistCapacity());
+        } else {
+            currentWaitlistTextview.setText(String.valueOf(waitListSize));
+        }
+
+        // Current Accepted Size
+        int acceptedListSize = event.getAcceptedList().size();
+        TextView currentAcceptedListTextview = view.findViewById(R.id.org_current_accepted_textview);
+        currentAcceptedListTextview.setText(acceptedListSize + "/" + event.getEventCapacity());
+    }
+}
