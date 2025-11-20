@@ -2,5 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="light_grey">#E6E5E5</color>
+    <color name="filter_grey">#B8B8B8</color>
+    <color name="grey">#828282</color>
+    <color name="filter_grey2">#565656</color>
     <color name="neon_green">#00FF00</color>
+    <color name="switch_green">#39E75F</color>
+    <color name="logout_red">#F44336</color>
 </resources>
