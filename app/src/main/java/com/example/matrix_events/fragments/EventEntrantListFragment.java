@@ -2,65 +2,141 @@ package com.example.matrix_events.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.adapters.ProfileArrayAdapter;
+import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Profile;
+import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.ProfileManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link EventEntrantListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class EventEntrantListFragment extends Fragment {
+import java.util.ArrayList;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class EventEntrantListFragment extends Fragment implements com.example.matrix_events.mvc.View, ProfileArrayAdapter.Listener{
+    public enum ListType {
+        WAITING_LIST,
+        PENDING_LIST,
+        ACCEPTED_LIST,
+        DECLINED_LIST
+    }
+    View view;
+    private Event event;
+    private ListType listType;
+    private ArrayList<Profile> profileArray;
+    private ProfileArrayAdapter profileAdapter;
 
     public EventEntrantListFragment() {
-        // Required empty public constructor
+        super(R.layout.fragment_event_entrant_list);
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EventEntrantListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static EventEntrantListFragment newInstance(String param1, String param2) {
+    public static EventEntrantListFragment newInstance(Event event, ListType listType) {
         EventEntrantListFragment fragment = new EventEntrantListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable("event", event);
+        args.putSerializable("listType", listType);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.view = view;
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            event = (Event) getArguments().getSerializable("event");
+            listType = (ListType) getArguments().getSerializable("listType");
         }
+        assert event != null;
+        assert listType != null;
+
+        boolean cancelEnabled = listType == ListType.PENDING_LIST;
+
+        profileArray = new ArrayList<>();
+        profileAdapter = new ProfileArrayAdapter(requireContext(), profileArray, cancelEnabled, this);
+        ListView profileListView = view.findViewById(R.id.ent_list_listview);
+        profileListView.setAdapter(profileAdapter);
+
+        Button backButton = view.findViewById(R.id.ent_list_back_button);
+        backButton.setOnClickListener(v -> {
+            getParentFragmentManager().popBackStack();
+        });
+
+        Button messageButton = view.findViewById(R.id.ent_list_message_button);
+        messageButton.setOnClickListener(v -> {
+            // TODO
+        });
+
+        Button downloadCSVButton = view.findViewById(R.id.ent_list_download_button);
+        downloadCSVButton.setOnClickListener(v -> {
+            // TODO
+        });
+
+        update();
+
+        // observe event manager and profile manager
+        EventManager.getInstance().addView(this);
+        ProfileManager.getInstance().addView(this);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_event_entrant_list, container, false);
+    public void onDestroy() {
+        super.onDestroy();
+        EventManager.getInstance().removeView(this);
+        ProfileManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+        event = EventManager.getInstance().getEventByDBID(event.getId());
+        assert event != null;
+        render();
+    }
+
+    @Override
+    public void cancelProfile(String deviceID) {
+        event.joinDeclinedList(deviceID);
+        EventManager.getInstance().updateEvent(event);
+        Toast.makeText(requireContext(), "Entrant successfully removed!", Toast.LENGTH_LONG).show();
+    }
+
+    public void render() {
+        TextView listTitleTextview = view.findViewById(R.id.ent_list_title_textview);
+        ArrayList<String> profileStringArray = new ArrayList<>();
+        switch (listType) {
+            case WAITING_LIST: {
+                listTitleTextview.setText("Waiting List");
+                profileStringArray = (ArrayList<String>) event.getWaitList();
+                break;
+            }
+            case PENDING_LIST: {
+                listTitleTextview.setText("Pending List");
+                profileStringArray = (ArrayList<String>) event.getPendingList();
+                break;
+            }
+            case ACCEPTED_LIST: {
+                listTitleTextview.setText("Accepted List");
+                profileStringArray = (ArrayList<String>) event.getAcceptedList();
+                break;
+            }
+            case DECLINED_LIST: {
+                listTitleTextview.setText("Declined List");
+                profileStringArray = (ArrayList<String>) event.getDeclinedList();
+                break;
+            }
+        }
+
+        profileArray.clear();
+        for (String deviceID : profileStringArray) {
+            profileArray.add(ProfileManager.getInstance().getProfileByDeviceId(deviceID));
+        }
+        profileAdapter.notifyDataSetChanged();
     }
 }

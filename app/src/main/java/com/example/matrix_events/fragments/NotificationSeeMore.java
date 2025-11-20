@@ -81,8 +81,7 @@ public class NotificationSeeMore extends Fragment {
             }
 
             closeButton.setOnClickListener(v -> {
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.popBackStack();
+                getParentFragmentManager().popBackStack();
             });
         }
 
