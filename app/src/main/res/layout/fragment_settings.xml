@@ -36,11 +36,11 @@
             android:background="@color/grey"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Out-of-app Notification Settings Header -->
+        <!-- Push Notification Settings Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/out_of_app_notification_settings_page_header"
+            android:text="@string/push_notification_settings_page_header"
             android:textSize="20sp"
             android:textStyle="bold"
             app:drawableLeftCompat="@drawable/ic_blank_notification"/>

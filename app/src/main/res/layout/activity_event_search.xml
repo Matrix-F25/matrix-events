@@ -135,8 +135,8 @@
     </com.google.android.material.card.MaterialCardView>
 
     <!-- Event List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/event_recyclerview"
+    <ListView
+        android:id="@+id/event_search_listview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:paddingTop="8dp"

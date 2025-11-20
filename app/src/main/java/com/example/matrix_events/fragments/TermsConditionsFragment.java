@@ -1,6 +1,5 @@
 package com.example.matrix_events.fragments;
 
-// Imports
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.matrix_events.R;
-import com.example.matrix_events.managers.ProfileManager;
 
-// TermsConditionsFragment Class
-public class TermsConditionsFragment extends Fragment implements com.example.matrix_events.mvc.View {
-
+public class TermsConditionsFragment extends Fragment {
     // Required Empty Constructor
     public TermsConditionsFragment() {}
 
@@ -37,17 +33,5 @@ public class TermsConditionsFragment extends Fragment implements com.example.mat
         });
 
         return view;
-    }
-
-    // MV Implementation methods
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ProfileManager.getInstance().removeView(this);
-    }
-
-    @Override
-    public void update() {
-
     }
 }

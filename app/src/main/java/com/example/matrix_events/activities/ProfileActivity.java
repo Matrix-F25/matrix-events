@@ -1,7 +1,5 @@
 package com.example.matrix_events.activities;
 
-// Imports
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.ImageButton;
@@ -17,7 +15,6 @@ import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.fragments.SettingsFragment;
-import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
 import com.google.android.material.button.MaterialButton;
@@ -25,9 +22,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
-// ProfileActivity Class
 public class ProfileActivity extends AppCompatActivity implements View {
-
     // Declarations
     private TextInputEditText profileName;
     private TextInputEditText profileEmail;
@@ -36,6 +31,7 @@ public class ProfileActivity extends AppCompatActivity implements View {
     // Declaration of ProfileManager and Current Profile
     private ProfileManager profileManager;
     private Profile currentProfile;
+    private String deviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +45,15 @@ public class ProfileActivity extends AppCompatActivity implements View {
             return insets;
         });
 
+        // Initialize Navigation Bar Fragment
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_profile))
+                .commit();
+
+        // Get Device ID (unique per device)
+        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
         // Initialize View Attributes
         profileName = findViewById(R.id.profile_name);
         profileEmail = findViewById(R.id.profile_email);
@@ -59,35 +64,14 @@ public class ProfileActivity extends AppCompatActivity implements View {
         // Grab Instance of Profile Manager
         profileManager = ProfileManager.getInstance();
 
-        // Get Device ID (unique per device)
-        @SuppressLint("HardwareIds") String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        // Observe Profile Manager
+        profileManager.addView(this);
 
-        // Initialize Navigation Bar Fragment
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_profile))
-                .commit();
-
-        // High-Level View of Methods Called
-        // Load and Populate User Profile
-        loadProfile(deviceId);
         // Set On Click Listeners
         updateButton.setOnClickListener(v -> updateProfile());
         settingsButton.setOnClickListener(v -> openSettings());
-    }
 
-
-    // Load User's Profile and Populate TextInput Fields
-    private void loadProfile(String deviceId) {
-        currentProfile = profileManager.getProfileByDeviceId(deviceId);
-
-        if (currentProfile != null) {
-            profileName.setText(currentProfile.getName());
-            profileEmail.setText(currentProfile.getEmail());
-            profilePhoneNumber.setText(currentProfile.getPhoneNumber());
-        } else {
-            Toast.makeText(this, "No profile found for this device.", Toast.LENGTH_LONG).show();
-        }
+        update();
     }
 
     // Update User's Profile
@@ -128,8 +112,17 @@ public class ProfileActivity extends AppCompatActivity implements View {
         ProfileManager.getInstance().removeView(this);
     }
 
+    // Load User's Profile and Populate TextInput Fields
     @Override
     public void update() {
+        currentProfile = profileManager.getProfileByDeviceId(deviceId);
 
+        if (currentProfile != null) {
+            profileName.setText(currentProfile.getName());
+            profileEmail.setText(currentProfile.getEmail());
+            profilePhoneNumber.setText(currentProfile.getPhoneNumber());
+        } else {
+            Toast.makeText(this, "No profile found for this device.", Toast.LENGTH_LONG).show();
+        }
     }
 }

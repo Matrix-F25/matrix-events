@@ -1,7 +1,5 @@
 package com.example.matrix_events.fragments;
 
-// Imports
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,10 +22,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textview.MaterialTextView;
 
-//SettingsFragment Class
 public class SettingsFragment extends Fragment implements com.example.matrix_events.mvc.View {
-
     // Declarations
+    private String deviceId;
+    private boolean isUpdatingUI = false; // Listener Guard Flag
     private MaterialSwitch emailAdminSwitch;
     private MaterialSwitch emailOrganizerSwitch;
     private MaterialSwitch phoneAdminSwitch;
@@ -35,7 +33,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
     private MaterialButton logoutButton;
     private MaterialButton deleteProfileButton;
     private MaterialTextView termsConditionsClickable;
-
     private MaterialButton backButton;
 
     // Declaration of ProfileManager and Current Profile
@@ -50,6 +47,9 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
         // Inflate Fragment Layout
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
+        // Get Device ID (unique per device)
+        deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
         // Initialize all switches and buttons
         emailAdminSwitch = view.findViewById(R.id.email_admin_switch);
         emailOrganizerSwitch = view.findViewById(R.id.email_organizer_switch);
@@ -62,53 +62,42 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
 
         // Grab Instance of Profile Manager
         profileManager = ProfileManager.getInstance();
+        // Observe Profile Manager
+        profileManager.addView(this);
 
-        // Get Device ID (unique per device)
-        @SuppressLint("HardwareIds") String deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-
-        // High-Level View of Methods Called
-        // Load and Populate User Profile, Also Calls setupSwitchListeners
-        loadProfile(deviceId);
-        // Setup On Click Button Listeners
+        // Setup Listeners
         setupButtonListeners();
+        setupSwitchListeners();
+
+        update();
 
         return view;
     }
-    // Load and Populate User's Notification Preferences
-    private void loadProfile(String deviceId) {
-        currentProfile = profileManager.getProfileByDeviceId(deviceId);
 
-        if (currentProfile != null) {
-            emailAdminSwitch.setChecked(currentProfile.isEmailAdminNotifications());
-            emailOrganizerSwitch.setChecked(currentProfile.isEmailOrganizerNotifications());
-            phoneAdminSwitch.setChecked(currentProfile.isPhoneAdminNotifications());
-            phoneOrganizerSwitch.setChecked(currentProfile.isPhoneOrganizerNotifications());
-
-            setupSwitchListeners(deviceId);
-        } else {
-            showToast("No profile found for this device");
-        }
-    }
     // Method to Set Up All Switch Listeners
-    private void setupSwitchListeners(String deviceId) {
+    private void setupSwitchListeners() {
         emailAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                currentProfile.setEmailAdminNotifications(isChecked);
-                profileManager.updateProfile(currentProfile);
+            if (isUpdatingUI) return; // Listener Guard
+            currentProfile.setEmailAdminNotifications(isChecked);
+            profileManager.updateProfile(currentProfile);
         });
 
         emailOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                currentProfile.setEmailOrganizerNotifications(isChecked);
-                profileManager.updateProfile(currentProfile);
+            if (isUpdatingUI) return; // Listener Guard
+            currentProfile.setEmailOrganizerNotifications(isChecked);
+            profileManager.updateProfile(currentProfile);
         });
 
         phoneAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                currentProfile.setPhoneAdminNotifications(isChecked);
-                profileManager.updateProfile(currentProfile);
+            if (isUpdatingUI) return; // Listener Guard
+            currentProfile.setPhoneAdminNotifications(isChecked);
+            profileManager.updateProfile(currentProfile);
         });
 
         phoneOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                currentProfile.setPhoneOrganizerNotifications(isChecked);
-                profileManager.updateProfile(currentProfile);
+            if (isUpdatingUI) return; // Listener Guard
+            currentProfile.setPhoneOrganizerNotifications(isChecked);
+            profileManager.updateProfile(currentProfile);
         });
     }
 
@@ -199,6 +188,11 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
         startActivity(intent);
     }
 
+    // Toast Method For Simplicity
+    private void showToast(String message){
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+    }
+
     // MV Implementation methods
     @Override
     public void onDestroy() {
@@ -206,13 +200,23 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
         ProfileManager.getInstance().removeView(this);
     }
 
+    // Load and Populate User's Notification Preferences
     @Override
     public void update() {
+        if (isUpdatingUI) return; // prevent re-entrant loops
+        isUpdatingUI = true; // pause switch listeners
 
-    }
+        currentProfile = profileManager.getProfileByDeviceId(deviceId);
 
-    // Toast Method For Simplicity
-    private void showToast(String message){
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+        if (currentProfile != null) {
+            emailAdminSwitch.setChecked(currentProfile.isEmailAdminNotifications());
+            emailOrganizerSwitch.setChecked(currentProfile.isEmailOrganizerNotifications());
+            phoneAdminSwitch.setChecked(currentProfile.isPhoneAdminNotifications());
+            phoneOrganizerSwitch.setChecked(currentProfile.isPhoneOrganizerNotifications());
+
+        } else {
+            showToast("No profile found for this device");
+        }
+        isUpdatingUI = false; // resume listeners
     }
 }

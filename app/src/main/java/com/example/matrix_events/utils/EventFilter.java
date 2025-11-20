@@ -52,9 +52,11 @@ public class EventFilter {
             // Availability Filter
             boolean matchesAvailability = true;
             if ("Filled".equalsIgnoreCase(availability)) {
-                matchesAvailability = event.isWaitlistFull();
+               // matchesAvailability = event.isWaitlistFull();
+                return null;
             } else if ("Available".equalsIgnoreCase(availability)) {
-                matchesAvailability = !event.isWaitlistFull();
+               // matchesAvailability = !event.isWaitlistFull();
+                return null;
             }
             if (!matchesAvailability) continue;
 
