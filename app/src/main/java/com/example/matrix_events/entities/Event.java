@@ -26,21 +26,21 @@ public class Event extends DBObject implements Serializable {
     private Timestamp eventStartDateTime;
     private Timestamp eventEndDateTime;
     private Integer eventCapacity;
-    private Integer waitlistCapacity;               // can be null if no limit
+    private Integer waitlistCapacity;                       // can be null if no limit
     private Timestamp registrationStartDateTime;
     private Timestamp registrationEndDateTime;
     private Boolean isReoccurring = false;
-    private Timestamp reoccurringEndDateTime;       // can be null if not reoccurring
-    private ReoccurringType reoccurringType;        // can be null if not reoccurring
+    private Timestamp reoccurringEndDateTime;               // can be null if not reoccurring
+    private ReoccurringType reoccurringType;                // can be null if not reoccurring
     private Boolean geolocationTrackingEnabled = true;
-    private Poster poster;                          // can be null if no poster
+    private Poster poster;                                  // can be null if no poster
     private List<String> waitList = new ArrayList<>();      // holds profile deviceId
     private List<String> pendingList = new ArrayList<>();
     private List<String> acceptedList = new ArrayList<>();
     private List<String> declinedList = new ArrayList<>();
-    private boolean registrationOpened = false;
-    private boolean lotteryProcessed = false;
-    private boolean pendingExpired = false;
+    private boolean registrationOpened = false;             // set by firestore cloud function
+    private boolean lotteryProcessed = false;               // set by firestore cloud function
+    private boolean pendingExpired = false;                 // set by firestore cloud function
 
     /**
      * Default constructor required for Firestore data mapping.
@@ -122,7 +122,7 @@ public class Event extends DBObject implements Serializable {
     public boolean isBeforeRegistrationStart() {
         Timestamp now = Timestamp.now();
         // Check if registration is yet to open
-        return registrationStartDateTime.compareTo(now) > 0;
+        return !registrationOpened;
     }
 
     /**
@@ -132,7 +132,7 @@ public class Event extends DBObject implements Serializable {
     public boolean isRegistrationOpen() {
         Timestamp now = Timestamp.now();
         // Check if registration is currently open
-        return registrationStartDateTime.compareTo(now) <= 0 && registrationEndDateTime.compareTo(now) >= 0;
+        return registrationOpened && !lotteryProcessed;
     }
 
     /**
@@ -142,7 +142,7 @@ public class Event extends DBObject implements Serializable {
     public boolean isRegistrationClosed() {
         Timestamp now = Timestamp.now();
         // Check if registration is closed
-        return registrationEndDateTime.compareTo(now) < 0;
+        return registrationOpened && lotteryProcessed;
     }
 
     /**
@@ -152,7 +152,7 @@ public class Event extends DBObject implements Serializable {
     public boolean isBeforeEventStart() {
         Timestamp now = Timestamp.now();
         // Check if event is yet to start
-        return eventStartDateTime.compareTo(now) > 0;
+        return !pendingExpired;
     }
 
     /**
@@ -162,7 +162,7 @@ public class Event extends DBObject implements Serializable {
     public boolean isEventOngoing() {
         Timestamp now = Timestamp.now();
         // Check if event is currently going on
-        return eventStartDateTime.compareTo(now) <= 0 && eventEndDateTime.compareTo(now) >= 0;
+        return pendingExpired && !isEventComplete();
     }
 
     /**

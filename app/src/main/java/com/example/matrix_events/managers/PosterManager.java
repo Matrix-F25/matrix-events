@@ -72,6 +72,14 @@ public class PosterManager extends Model implements DBListener<Poster> {
     }
 
     /**
+     * Gets the posters
+     * @return The list of posters
+     */
+    public List<Poster> getPosters() {
+        return posters;
+    }
+
+    /**
      * Asynchronously creates a new poster document in the Firestore database.
      *
      * @param poster The {@link Poster} object to create.

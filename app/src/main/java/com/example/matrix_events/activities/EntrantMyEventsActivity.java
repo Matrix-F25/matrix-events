@@ -25,43 +25,21 @@ import com.example.matrix_events.mvc.View;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Activity for entrants (attendees) to view events they have signed up for.
- * This screen categorizes events based on the user's status, such as waitlisted,
- * accepted, declined, etc. It implements the {@link View} interface to update
- * its display when the underlying event data changes.
- */
 public class EntrantMyEventsActivity extends AppCompatActivity implements View {
 
-    /**
-     * Enum to manage the different filtering states for the event list.
-     */
     enum Selection {
-        /** User is on the waitlist for the event, and registration is still open. */
         Waitlist,
-        /** User was on the waitlist, but registration closed and they were not chosen. */
         NotSelected,
-        /** User has been accepted and is confirmed to attend the event. */
         Accepted,
-        /** User has declined their invitation to the event. */
         Declined,
-        /** User has been selected from the waitlist and must accept or decline. */
         Pending
     }
     private Selection selection = Selection.Waitlist;
+    private String deviceId;
     private ArrayList<Event> eventArray;
     private EventArrayAdapter eventAdapter;
     private TextView listTitleTextview;
 
-    /**
-     * Called when the activity is first created.
-     * Initializes the UI components, sets up the event list adapter, configures button listeners
-     * for filtering the event list, and registers this activity as a view with the EventManager.
-     *
-     * @param savedInstanceState If the activity is being re-initialized after
-     *                           previously being shut down then this Bundle contains the data it most
-     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,9 +55,11 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_my_events))
                 .commit();
 
+        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
         eventArray = new ArrayList<>();
         eventAdapter = new EventArrayAdapter(getApplicationContext(), eventArray);
-        ListView eventListview = findViewById(R.id.myevents_entrant_listview);
+        ListView eventListview = findViewById(R.id.entrant_listview);
         eventListview.setAdapter(eventAdapter);
 
         eventListview.setOnItemClickListener(((parent, view, position, id) -> {
@@ -92,37 +72,37 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
                     .commit();
         }));
 
-        // Go to the Organizer "My Events" screen
-        Button switchToEntrantButton = findViewById(R.id.button_switch_to_org);
-        switchToEntrantButton.setOnClickListener(v -> {
+        // Go to the Organizer "My Events" Activity
+        Button switchToOrganizerButton = findViewById(R.id.entrant_switch_to_org_button);
+        switchToOrganizerButton.setOnClickListener(v -> {
             Intent intent = new Intent(EntrantMyEventsActivity.this, OrganizerMyEventsActivity.class);
             startActivity(intent);
             finish();
         });
 
-        listTitleTextview = findViewById(R.id.myevents_list_title_textview);
+        listTitleTextview = findViewById(R.id.entrant_list_title_textview);
 
-        Button waitlistButton = findViewById(R.id.myevents_waitlisted_button);
+        Button waitlistButton = findViewById(R.id.entrant_waitlisted_button);
         waitlistButton.setOnClickListener(v -> {
             selection = Selection.Waitlist;
             update();
         });
-        Button notSelectedButton = findViewById(R.id.myevents_not_selected_button);
+        Button notSelectedButton = findViewById(R.id.entrant_not_selected_button);
         notSelectedButton.setOnClickListener(v -> {
             selection = Selection.NotSelected;
             update();
         });
-        Button pendingButton = findViewById(R.id.myevents_pending_button);
+        Button pendingButton = findViewById(R.id.entrant_pending_button);
         pendingButton.setOnClickListener(v -> {
             selection = Selection.Pending;
             update();
         });
-        Button acceptedButton = findViewById(R.id.myevents_accepted_button);
+        Button acceptedButton = findViewById(R.id.entrant_accepted_button);
         acceptedButton.setOnClickListener(v -> {
             selection = Selection.Accepted;
             update();
         });
-        Button declinedButton = findViewById(R.id.myevents_declined_button);
+        Button declinedButton = findViewById(R.id.entrant_declined_button);
         declinedButton.setOnClickListener(v -> {
             selection = Selection.Declined;
             update();
@@ -134,29 +114,15 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
         EventManager.getInstance().addView(this);
     }
 
-    /**
-     * Called when the activity is about to be destroyed.
-     * Unregisters this activity from the EventManager to prevent memory leaks.
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventManager.getInstance().removeView(this);
     }
 
-    /**
-     * Updates the UI in response to data changes.
-     * This method is called by the {@link EventManager} when the list of events is updated.
-     * It fetches the user's device ID, clears the current event list, and repopulates it
-     * based on the currently selected filter (e.g., Waitlist, Accepted). It then notifies
-     * the adapter to refresh the {@link ListView}.
-     */
     @Override
     public void update() {
-        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-
         eventArray.clear();
-
         switch (selection) {
             case Waitlist: {
                 listTitleTextview.setText("Waitlisted:");
@@ -194,7 +160,6 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
                 break;
             }
         }
-
         eventAdapter.notifyDataSetChanged();
     }
 }

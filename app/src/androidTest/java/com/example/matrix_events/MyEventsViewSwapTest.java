@@ -42,13 +42,13 @@ public class MyEventsViewSwapTest {
     @Test
     public void testEntrantAndOrganizerViewSwap() {
         // 1. From Entrant view, click the button to switch to Organizer view
-        onView(withId(R.id.button_switch_to_org)).perform(click());
+        onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
 
         // Verify that the OrganizerMyEventsActivity is now open
         intended(hasComponent(OrganizerMyEventsActivity.class.getName()));
 
         // 2. From Organizer view, click the button to switch back to Entrant view
-        onView(withId(R.id.button_switch_to_entrant)).perform(click());
+        onView(withId(R.id.organizer_switch_to_entrant_button)).perform(click());
 
         // Verify that the EntrantMyEventsActivity is now open
         intended(hasComponent(EntrantMyEventsActivity.class.getName()));

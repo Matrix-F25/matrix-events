@@ -25,7 +25,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_event_list_view, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_event, parent, false);
         }
 
         Event event = getItem(position);

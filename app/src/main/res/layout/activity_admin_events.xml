@@ -5,22 +5,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ProfileActivity">
+    tools:context=".activities.AdminEventsActivity">
 
     <TextView
-        android:id="@+id/profile_title_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Profile Page"
-        android:textSize="32sp"
+        android:text="Admin Events"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toTopOf="@+id/admin_navigation_bar_fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
-        android:id="@+id/navigation_bar_fragment"
-        android:name="com.example.matrix_events.fragments.NavigationBarFragment"
+        android:id="@+id/admin_navigation_bar_fragment"
+        android:name="com.example.matrix_events.fragments.AdminNavigationBarFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

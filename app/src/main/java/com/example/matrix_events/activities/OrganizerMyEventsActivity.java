@@ -1,8 +1,15 @@
 package com.example.matrix_events.activities;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,57 +19,63 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.adapters.EventArrayAdapter;
+import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.EventCreateFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
+import com.example.matrix_events.fragments.OrganizerEventFragment;
+import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.ProfileManager;
+import com.example.matrix_events.mvc.View;
 
-/**
- * An activity that serves as the main dashboard for event organizers.
- * From this screen, an organizer can initiate the creation of a new event
- * or switch to the entrant (attendee) view of their events.
- */
-public class OrganizerMyEventsActivity extends AppCompatActivity {
+import java.util.ArrayList;
 
-    /**
-     * Called when the activity is first created.
-     * This method initializes the user interface, including setting up window insets for edge-to-edge display,
-     * loading the navigation bar, and configuring the button click listeners.
-     *
-     * @param savedInstanceState If the activity is being re-initialized after
-     *                           previously being shut down then this Bundle contains the data it most
-     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
-     */
+public class OrganizerMyEventsActivity extends AppCompatActivity implements View {
+    enum Selection {
+        NotClosed,
+        Closed
+    }
+    private Selection selection = Selection.NotClosed;
+    private String deviceId;
+    private ArrayList<Event> eventArray;
+    private EventArrayAdapter eventAdapter;
+    private TextView listTitleTextview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_organizer_my_events);
-
-        // If your layout has a view with id "main"
-        if (findViewById(R.id.main) != null) {
-            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-                Insets sb = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(sb.left, sb.top, sb.right, sb.bottom);
-                return insets;
-            });
-        }
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets sb = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(sb.left, sb.top, sb.right, sb.bottom);
+            return insets;
+        });
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_my_events))
                 .commit();
 
-        // --- Button Logic ---
-        buttonLogic();
-    }
+        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-    /**
-     * Sets up the OnClickListeners for the buttons in this activity.
-     * This includes handling the navigation to the entrant view and opening the
-     * event creation fragment.
-     */
-    private void buttonLogic() {
-        // Switch to Entrant
-        Button switchToEntrantButton = findViewById(R.id.button_switch_to_entrant);
+        eventArray = new ArrayList<>();
+        eventAdapter = new EventArrayAdapter(getApplicationContext(), eventArray);
+        ListView eventListview = findViewById(R.id.organizer_listview);
+        eventListview.setAdapter(eventAdapter);
+
+        eventListview.setOnItemClickListener(((parent, view, position, id) -> {
+            Log.d("DEBUG", "event clicked");
+            Event selectedEvent = eventArray.get(position);
+            OrganizerEventFragment fragment = OrganizerEventFragment.newInstance(selectedEvent);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }));
+
+        // Go to the Entrant "My Events" Activity
+        Button switchToEntrantButton = findViewById(R.id.organizer_switch_to_entrant_button);
         if (switchToEntrantButton != null) {
             switchToEntrantButton.setOnClickListener(v -> {
                 Intent intent = new Intent(OrganizerMyEventsActivity.this, EntrantMyEventsActivity.class);
@@ -71,8 +84,21 @@ public class OrganizerMyEventsActivity extends AppCompatActivity {
             });
         }
 
+        // Go to the Admin Activity, if profile has necessary permissions
+        Button switchToAdminButton = findViewById(R.id.organizer_switch_to_admin_button);
+        switchToAdminButton.setVisibility(INVISIBLE);
+        Profile currentProfile = ProfileManager.getInstance().getProfileByDeviceId(deviceId);
+        if (currentProfile.isAdmin()) {
+            switchToAdminButton.setVisibility(VISIBLE);
+            switchToAdminButton.setOnClickListener(v -> {
+                Intent intent = new Intent(OrganizerMyEventsActivity.this, AdminActivity.class);
+                startActivity(intent);
+                finish();
+            });
+        }
+
         // Create Event
-        Button createEventButton = findViewById(R.id.create_event_button);
+        Button createEventButton = findViewById(R.id.organizer_create_event_button);
         if (createEventButton != null) {
             createEventButton.setOnClickListener(v -> {
                 Fragment fragment = new EventCreateFragment();
@@ -80,5 +106,47 @@ public class OrganizerMyEventsActivity extends AppCompatActivity {
                         .replace(R.id.main, fragment).addToBackStack(null).commit();
             });
         }
+
+        listTitleTextview = findViewById(R.id.organizer_list_title_textview);
+
+        Button registrationNotClosedButton = findViewById(R.id.organizer_reg_not_closed_button);
+        registrationNotClosedButton.setOnClickListener(v -> {
+            selection = Selection.NotClosed;
+            update();
+        });
+        Button registrationClosedButton = findViewById(R.id.organizer_reg_closed_button);
+        registrationClosedButton.setOnClickListener(v -> {
+            selection = Selection.Closed;
+            update();
+        });
+
+        update();
+
+        // observe event manager
+        EventManager.getInstance().addView(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+        eventArray.clear();
+        switch (selection) {
+            case NotClosed: {
+                listTitleTextview.setText("Upcoming and Registration Open");
+                eventArray.addAll(EventManager.getInstance().getOrganizerEventsRegistrationNotClosed(deviceId));
+                break;
+            }
+            case Closed: {
+                listTitleTextview.setText("Registration Closed");
+                eventArray.addAll(EventManager.getInstance().getOrganizerEventsRegistrationClosed(deviceId));
+                break;
+            }
+        }
+        eventAdapter.notifyDataSetChanged();
     }
 }

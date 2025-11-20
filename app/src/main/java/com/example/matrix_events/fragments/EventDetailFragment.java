@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -41,14 +42,13 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
             event = (Event) getArguments().getSerializable("event");
         }
         assert event != null;
-        render();
 
         Button backButton = view.findViewById(R.id.event_back_button);
         backButton.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
+            getParentFragmentManager().popBackStack();
         });
+
+        update();
 
         // observe event manager
         EventManager.getInstance().addView(this);
@@ -190,8 +190,13 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
                 listStatusTextview.setText("Not on the Waitlist");
                 waitlistButton.setText("Join Waitlist");
                 waitlistButton.setOnClickListener(v -> {
-                    event.joinWaitList(deviceId);
-                    EventManager.getInstance().updateEvent(event);
+                    if (event.getOrganizer().getDeviceId().equals(deviceId)) {
+                        Toast.makeText(requireContext(), "You may not enter your own event!", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        event.joinWaitList(deviceId);
+                        EventManager.getInstance().updateEvent(event);
+                    }
                 });
             }
 
@@ -257,7 +262,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
                     if (event.isEventComplete()) {
                         messageTextview.setText("This event series has ended.");
                     } else {
-                        messageTextview.setText("This event instance has ended, but the series is still reoccurring.");
+                        messageTextview.setText("This event has ended, but the series is still reoccurring.");
                     }
                 } else {
                     // For a non-reoccurring event, it has simply ended.
