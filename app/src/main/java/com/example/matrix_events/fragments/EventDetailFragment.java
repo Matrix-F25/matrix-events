@@ -42,14 +42,13 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
             event = (Event) getArguments().getSerializable("event");
         }
         assert event != null;
-        render();
 
         Button backButton = view.findViewById(R.id.event_back_button);
         backButton.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
+            getParentFragmentManager().popBackStack();
         });
+
+        update();
 
         // observe event manager
         EventManager.getInstance().addView(this);
@@ -263,7 +262,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
                     if (event.isEventComplete()) {
                         messageTextview.setText("This event series has ended.");
                     } else {
-                        messageTextview.setText("This event instance has ended, but the series is still reoccurring.");
+                        messageTextview.setText("This event has ended, but the series is still reoccurring.");
                     }
                 } else {
                     // For a non-reoccurring event, it has simply ended.

@@ -56,7 +56,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/org_declined_list_button" />
+                app:layout_constraintTop_toBottomOf="@+id/org_event_declined_list_button" />
 
             <TextView
                 android:id="@+id/org_event_description_textview"
@@ -246,7 +246,7 @@
 
             <!-- current waitlist -->
             <TextView
-                android:id="@+id/org_current_waitlist_static"
+                android:id="@+id/org_event_current_waitlist_static"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -257,18 +257,18 @@
                 app:layout_constraintTop_toBottomOf="@+id/org_event_max_cap_static" />
 
             <TextView
-                android:id="@+id/org_current_waitlist_textview"
+                android:id="@+id/org_event_current_waitlist_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Int"
                 android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/org_current_waitlist_static"
-                app:layout_constraintStart_toEndOf="@id/org_current_waitlist_static"
-                app:layout_constraintTop_toTopOf="@+id/org_current_waitlist_static" />
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_current_waitlist_static"
+                app:layout_constraintStart_toEndOf="@id/org_event_current_waitlist_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_current_waitlist_static" />
 
             <!-- current accepted -->
             <TextView
-                android:id="@+id/org_current_accepted_static"
+                android:id="@+id/org_event_current_accepted_static"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -276,17 +276,17 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/org_current_waitlist_static" />
+                app:layout_constraintTop_toBottomOf="@+id/org_event_current_waitlist_static" />
 
             <TextView
-                android:id="@+id/org_current_accepted_textview"
+                android:id="@+id/org_event_current_accepted_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Int"
                 android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/org_current_accepted_static"
-                app:layout_constraintStart_toEndOf="@id/org_current_accepted_static"
-                app:layout_constraintTop_toTopOf="@+id/org_current_accepted_static" />
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_current_accepted_static"
+                app:layout_constraintStart_toEndOf="@id/org_event_current_accepted_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_current_accepted_static" />
 
             <ImageView
                 android:id="@+id/org_event_poster_image"
@@ -297,10 +297,10 @@
                 android:background="@color/black"
                 android:contentDescription="Event Poster"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toTopOf="@+id/org_edit_event_button"
+                app:layout_constraintBottom_toTopOf="@+id/org_event_edit_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/org_current_accepted_static" />
+                app:layout_constraintTop_toBottomOf="@+id/org_event_current_accepted_static" />
 
             <Button
                 android:id="@+id/org_event_waitlist_button"
@@ -313,7 +313,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/org_event_title_textview" />
 
             <Button
-                android:id="@+id/org_pending_list_button"
+                android:id="@+id/org_event_pending_list_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pending List ->"
@@ -322,25 +322,25 @@
                 app:layout_constraintTop_toBottomOf="@+id/org_event_waitlist_button" />
 
             <Button
-                android:id="@+id/org_accepted_list_button"
+                android:id="@+id/org_event_accepted_list_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Accepted List ->"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/org_pending_list_button" />
+                app:layout_constraintTop_toBottomOf="@+id/org_event_pending_list_button" />
 
             <Button
-                android:id="@+id/org_declined_list_button"
+                android:id="@+id/org_event_declined_list_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Declined List ->"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/org_accepted_list_button" />
+                app:layout_constraintTop_toBottomOf="@+id/org_event_accepted_list_button" />
 
             <Button
-                android:id="@+id/org_edit_event_button"
+                android:id="@+id/org_event_edit_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit Event"

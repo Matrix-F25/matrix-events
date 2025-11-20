@@ -109,9 +109,7 @@ public class EventCreateFragment extends Fragment {
         uploadPosterButton.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
         createButton.setOnClickListener(v -> uploadPosterThenCreateEvent());
         backButton.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
+            getParentFragmentManager().popBackStack();
         });
 
         return view;
