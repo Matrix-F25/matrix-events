@@ -23,8 +23,7 @@ import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.mvc.View;
-import com.google.android.material.search.SearchBar;
-import com.google.android.material.search.SearchView;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
@@ -53,13 +52,10 @@ public class EventSearchActivity extends AppCompatActivity implements View {
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
         ListView eventListView = findViewById(R.id.event_search_listview);
         eventListView.setAdapter(eventArrayAdapter);
-        SearchBar searchBar = findViewById(R.id.search_bar);
-        SearchView searchView = findViewById(R.id.search_view);
+        TextInputEditText searchInput = findViewById(R.id.search_input);
 
-        // Opens SearchView when SearchBar is Clicked
-        searchBar.setOnClickListener(v -> searchView.show());
         // Updates Results, when User Types
-        searchView.getEditText().addTextChangedListener(new TextWatcher() {
+        searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void afterTextChanged(Editable s) {}
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
