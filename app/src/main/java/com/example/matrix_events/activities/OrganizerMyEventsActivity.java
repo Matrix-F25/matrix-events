@@ -88,7 +88,7 @@ public class OrganizerMyEventsActivity extends AppCompatActivity implements View
         Button switchToAdminButton = findViewById(R.id.organizer_switch_to_admin_button);
         switchToAdminButton.setVisibility(INVISIBLE);
         Profile currentProfile = ProfileManager.getInstance().getProfileByDeviceId(deviceId);
-        if (currentProfile.isAdmin()) {
+        if (currentProfile != null && currentProfile.isAdmin()) {
             switchToAdminButton.setVisibility(VISIBLE);
             switchToAdminButton.setOnClickListener(v -> {
                 Intent intent = new Intent(OrganizerMyEventsActivity.this, AdminActivity.class);

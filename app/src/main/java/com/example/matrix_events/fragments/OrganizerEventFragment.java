@@ -80,9 +80,12 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         });
         Button editButton = view.findViewById(R.id.org_event_edit_button);
         editButton.setOnClickListener(v -> {
-                    EventEditFragment fragment = EventEditFragment.newInstance(event);
-
-                }
+            EventEditFragment fragment = EventEditFragment.newInstance(event);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         update();
 
