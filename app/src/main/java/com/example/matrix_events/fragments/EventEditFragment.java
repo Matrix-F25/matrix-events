@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Geolocation;
 import com.example.matrix_events.entities.Poster;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.PosterManager;
@@ -37,6 +39,10 @@ public class EventEditFragment extends Fragment {
     private Uri posterUri = null;
     private ImageView eventPosterImage;
     private MaterialSwitch geolocationTrackingSwitch;
+    private EditText eventNameInput;
+    private EditText eventDescriptionInput;
+    private EditText eventLocationInput;
+
 
     // Launcher for selecting an image from the gallery
     private final ActivityResultLauncher<String> imagePickerLauncher =
@@ -91,39 +97,61 @@ public class EventEditFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_edit, container, false);
-        
+
         // Initialize Views
         Button backButton = view.findViewById(R.id.back_btn);
         Button uploadPosterButton = view.findViewById(R.id.upload_poster_btn);
         Button confirmChangesButton = view.findViewById(R.id.confirm_changes_btn);
+        Button deleteEventButton = view.findViewById(R.id.delete_event_btn);
         eventPosterImage = view.findViewById(R.id.event_poster_image);
         geolocationTrackingSwitch = view.findViewById(R.id.geolocation_tracking_switch);
+        eventNameInput = view.findViewById(R.id.event_name_input);
+        eventDescriptionInput = view.findViewById(R.id.event_description_input);
+        eventLocationInput = view.findViewById(R.id.event_location_input);
+
 
         // Load existing poster if available
-        if (event != null && event.getPoster() != null && event.getPoster().getImageUrl() != null) {
-            Glide.with(requireContext())
-                    .load(event.getPoster().getImageUrl())
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder)
-                    .into(eventPosterImage);
-        } else {
-            eventPosterImage.setImageResource(R.drawable.placeholder);
-        }
+        if (event != null) {
+            if (event.getPoster() != null && event.getPoster().getImageUrl() != null) {
+                Glide.with(requireContext())
+                        .load(event.getPoster().getImageUrl())
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.placeholder)
+                        .into(eventPosterImage);
+            } else {
+                eventPosterImage.setImageResource(R.drawable.placeholder);
+            }
 
-        // Initialize Geolocation Switch
-        if (geolocationTrackingSwitch != null && event != null) {
-            geolocationTrackingSwitch.setChecked(Boolean.TRUE.equals(event.isGeolocationTrackingEnabled()));
+            // Initialize Geolocation Switch
+            if (geolocationTrackingSwitch != null) {
+                geolocationTrackingSwitch.setChecked(Boolean.TRUE.equals(event.isGeolocationTrackingEnabled()));
+            }
+
+            // Initialize Event Name
+            if (eventNameInput != null) {
+                eventNameInput.setText(event.getName());
+            }
+
+            if(eventDescriptionInput != null) {
+                eventDescriptionInput.setText(event.getDescription());
+            }
+            if (eventLocationInput != null && event.getLocation() != null) {
+                eventLocationInput.setText(event.getLocation().getName());
+            }
         }
 
         // Set Click Listeners
         if (backButton != null) {
             backButton.setOnClickListener(v -> getParentFragmentManager().popBackStack());
         }
+        if (deleteEventButton != null) {
+            deleteEventButton.setOnClickListener(v -> deleteEvent());
+        }
 
         uploadPosterButton.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
 
         confirmChangesButton.setOnClickListener(v -> uploadPosterThenUpdateEvent());
-        
+
         return view;
     }
 
@@ -131,9 +159,25 @@ public class EventEditFragment extends Fragment {
      * Uploads the selected poster image and updates the event in Firestore.
      */
     private void uploadPosterThenUpdateEvent() {
-        // Update geolocation tracking status
-        if (event != null && geolocationTrackingSwitch != null) {
-            event.setGeolocationTrackingEnabled(geolocationTrackingSwitch.isChecked());
+        if (event != null) {
+            if (eventNameInput != null) {
+                event.setName(eventNameInput.getText().toString().trim());
+            }
+            if (eventDescriptionInput != null) {
+                event.setDescription(eventDescriptionInput.getText().toString().trim());
+            }
+            if (eventLocationInput != null && event.getLocation() != null) {
+                String newLocationName = eventLocationInput.getText().toString().trim();
+                Geolocation currentLocation = event.getLocation();
+                // Create new Geolocation object with new name but same coordinates
+                Geolocation newGeolocation = new Geolocation(newLocationName, currentLocation.getLongitude(), currentLocation.getLatitude());
+                event.setLocation(newGeolocation);
+            }
+
+            // Update geolocation tracking status
+            if (geolocationTrackingSwitch != null) {
+                event.setGeolocationTrackingEnabled(geolocationTrackingSwitch.isChecked());
+            }
         }
 
         if (posterUri != null) {
@@ -145,7 +189,7 @@ public class EventEditFragment extends Fragment {
                             poster.setEventId(event.getId());
                             event.setPoster(poster);
                             EventManager.getInstance().updateEvent(event);
-                            
+
                             if (isAdded() && getContext() != null) {
                                 Toast.makeText(requireContext(), "Event updated successfully!", Toast.LENGTH_SHORT).show();
                                 getParentFragmentManager().popBackStack();
@@ -169,6 +213,16 @@ public class EventEditFragment extends Fragment {
              } else {
                  getParentFragmentManager().popBackStack();
              }
+        }
+    }
+    /**
+     * Deletes the current event from Firebase and navigates back.
+     */
+    private void deleteEvent() {
+        if (event != null) {
+            EventManager.getInstance().deleteEvent(event);
+            Toast.makeText(requireContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
+            getParentFragmentManager().popBackStack();
         }
     }
 }
