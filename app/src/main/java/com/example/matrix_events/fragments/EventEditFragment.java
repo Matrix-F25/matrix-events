@@ -22,6 +22,7 @@ import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Poster;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.PosterManager;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 /**
  * for editing an events poster
@@ -35,6 +36,7 @@ public class EventEditFragment extends Fragment {
     private Event event;
     private Uri posterUri = null;
     private ImageView eventPosterImage;
+    private MaterialSwitch geolocationTrackingSwitch;
 
     // Launcher for selecting an image from the gallery
     private final ActivityResultLauncher<String> imagePickerLauncher =
@@ -95,6 +97,7 @@ public class EventEditFragment extends Fragment {
         Button uploadPosterButton = view.findViewById(R.id.upload_poster_btn);
         Button confirmChangesButton = view.findViewById(R.id.confirm_changes_btn);
         eventPosterImage = view.findViewById(R.id.event_poster_image);
+        geolocationTrackingSwitch = view.findViewById(R.id.geolocation_tracking_switch);
 
         // Load existing poster if available
         if (event != null && event.getPoster() != null && event.getPoster().getImageUrl() != null) {
@@ -105,6 +108,11 @@ public class EventEditFragment extends Fragment {
                     .into(eventPosterImage);
         } else {
             eventPosterImage.setImageResource(R.drawable.placeholder);
+        }
+
+        // Initialize Geolocation Switch
+        if (geolocationTrackingSwitch != null && event != null) {
+            geolocationTrackingSwitch.setChecked(Boolean.TRUE.equals(event.isGeolocationTrackingEnabled()));
         }
 
         // Set Click Listeners
@@ -123,6 +131,11 @@ public class EventEditFragment extends Fragment {
      * Uploads the selected poster image and updates the event in Firestore.
      */
     private void uploadPosterThenUpdateEvent() {
+        // Update geolocation tracking status
+        if (event != null && geolocationTrackingSwitch != null) {
+            event.setGeolocationTrackingEnabled(geolocationTrackingSwitch.isChecked());
+        }
+
         if (posterUri != null) {
             PosterManager.getInstance().uploadPosterImage(posterUri, event.getId(),
                     new PosterManager.PosterUploadCallback() {
@@ -134,7 +147,7 @@ public class EventEditFragment extends Fragment {
                             EventManager.getInstance().updateEvent(event);
                             
                             if (isAdded() && getContext() != null) {
-                                Toast.makeText(requireContext(), "Poster updated successfully!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), "Event updated successfully!", Toast.LENGTH_SHORT).show();
                                 getParentFragmentManager().popBackStack();
                             }
                         }
@@ -148,9 +161,14 @@ public class EventEditFragment extends Fragment {
                         }
                     });
         } else {
-             // No changes to poster
-             Toast.makeText(requireContext(), "No new poster selected.", Toast.LENGTH_SHORT).show();
-             getParentFragmentManager().popBackStack();
+             // Just update the event details (e.g. geolocation tracking) without changing poster
+             if (event != null) {
+                 EventManager.getInstance().updateEvent(event);
+                 Toast.makeText(requireContext(), "Event updated successfully!", Toast.LENGTH_SHORT).show();
+                 getParentFragmentManager().popBackStack();
+             } else {
+                 getParentFragmentManager().popBackStack();
+             }
         }
     }
 }

@@ -17,11 +17,6 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <!-- Geolocation Tracking Switch -->
-
-    <!-- Show Poster -->
-
-    <!-- Poster Upload Button-->
-
     <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/geolocation_tracking_switch"
         android:layout_width="match_parent"
@@ -32,6 +27,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
+    <!-- Show Poster -->
     <ImageView
         android:id="@+id/event_poster_image"
         android:layout_width="0dp"
@@ -45,6 +41,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/geolocation_tracking_switch" />
 
+    <!-- Poster Upload Button-->
     <Button
         android:id="@+id/upload_poster_btn"
         android:layout_width="match_parent"
