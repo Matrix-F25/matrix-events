@@ -94,8 +94,9 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
     @Override
     public void update() {
         event = EventManager.getInstance().getEventByDBID(event.getId());
-        assert event != null;
-        render();
+        if (event != null) {
+            render();
+        }
     }
 
     public void render() {

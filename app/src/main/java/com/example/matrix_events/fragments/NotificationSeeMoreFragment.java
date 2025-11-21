@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Notification;
@@ -20,15 +19,15 @@ import com.google.firebase.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class NotificationSeeMore extends Fragment {
+public class NotificationSeeMoreFragment extends Fragment {
 
     private static final String ARG_NOTIFICATION = "notification";
     private static final String ARG_ADAPTER_TYPE = "adapterType";
     private Notification notification;
     private String adapterType;
 
-    public static NotificationSeeMore newInstance(Notification notification, String adapterType) {
-        NotificationSeeMore fragment = new NotificationSeeMore();
+    public static NotificationSeeMoreFragment newInstance(Notification notification, String adapterType) {
+        NotificationSeeMoreFragment fragment = new NotificationSeeMoreFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_NOTIFICATION, notification);
         args.putString(ARG_ADAPTER_TYPE, adapterType);

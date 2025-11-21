@@ -63,8 +63,9 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
     @Override
     public void update() {
         event = EventManager.getInstance().getEventByDBID(event.getId());
-        assert event != null;
-        render();
+        if (event != null) {
+            render();
+        }
     }
 
     public void render() {

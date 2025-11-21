@@ -14,13 +14,17 @@ import android.widget.Toast;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.ProfileArrayAdapter;
 import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Notification;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.NotificationManager;
 import com.example.matrix_events.managers.ProfileManager;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 
-public class EventEntrantListFragment extends Fragment implements com.example.matrix_events.mvc.View, ProfileArrayAdapter.Listener{
+public class EventEntrantListFragment extends Fragment implements com.example.matrix_events.mvc.View, ProfileArrayAdapter.Listener {
+
     public enum ListType {
         WAITING_LIST,
         PENDING_LIST,
@@ -71,8 +75,24 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
 
         Button messageButton = view.findViewById(R.id.ent_list_message_button);
         messageButton.setOnClickListener(v -> {
-            // TODO
+            if (profileArray.isEmpty()) {
+                Toast.makeText(requireContext(), "No entrants in list!", Toast.LENGTH_LONG).show();
+            }
+            else {
+                NotificationCreateFragment fragment = new NotificationCreateFragment();
+                getParentFragmentManager().beginTransaction()
+                        .add(R.id.main, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
         });
+
+        getParentFragmentManager().setFragmentResultListener(NotificationCreateFragment.REQUEST_KEY, this, ((requestKey, result) -> {
+            String message = result.getString(NotificationCreateFragment.KEY_MESSAGE);
+            if (message != null) {
+                createNotification(message);
+            }
+        }));
 
         Button downloadCSVButton = view.findViewById(R.id.ent_list_download_button);
         downloadCSVButton.setOnClickListener(v -> {
@@ -96,8 +116,9 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
     @Override
     public void update() {
         event = EventManager.getInstance().getEventByDBID(event.getId());
-        assert event != null;
-        render();
+        if (event != null) {
+            render();
+        }
     }
 
     @Override
@@ -105,6 +126,16 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
         event.joinDeclinedList(deviceID);
         EventManager.getInstance().updateEvent(event);
         Toast.makeText(requireContext(), "Entrant successfully removed!", Toast.LENGTH_LONG).show();
+    }
+
+    public void createNotification(String message) {
+        Profile sender = event.getOrganizer();
+        Timestamp now = Timestamp.now();
+        for (Profile receiver : profileArray) {
+            Notification notification = new Notification(sender, receiver, message, now);
+            NotificationManager.getInstance().createNotification(notification);
+        }
+        Toast.makeText(requireContext(), "Message sent to entrants!", Toast.LENGTH_LONG).show();
     }
 
     public void render() {
@@ -135,7 +166,10 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
 
         profileArray.clear();
         for (String deviceID : profileStringArray) {
-            profileArray.add(ProfileManager.getInstance().getProfileByDeviceId(deviceID));
+            Profile profile = ProfileManager.getInstance().getProfileByDeviceId(deviceID);
+            if (profile != null) {
+                profileArray.add(profile);
+            }
         }
         profileAdapter.notifyDataSetChanged();
     }

@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class EventManager extends Model implements DBListener<Event> {
     private static final String TAG = "EventManager";
-
     private List<Event> events = new ArrayList<>();
     private final DBConnector<Event> connector = new DBConnector<Event>("events", this, Event.class);
 
@@ -54,31 +53,6 @@ public class EventManager extends Model implements DBListener<Event> {
             }
         }
         return null;
-    }
-
-    /**
-     * Finds and retrieves an event by its name. Note: This assumes event names are unique.
-     *
-     * @param name The name of the event to find.
-     * @return The first {@link Event} object with the matching name, or {@code null} if no event is found.
-     */
-    public Event getEventByName(String name) {
-        for (Event event : events) {
-            if (event.getName().equals(name)) {
-                return event;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Checks if an event with the given name exists.
-     *
-     * @param name The name of the event to check.
-     * @return {@code true} if an event with the specified name exists, {@code false} otherwise.
-     */
-    public boolean doesEventExist(String name) {
-        return getEventByName(name) != null;
     }
 
     /**

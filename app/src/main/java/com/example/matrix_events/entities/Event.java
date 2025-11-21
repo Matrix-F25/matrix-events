@@ -1,5 +1,7 @@
 package com.example.matrix_events.entities;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.matrix_events.database.DBObject;
@@ -310,6 +312,10 @@ public class Event extends DBObject implements Serializable {
             // Send notification to winner
             Profile sender = this.organizer;
             Profile receiver = ProfileManager.getInstance().getProfileByDeviceId(secondChance);
+            if (receiver == null) {
+                Log.d("DEBUG", "Error: Profile for winner deviceId " + secondChance + " not found. Skipping notification for this user.");
+                return;
+            }
             String message = "It's your lucky day! You have been "
                     + "second chance selected for the " + name + " "
                     + "event. Please accept or decline the invitation "
