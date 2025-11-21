@@ -20,7 +20,6 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     private static final String TAG = "ProfileManager";
 
     private List<Profile> profiles = new ArrayList<>();
-
     private final DBConnector<Profile> connector = new DBConnector<Profile>("profiles", this, Profile.class);
 
     // Singleton
