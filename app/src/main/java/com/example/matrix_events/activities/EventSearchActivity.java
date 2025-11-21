@@ -1,6 +1,7 @@
 package com.example.matrix_events.activities;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -13,12 +14,17 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.EventArrayAdapter;
 import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Geolocation;
+import com.example.matrix_events.entities.Profile;
+import com.example.matrix_events.entities.ReoccurringType;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.mvc.View;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class EventSearchActivity extends AppCompatActivity implements View {
 
@@ -113,12 +119,6 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 //        );
 //        // Add to manager
 //        EventManager.getInstance().createEvent(sampleEvent);
-//
-//        Timestamp timestamp = Timestamp.now();
-//        Profile albert = ProfileManager.getInstance().getProfileByDeviceId("9bef0d831b027a09");
-//        Profile nikolai = ProfileManager.getInstance().getProfileByDeviceId("25053a74eaf65030");
-//        Notification message = new Notification(albert, nikolai, "Test notification, hello!", timestamp);
-//        NotificationManager.getInstance().createNotification(message);
 
         // -----------------------------
     }

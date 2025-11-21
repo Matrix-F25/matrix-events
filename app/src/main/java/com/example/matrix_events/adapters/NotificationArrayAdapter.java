@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Notification;
-import com.example.matrix_events.fragments.NotificationSeeMore;
+import com.example.matrix_events.fragments.NotificationSeeMoreFragment;
 import com.example.matrix_events.managers.NotificationManager;
 import com.google.android.material.button.MaterialButton;
 
@@ -71,7 +71,7 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
                     AppCompatActivity activity = (AppCompatActivity) getContext();
                     FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
-                    NotificationSeeMore fragment = NotificationSeeMore.newInstance(notification, adapterType);
+                    NotificationSeeMoreFragment fragment = NotificationSeeMoreFragment.newInstance(notification, adapterType);
 
                     fragmentManager.beginTransaction()
                             .replace(R.id.main, fragment)
