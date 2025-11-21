@@ -16,30 +16,45 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <!-- Geolocation Tracking Switch -->
+
     <!-- Show Poster -->
+
+    <!-- Poster Upload Button-->
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/geolocation_tracking_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="108dp"
+        android:checked="true"
+        android:text="Enable Geolocation Tracking"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
     <ImageView
         android:id="@+id/event_poster_image"
         android:layout_width="0dp"
         android:layout_height="250dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="40dp"
         android:background="@color/black"
         android:contentDescription="Event Poster"
         android:scaleType="centerCrop"
-        app:layout_constraintTop_toBottomOf="@id/back_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/geolocation_tracking_switch" />
 
-    <!-- Poster Upload Button-->
     <Button
         android:id="@+id/upload_poster_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="4dp"
         android:text="Upload Poster"
-        app:layout_constraintTop_toBottomOf="@id/event_poster_image"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_poster_image" />
 
     <!-- Confirm Changes Button -->
     <Button
@@ -50,6 +65,8 @@
         android:text="Confirm Changes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upload_poster_btn"
+        app:layout_constraintVertical_bias="0.341" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
