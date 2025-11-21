@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.utils.TimestampConverter;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -44,7 +45,16 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
         ImageView posterImageView = convertView.findViewById(R.id.poster_imageview);
         assert posterImageView != null;
-        posterImageView.setImageResource(R.drawable.placeholder);
+
+        // to show the poster without clicking on the actual event
+        if (event.getPoster() != null && event.getPoster().getImageUrl() != null) { // if an event has a poster and the poster url exists
+            Glide.with(getContext())
+                    .load(event.getPoster().getImageUrl())
+                    .placeholder(R.drawable.placeholder)
+                    .into(posterImageView);
+        } else { // show the placeholder image if a poster wasn't uploaded
+            posterImageView.setImageResource(R.drawable.placeholder);
+        }
 
         return convertView;
     }
