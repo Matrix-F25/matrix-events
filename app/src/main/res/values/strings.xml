@@ -78,7 +78,7 @@
 
 <!-- Strings related to Event Search -->
 <string name="event_search_page_title">Event Search Page</string>
-<string name="search_events_hint">Search events</string>
+<string name="search_events_hint">Search events…</string>
 <string name="event_availability">Event Availability</string>
 <string name="date_filter_button_text">Date</string>
 

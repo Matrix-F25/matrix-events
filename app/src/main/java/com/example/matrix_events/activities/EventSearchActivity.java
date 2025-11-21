@@ -2,6 +2,8 @@ package com.example.matrix_events.activities;
 
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -21,14 +23,16 @@ import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.mvc.View;
+import com.google.android.material.search.SearchBar;
+import com.google.android.material.search.SearchView;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class EventSearchActivity extends AppCompatActivity implements View {
-
-    ArrayList<Event> events;
+    ArrayList<Event> allEvents = new ArrayList<>();
+    ArrayList<Event> events = new ArrayList<>();
     EventArrayAdapter eventArrayAdapter;
 
     @Override
@@ -46,10 +50,22 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_event_search))
                 .commit();
 
-        events = new ArrayList<>();
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
         ListView eventListView = findViewById(R.id.event_search_listview);
         eventListView.setAdapter(eventArrayAdapter);
+        SearchBar searchBar = findViewById(R.id.search_bar);
+        SearchView searchView = findViewById(R.id.search_view);
+
+        // Opens SearchView when SearchBar is Clicked
+        searchBar.setOnClickListener(v -> searchView.show());
+        // Updates Results, when User Types
+        searchView.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterEvents(s.toString());
+            }
+        });
 
         eventListView.setOnItemClickListener(((parent, view, position, id) -> {
             Log.d("DEBUG", "event clicked");
@@ -123,6 +139,22 @@ public class EventSearchActivity extends AppCompatActivity implements View {
         // -----------------------------
     }
 
+    private void filterEvents(String query) {
+        events.clear();
+        if (query == null || query.trim().isEmpty()) {
+            events.addAll(allEvents);
+        } else {
+            String lower = query.toLowerCase();
+            for (Event e : allEvents) {
+                if (e.getName().toLowerCase().contains(lower) ||
+                    e.getLocation().getName().toLowerCase().contains(lower)) {
+                    events.add(e);
+                }
+            }
+        }
+        eventArrayAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -131,8 +163,10 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 
     @Override
     public void update() {
+        allEvents.clear();
+        allEvents.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
         events.clear();
-        events.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
+        events.addAll(allEvents);
         eventArrayAdapter.notifyDataSetChanged();
     }
 }
