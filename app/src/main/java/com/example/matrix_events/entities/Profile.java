@@ -7,14 +7,24 @@ import com.example.matrix_events.database.DBObject;
 import java.io.Serializable;
 
 public class Profile extends DBObject implements Serializable {
+    // Attribute Declarations
     private String name;
     private String email;
-    private String phoneNumber;         // optional, can be null
+    private String phoneNumber; // optional, can be null
     private String deviceId;
+
+    // Profile Notification Preferences
+    // Notifications on by Default
+    private boolean emailAdminNotifications = true;
+    private boolean emailOrganizerNotifications = true;
+    private boolean phoneAdminNotifications = true;
+    private boolean phoneOrganizerNotifications = true;
     private boolean notificationsEnabled = true;
     private boolean isAdmin = false;
 
-    public Profile() {}       // Required for Firestore
+    // Constructors
+    public Profile() {} // Required for Firestore
+
     public Profile(@NonNull String name, @NonNull String email, String phoneNumber, @NonNull String deviceId) {
         this.name = name;
         this.email = email;
@@ -22,6 +32,7 @@ public class Profile extends DBObject implements Serializable {
         this.deviceId = deviceId;
     }
 
+    // Getters and Setters
     public String getName() {
         return name;
     }
@@ -49,6 +60,29 @@ public class Profile extends DBObject implements Serializable {
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
+    public boolean isEmailAdminNotifications() {
+        return emailAdminNotifications;
+    }
+    public void setEmailAdminNotifications(boolean emailAdminNotifications) {
+        this.emailAdminNotifications = emailAdminNotifications;
+    }
+    public boolean isEmailOrganizerNotifications() {
+        return emailOrganizerNotifications;
+    }
+    public void setEmailOrganizerNotifications(boolean emailOrganizerNotifications) {
+        this.emailOrganizerNotifications = emailOrganizerNotifications;
+    }
+    public boolean isPhoneAdminNotifications() {
+        return phoneAdminNotifications;
+    }
+    public void setPhoneAdminNotifications(boolean phoneAdminNotifications) {
+        this.phoneAdminNotifications = phoneAdminNotifications;
+    }
+    public boolean isPhoneOrganizerNotifications() { return phoneOrganizerNotifications; }
+    public void setPhoneOrganizerNotifications(boolean phoneOrganizerNotifications) {
+        this.phoneOrganizerNotifications = phoneOrganizerNotifications;
+    }
     public boolean isAdmin() { return isAdmin; }
     public void setAdmin(boolean admin) { isAdmin = admin; }
+
 }
