@@ -1,12 +1,10 @@
 package com.example.matrix_events.fragments;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -42,14 +40,46 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
             event = (Event) getArguments().getSerializable("event");
         }
         assert event != null;
-        render();
 
         Button backButton = view.findViewById(R.id.org_event_back_button);
         backButton.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
+            getParentFragmentManager().popBackStack();
         });
+
+        Button waitlistButton = view.findViewById(R.id.org_event_waitlist_button);
+        waitlistButton.setOnClickListener(v -> {
+            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.WAITING_LIST);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+        Button pendingListButton = view.findViewById(R.id.org_event_pending_list_button);
+        pendingListButton.setOnClickListener(v -> {
+            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.PENDING_LIST);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+        Button acceptedListButton = view.findViewById(R.id.org_event_accepted_list_button);
+        acceptedListButton.setOnClickListener(v -> {
+            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.ACCEPTED_LIST);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+        Button declinedListButton = view.findViewById(R.id.org_event_declined_list_button);
+        declinedListButton.setOnClickListener(v -> {
+            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.DECLINED_LIST);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        update();
 
         // observe event manager
         EventManager.getInstance().addView(this);
@@ -76,8 +106,8 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
             String posterUrl = event.getPoster().getImageUrl();
             Glide.with(requireContext())
                     .load(posterUrl)
-                    .placeholder(R.drawable.placeholder) // optional
-                    .error(R.drawable.placeholder)             // optional
+                    .placeholder(R.drawable.placeholder)        // optional
+                    .error(R.drawable.placeholder)              // optional
                     .into(posterImage);
         } else {
             posterImage.setImageResource(R.drawable.placeholder);
@@ -134,7 +164,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
 
         // Current Waitlist Size
         int waitListSize = event.getWaitList().size();
-        TextView currentWaitlistTextview = view.findViewById(R.id.org_current_waitlist_textview);
+        TextView currentWaitlistTextview = view.findViewById(R.id.org_event_current_waitlist_textview);
         if (event.getWaitlistCapacity() != null) {
             currentWaitlistTextview.setText(waitListSize + "/" + event.getWaitlistCapacity());
         } else {
@@ -143,7 +173,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
 
         // Current Accepted Size
         int acceptedListSize = event.getAcceptedList().size();
-        TextView currentAcceptedListTextview = view.findViewById(R.id.org_current_accepted_textview);
+        TextView currentAcceptedListTextview = view.findViewById(R.id.org_event_current_accepted_textview);
         currentAcceptedListTextview.setText(acceptedListSize + "/" + event.getEventCapacity());
     }
 }
