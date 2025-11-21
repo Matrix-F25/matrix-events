@@ -21,7 +21,6 @@ public class ProfileManager extends Model implements DBListener<Profile> {
 
     private List<Profile> profiles = new ArrayList<>();
 
-    private Profile currentProfile;
     private final DBConnector<Profile> connector = new DBConnector<Profile>("profiles", this, Profile.class);
 
     // Singleton

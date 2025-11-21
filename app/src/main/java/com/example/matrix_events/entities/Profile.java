@@ -25,12 +25,6 @@ public class Profile extends DBObject implements Serializable {
     // Constructors
     public Profile() {} // Required for Firestore
 
-    public Profile(@NonNull String name, @NonNull String email, @NonNull String deviceId) {
-        this.name = name;
-        this.email = email;
-        this.deviceId = deviceId;
-    }
-
     public Profile(@NonNull String name, @NonNull String email, String phoneNumber, @NonNull String deviceId) {
         this.name = name;
         this.email = email;
