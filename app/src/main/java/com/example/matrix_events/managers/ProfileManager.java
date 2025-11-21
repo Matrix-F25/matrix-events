@@ -126,4 +126,5 @@ public class ProfileManager extends Model implements DBListener<Profile> {
         // Notify views of profile changes
         notifyViews();
     }
+    
 }
