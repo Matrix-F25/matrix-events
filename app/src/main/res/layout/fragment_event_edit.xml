@@ -1,32 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Poster Upload -->
+
+
+
+    <!-- Poster Upload Button-->
+
     <Button
         android:id="@+id/upload_poster_btn"
-        android:text="Upload Poster"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="596dp"
+        android:text="Upload Poster"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+
+    <!-- Show Poster -->
+    <ImageView
+        android:id="@+id/event_poster_image"
+        android:layout_width="0dp"
+        android:layout_height="250dp"
+        android:background="@color/black"
+        android:contentDescription="Event Poster"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="267dp" />
 
     <!-- Confirm Changes Button -->
     <Button
         android:id="@+id/confirm_changes_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Confirm Changes" />
+        android:layout_marginTop="664dp"
+        android:text="Confirm Changes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Back Button -->
     <Button
         android:id="@+id/back_btn"
-        android:text="Back"
         android:layout_width="100sp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="100dp"/>
+        android:text="Back"
+        tools:layout_editor_absoluteX="311dp"
+        tools:layout_editor_absoluteY="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
