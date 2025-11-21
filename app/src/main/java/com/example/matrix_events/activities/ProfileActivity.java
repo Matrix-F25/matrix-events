@@ -83,7 +83,11 @@ public class ProfileActivity extends AppCompatActivity implements View {
 
         String name = Objects.requireNonNull(profileName.getText()).toString().trim();
         String email = Objects.requireNonNull(profileEmail.getText()).toString().trim();
-        String phoneNumber = Objects.requireNonNull(profilePhoneNumber.getText()).toString().trim();
+        String phoneNumber = profilePhoneNumber.getText().toString().trim();
+
+        if (phoneNumber.equals("")) {
+            phoneNumber = null;
+        }
 
         currentProfile.setName(name);
         currentProfile.setEmail(email);
