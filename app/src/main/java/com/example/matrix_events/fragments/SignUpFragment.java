@@ -53,7 +53,7 @@ public class SignUpFragment extends Fragment {
 
                 // check that required inputs have been made
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email)) {
-                    Toast.makeText(getActivity(), "Enter both name and email.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Enter both name and email.", Toast.LENGTH_LONG).show();
                     return; // breaks onClick()
                 }
 
@@ -64,14 +64,14 @@ public class SignUpFragment extends Fragment {
 
                 // check that profile doesn't already exist
                 if (manager.doesProfileExist(deviceId)) {
-                    Toast.makeText(getActivity(), "Profile already exists for this device.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Profile already exists for this device.", Toast.LENGTH_LONG).show();
                     return; // breaks onClick()
                 }
 
                 // create new profile
                 Profile profile = new Profile(name, email, TextUtils.isEmpty(phone) ? null : phone, deviceId); // if phone number is left empty then null, otherwise the input
                 manager.createProfile(profile);
-                Toast.makeText(getActivity(), "Profile created successfully.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Profile created successfully. Please login to proceed", Toast.LENGTH_LONG).show();
 
                 // sends the entrant back to the main activity, where they'd have to click "login"
                 if (getActivity() != null) {

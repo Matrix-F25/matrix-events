@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.matrix_events" />
+                  <option name="mobileSdkAppId" value="1:68758771811:android:508ec9bf60d27b8ddd0056" />
+                  <option name="projectId" value="matrix-events" />
+                  <option name="projectNumber" value="68758771811" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

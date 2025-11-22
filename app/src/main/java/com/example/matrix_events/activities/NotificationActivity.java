@@ -1,7 +1,8 @@
 package com.example.matrix_events.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,10 +11,20 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.adapters.NotificationArrayAdapter;
+import com.example.matrix_events.entities.Notification;
 import com.example.matrix_events.fragments.NavigationBarFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.matrix_events.managers.NotificationManager;
+import com.example.matrix_events.mvc.View;
 
-public class NotificationActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class NotificationActivity extends AppCompatActivity implements View {
+
+    private ArrayList<Notification> notifications;
+    private NotificationArrayAdapter notificationArrayAdapter;
+    private String deviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,5 +40,40 @@ public class NotificationActivity extends AppCompatActivity {
                 .setReorderingAllowed(true)
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_notifications))
                 .commit();
+
+        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        notifications = new ArrayList<>();
+        ListView notificationListView = findViewById(R.id.notification_listview);
+        notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);
+        notificationListView.setAdapter(notificationArrayAdapter);
+
+        update();
+
+        // observe notification manager
+        NotificationManager.getInstance().addView(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NotificationManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+        notifications.clear();
+
+        List<Notification> allRecvNotifications = NotificationManager.getInstance().getReceivedNotificationsByDeviceID(deviceId);
+
+        for (Notification notification : allRecvNotifications) {
+            if (!notification.getReadFlag()) {
+                notifications.add(notification);
+            }
+        }
+
+        if (notificationArrayAdapter != null) {
+            notificationArrayAdapter.notifyDataSetChanged();
+        }
     }
 }

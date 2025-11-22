@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Scrollable content -->
+    <ScrollView
+        android:id="@+id/org_event_detail_scrollview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+            <!-- title -->
+            <TextView
+                android:id="@+id/org_event_title_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Event Title"
+                android:textAlignment="center"
+                android:textSize="40sp"
+                app:layout_constraintEnd_toStartOf="@+id/org_event_back_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/org_event_back_button"
+                android:layout_width="55dp"
+                android:layout_height="40dp"
+                android:text="X"
+                app:cornerRadius="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeWidth="2dp" />
+
+            <!-- organizer details -->
+
+            <!-- description -->
+            <TextView
+                android:id="@+id/org_event_description_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Description: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_declined_list_button" />
+
+            <TextView
+                android:id="@+id/org_event_description_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:text="@string/lorem_ipsum"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/org_event_description_static" />
+
+            <!-- location details -->
+            <TextView
+                android:id="@+id/org_event_location_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Location: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_description_textview" />
+
+            <TextView
+                android:id="@+id/org_event_location_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location String"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_location_static"
+                app:layout_constraintStart_toEndOf="@+id/org_event_location_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_location_static" />
+
+            <!-- date and time details -->
+            <TextView
+                android:id="@+id/org_event_start_date_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Event Start: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_location_static" />
+
+            <TextView
+                android:id="@+id/org_event_start_date_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_start_date_static"
+                app:layout_constraintStart_toEndOf="@+id/org_event_start_date_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_start_date_static" />
+
+            <TextView
+                android:id="@+id/org_event_end_date_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Event End: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_start_date_static" />
+
+            <TextView
+                android:id="@+id/org_event_end_date_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_end_date_static"
+                app:layout_constraintStart_toEndOf="@+id/org_event_end_date_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_end_date_static" />
+
+            <!-- Reoccuring details -->
+            <TextView
+                android:id="@+id/org_reoccuring_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Reoccurring: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_end_date_static" />
+
+            <TextView
+                android:id="@+id/org_reoccuring_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Boolean/String"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_reoccuring_static"
+                app:layout_constraintStart_toEndOf="@+id/org_reoccuring_static"
+                app:layout_constraintTop_toTopOf="@+id/org_reoccuring_static" />
+
+            <!-- registration details -->
+            <TextView
+                android:id="@+id/org_registration_open_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Registration Opens: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_reoccuring_static" />
+
+            <TextView
+                android:id="@+id/org_registration_open_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_registration_open_static"
+                app:layout_constraintStart_toEndOf="@+id/org_registration_open_static"
+                app:layout_constraintTop_toTopOf="@+id/org_registration_open_static" />
+
+            <TextView
+                android:id="@+id/org_registration_closes_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Registration Closes: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_registration_open_static" />
+
+            <TextView
+                android:id="@+id/org_registration_closes_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_registration_closes_static"
+                app:layout_constraintStart_toEndOf="@+id/org_registration_closes_static"
+                app:layout_constraintTop_toTopOf="@+id/org_registration_closes_static" />
+
+            <!-- capacity details -->
+            <TextView
+                android:id="@+id/org_event_max_waitlist_cap_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Max Waitlist Capacity: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_registration_closes_static" />
+
+            <TextView
+                android:id="@+id/org_event_max_waitlist_cap_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Int"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_max_waitlist_cap_static"
+                app:layout_constraintStart_toEndOf="@+id/org_event_max_waitlist_cap_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_max_waitlist_cap_static" />
+
+            <TextView
+                android:id="@+id/org_event_max_cap_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Max Event Capacity: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_max_waitlist_cap_static" />
+
+            <TextView
+                android:id="@+id/org_event_max_cap_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Int"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_max_cap_static"
+                app:layout_constraintStart_toEndOf="@id/org_event_max_cap_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_max_cap_static" />
+
+            <!-- current waitlist -->
+            <TextView
+                android:id="@+id/org_event_current_waitlist_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Current Waitlist: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_max_cap_static" />
+
+            <TextView
+                android:id="@+id/org_event_current_waitlist_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Int"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_current_waitlist_static"
+                app:layout_constraintStart_toEndOf="@id/org_event_current_waitlist_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_current_waitlist_static" />
+
+            <!-- current accepted -->
+            <TextView
+                android:id="@+id/org_event_current_accepted_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Current Accepted: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_current_waitlist_static" />
+
+            <TextView
+                android:id="@+id/org_event_current_accepted_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Int"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/org_event_current_accepted_static"
+                app:layout_constraintStart_toEndOf="@id/org_event_current_accepted_static"
+                app:layout_constraintTop_toTopOf="@+id/org_event_current_accepted_static" />
+
+            <ImageView
+                android:id="@+id/org_event_poster_image"
+                android:layout_width="0dp"
+                android:layout_height="250dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
+                android:background="@color/black"
+                android:contentDescription="Event Poster"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toTopOf="@+id/org_event_edit_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_current_accepted_static" />
+
+            <Button
+                android:id="@+id/org_event_waitlist_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Waiting List ->"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_title_textview" />
+
+            <Button
+                android:id="@+id/org_event_pending_list_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending List ->"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_waitlist_button" />
+
+            <Button
+                android:id="@+id/org_event_accepted_list_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accepted List ->"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_pending_list_button" />
+
+            <Button
+                android:id="@+id/org_event_declined_list_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Declined List ->"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/org_event_accepted_list_button" />
+
+            <Button
+                android:id="@+id/org_event_edit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Event"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <!-- Fixed button bar -->
+    <LinearLayout
+        android:id="@+id/button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
