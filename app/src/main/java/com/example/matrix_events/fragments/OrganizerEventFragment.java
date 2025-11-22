@@ -78,14 +78,6 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
                     .addToBackStack(null)
                     .commit();
         });
-        Button editButton = view.findViewById(R.id.org_event_edit_button);
-        editButton.setOnClickListener(v -> {
-            EventEditFragment fragment = EventEditFragment.newInstance(event);
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
 
         update();
 
@@ -102,8 +94,9 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
     @Override
     public void update() {
         event = EventManager.getInstance().getEventByDBID(event.getId());
-        assert event != null;
-        render();
+        if (event != null) {
+            render();
+        }
     }
 
     public void render() {

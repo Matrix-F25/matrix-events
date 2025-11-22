@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class ProfileManager extends Model implements DBListener<Profile> {
     private static final String TAG = "ProfileManager";
-
     private List<Profile> profiles = new ArrayList<>();
     private final DBConnector<Profile> connector = new DBConnector<Profile>("profiles", this, Profile.class);
 
@@ -29,9 +28,7 @@ public class ProfileManager extends Model implements DBListener<Profile> {
      *
      * @return The single, static instance of ProfileManager.
      */
-    public static ProfileManager getInstance() {
-        return manager;
-    }
+    public static ProfileManager getInstance() { return manager; }
 
     // Profile getters
 
