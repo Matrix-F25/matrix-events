@@ -38,8 +38,8 @@ import java.util.Calendar;
 
 public class EventCreateFragment extends Fragment {
 
+    View view = null;
     private EditText nameInput, descriptionInput, capacityInput, locationInput, waitlistCapacityInput;
-    private Button startDateButton, endDateButton, regStartButton, regEndButton, createButton, uploadPosterButton, reoccurringEndDateButton, backButton;
     private MaterialSwitch isReoccurringSwitch, geolocationTrackingSwitch;
     private Spinner reoccurringTypeSpinner;
     private View reoccurringSection;
@@ -60,36 +60,39 @@ public class EventCreateFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_event_create, container, false);
+    }
 
-        View view = inflater.inflate(R.layout.fragment_event_create, container, false);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.view = view;
 
+        Button backButton = view.findViewById(R.id.back_btn);
+        backButton.setOnClickListener(v -> {
+            getParentFragmentManager().popBackStack();
+        });
+
+        render();
+    }
+
+    public void render() {
+        // Inputs
         nameInput = view.findViewById(R.id.event_name_input);
         descriptionInput = view.findViewById(R.id.event_description_input);
         capacityInput = view.findViewById(R.id.event_capacity_input);
         waitlistCapacityInput = view.findViewById(R.id.waitlist_capacity_input);
         locationInput = view.findViewById(R.id.event_location_input);
 
+        // Show/hide reoccurring section
         isReoccurringSwitch = view.findViewById(R.id.is_reoccurring_switch);
         reoccurringSection = view.findViewById(R.id.reoccurring_section);
-        reoccurringTypeSpinner = view.findViewById(R.id.reoccurring_type_spinner);
-        reoccurringEndDateButton = view.findViewById(R.id.reoccurring_end_date_btn);
-        geolocationTrackingSwitch = view.findViewById(R.id.geolocation_tracking_switch);
-
-        regStartButton = view.findViewById(R.id.reg_start_date_btn);
-        regEndButton = view.findViewById(R.id.reg_end_date_btn);
-        startDateButton = view.findViewById(R.id.event_start_date_btn);
-        endDateButton = view.findViewById(R.id.event_end_date_btn);
-
-        uploadPosterButton = view.findViewById(R.id.upload_poster_btn);
-        createButton = view.findViewById(R.id.create_event_btn);
-        backButton = view.findViewById(R.id.back_btn);
-
-        // Show/hide reoccurring section
         isReoccurringSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             reoccurringSection.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
 
         // Spinner setup using enum
+        reoccurringTypeSpinner = view.findViewById(R.id.reoccurring_type_spinner);
         ArrayAdapter<ReoccurringType> typeAdapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_spinner_item,
@@ -99,20 +102,34 @@ public class EventCreateFragment extends Fragment {
         reoccurringTypeSpinner.setAdapter(typeAdapter);
 
         // Pick reoccurring end date
+        Button reoccurringEndDateButton = view.findViewById(R.id.reoccurring_end_date_btn);
         reoccurringEndDateButton.setOnClickListener(v -> pickDateTime(ts -> reoccurringEndDateTime = ts));
 
+        geolocationTrackingSwitch = view.findViewById(R.id.geolocation_tracking_switch);
+
+        // Pick registration start date
+        Button regStartButton = view.findViewById(R.id.reg_start_date_btn);
         regStartButton.setOnClickListener(v -> pickDateTime(ts -> regStart = ts));
+
+        // Pick registration end date
+        Button regEndButton = view.findViewById(R.id.reg_end_date_btn);
         regEndButton.setOnClickListener(v -> pickDateTime(ts -> regEnd = ts));
+
+        // Pick event start date
+        Button startDateButton = view.findViewById(R.id.event_start_date_btn);
         startDateButton.setOnClickListener(v -> pickDateTime(ts -> eventStart = ts));
+
+        // Pick event end date
+        Button endDateButton = view.findViewById(R.id.event_end_date_btn);
         endDateButton.setOnClickListener(v -> pickDateTime(ts -> eventEnd = ts));
 
+        // Upload poster
+        Button uploadPosterButton = view.findViewById(R.id.upload_poster_btn);
         uploadPosterButton.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
-        createButton.setOnClickListener(v -> uploadPosterThenCreateEvent());
-        backButton.setOnClickListener(v -> {
-            getParentFragmentManager().popBackStack();
-        });
 
-        return view;
+        // Create poster
+        Button createButton = view.findViewById(R.id.create_event_btn);
+        createButton.setOnClickListener(v -> uploadPosterThenCreateEvent());
     }
 
     private interface TimestampCallback {
@@ -171,11 +188,7 @@ public class EventCreateFragment extends Fragment {
             Profile organizer = ProfileManager.getInstance().getProfileByDeviceId(deviceId);
             Geolocation location = new Geolocation(locationName, -123.3656, 48.4284);
 
-            // temp fix for asynch shenanigans, sets aside eventId so poster doesn't grab null because firebase takes forever to create id for event
-            String eventId = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                    .collection("events").document().getId();
-
-            // Create the base event first (without poster)
+            // create the base event first (without poster)
             Event newEvent = new Event(
                     name,
                     description,
@@ -194,30 +207,56 @@ public class EventCreateFragment extends Fragment {
                     null
             );
 
-            newEvent.setId(eventId);
-
-            // upload the poster after event creation (using its id)
+            // create event with poster if uploaded
             if (posterUri != null) {
-                PosterManager.getInstance().uploadPosterImage(posterUri, eventId,
-                        new PosterManager.PosterUploadCallback() {
-                            @Override
-                            public void onSuccess(Poster poster) {
-                                poster.setEventId(eventId);
-                                newEvent.setPoster(poster);
+                // create event first using DBConnector
+                EventManager.getInstance().createEvent(newEvent);
 
-                                // poster is not null
-                                EventManager.getInstance().createEvent(newEvent);
-                                Toast.makeText(requireContext(), "Event and poster uploaded!", Toast.LENGTH_SHORT).show();
-                            }
+                // wait for event to get its ID from Firestore
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+                    private int attempts = 0;
+                    private final int MAX_ATTEMPTS = 50; // 5 seconds max
 
-                            @Override
-                            public void onFailure(Exception e) {
-                                Log.e(TAG, "Poster upload failed", e);
-                                Toast.makeText(requireContext(), "Poster upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
+                    @Override
+                    public void run() {
+                        // look for the event by name in EventManager
+                        Event createdEvent = EventManager.getInstance().getEventByName(name);
+
+                        if (createdEvent != null && createdEvent.getId() != null && !createdEvent.getId().isEmpty()) {
+                            // event has its ID
+                            String eventId = createdEvent.getId();
+
+                            PosterManager.getInstance().uploadPosterImage(posterUri, eventId,
+                                    new PosterManager.PosterUploadCallback() {
+                                        @Override
+                                        public void onSuccess(Poster poster) {
+                                            // poster has its Firestore ID
+                                            createdEvent.setPoster(poster);
+                                            EventManager.getInstance().updateEvent(createdEvent);
+
+                                            Toast.makeText(requireContext(), "Event and poster uploaded!", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            Log.e(TAG, "Poster upload failed", e);
+                                            Toast.makeText(requireContext(), "Poster upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                        } else if (attempts < MAX_ATTEMPTS) {
+                            // try again in 100ms
+                            attempts++;
+                            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(this, 100);
+                        } else {
+                            // timeout
+                            Log.e(TAG, "Timeout waiting for event ID");
+                            Toast.makeText(requireContext(), "Error: Timeout creating event", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }, 100);
+
             } else {
-                // poster is null
+                // null poster
                 EventManager.getInstance().createEvent(newEvent);
                 Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show();
             }

@@ -3,9 +3,7 @@ package com.example.matrix_events.fragments;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,7 +12,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -32,8 +29,6 @@ import com.google.android.material.materialswitch.MaterialSwitch;
  */
 public class EventEditFragment extends Fragment implements com.example.matrix_events.mvc.View {
     private static final String TAG = "EventEditFragment";
-    private static final String ARG_EVENT = "event";
-    private static final String ARG_EVENT_ID = "event_id";
 
     View view = null;
     ImageView posterImage;
@@ -70,40 +65,17 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
     public static EventEditFragment newInstance(Event event) {
         EventEditFragment fragment = new EventEditFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_EVENT, event);
-        /*
-        // Pass ID since it might be lost during Event serialization it was rawr
-        if (event != null) {
-            args.putString(ARG_EVENT_ID, event.getId());
-        }
-         */
+        args.putSerializable("event", event);
         fragment.setArguments(args);
         return fragment;
     }
-    /*
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-            // Restore the ID if it was lost it was even harder rawwr
-            if (event != null) {
-                String eventId = getArguments().getString(ARG_EVENT_ID);
-                if (eventId != null) {
-                    event.setId(eventId);
-                }
-
-            }
-        }
-    }
-
-     */
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
         if (getArguments() != null) {
-            event = (Event) getArguments().getSerializable(ARG_EVENT);
+            event = (Event) getArguments().getSerializable("event");
         }
         assert event != null;
 
@@ -211,7 +183,8 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
             // if poster exists (updates)
             Poster currentPoster = event.getPoster();
             if (currentPoster != null) {
-                PosterManager.getInstance().updatePosterImage(posterUri, currentPoster, // creating poster
+                // updating poster
+                PosterManager.getInstance().updatePosterImage(posterUri, currentPoster,
                         new PosterManager.PosterUploadCallback() {
                             @Override
                             public void onSuccess(Poster poster) {
@@ -234,27 +207,22 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
             }
             // if poster doesn't exist (uploads)
             else {
-                PosterManager.getInstance().uploadPosterImage(posterUri, event.getId(), // creating poster
+                // creating poster
+                PosterManager.getInstance().uploadPosterImage(posterUri, event.getId(),
                         new PosterManager.PosterUploadCallback() {
                             @Override
                             public void onSuccess(Poster poster) {
-                                // Update event with new poster details
-                                poster.setEventId(event.getId());
+                                // poster has its Firestore ID
                                 event.setPoster(poster);
                                 EventManager.getInstance().updateEvent(event);
 
-                                if (isAdded() && getContext() != null) {
-                                    Toast.makeText(requireContext(), "Event updated successfully!", Toast.LENGTH_SHORT).show();
-                                    getParentFragmentManager().popBackStack();
-                                }
+                                Toast.makeText(requireContext(), "Event and poster uploaded!", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onFailure(Exception e) {
                                 Log.e(TAG, "Poster upload failed", e);
-                                if (isAdded() && getContext() != null) {
-                                    Toast.makeText(requireContext(), "Poster upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                }
+                                Toast.makeText(requireContext(), "Poster upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
             }
