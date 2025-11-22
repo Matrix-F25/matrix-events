@@ -71,6 +71,29 @@ public class PosterManager extends Model implements DBListener<Poster> {
         }).addOnFailureListener(callback::onFailure);
     }
 
+
+    public void updatePosterImage(Uri imageUri, Poster poster, PosterUploadCallback callback) {
+        if (imageUri == null) {
+            callback.onFailure(new IllegalArgumentException("No image selected"));
+            return;
+        }
+
+        StorageReference posterRef = posterStorageRef.child(poster.getFileName());
+
+        UploadTask uploadTask = posterRef.putFile(imageUri);
+
+        uploadTask.continueWithTask(task -> {
+            if (!task.isSuccessful()) {
+                throw task.getException();
+            }
+            return posterRef.getDownloadUrl();
+        }).addOnSuccessListener(downloadUri -> {
+            updatePoster(poster);
+            callback.onSuccess(poster);
+        }).addOnFailureListener(callback::onFailure);
+    }
+
+
     /**
      * Gets the posters
      * @return The list of posters
