@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/delete_event_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:text="delete event"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@android:color/holo_red_dark"/>
+
+    <EditText
+        android:id="@+id/event_name_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Event Name"
+        app:layout_constraintTop_toBottomOf="@+id/back_btn"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <EditText
+        android:id="@+id/event_description_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Description"
+        app:layout_constraintTop_toBottomOf="@+id/event_name_input"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <EditText
+        android:id="@+id/event_location_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Location"
+        app:layout_constraintTop_toBottomOf="@+id/event_description_input"
+        tools:layout_editor_absoluteX="0dp" />
+
+
+    <!-- Geolocation Tracking Switch -->
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/geolocation_tracking_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:checked="true"
+        android:text="Enable Geolocation Tracking"
+        app:layout_constraintTop_toBottomOf="@+id/event_location_input"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <!-- Show Poster -->
+    <ImageView
+        android:id="@+id/event_poster_image"
+        android:layout_width="0dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/black"
+        android:contentDescription="Event Poster"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/geolocation_tracking_switch" />
+
+    <!-- Poster Upload Button-->
+    <Button
+        android:id="@+id/upload_poster_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:text="Upload Poster"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_poster_image" />
+
+    <!-- Confirm Changes Button -->
+    <Button
+        android:id="@+id/confirm_changes_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Confirm Changes"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upload_poster_btn"
+        app:layout_constraintVertical_bias="0.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
