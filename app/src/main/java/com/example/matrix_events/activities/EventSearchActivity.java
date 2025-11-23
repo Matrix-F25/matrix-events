@@ -61,6 +61,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                     .commit();
         }));
 
+        /*
         // -----------------------------
         // --- TESTING PURPOSES ONLY ---
         // -----------------------------
@@ -114,6 +115,8 @@ public class EventSearchActivity extends AppCompatActivity implements View {
         EventManager.getInstance().createEvent(sampleEvent);
         // -----------------------------
         // -----------------------------
+        
+         */
 
         update();
 
