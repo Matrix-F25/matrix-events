@@ -61,66 +61,64 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                     .commit();
         }));
 
+        // -----------------------------
+        // --- TESTING PURPOSES ONLY ---
+        // -----------------------------
+        Profile organizer = new Profile(
+                "Alice Johnson",
+                "alice.johnson@example.com",
+                "+1-780-555-0123",
+                Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
+        );
+        Geolocation location = new Geolocation(
+                "Yo Mamas House",
+                -113.5244,
+                53.5232
+        );
+        // Start from current time
+        Calendar calendar = Calendar.getInstance();
+        // Registration starts in 2 minutes
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp registrationStart = new Timestamp(calendar.getTime());
+        // Registration ends 2 minutes after it starts
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp registrationEnd = new Timestamp(calendar.getTime());
+        // Event starts 2 minutes after registration closes
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp eventStart = new Timestamp(calendar.getTime());
+        // Event ends 2 minutes after it starts
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp eventEnd = new Timestamp(calendar.getTime());
+        // Reoccurring end is 2 minutes after event ends
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp reoccurringEnd = new Timestamp(calendar.getTime());
+        // Create event (chronologically valid)
+        Event sampleEvent = new Event(
+                "Campus Hackathon 2025",             // name
+                "A short test hackathon for debugging",  // description
+                organizer,                           // organizer
+                location,                            // location
+                eventStart,                          // event start
+                eventEnd,                            // event end
+                1,                                   // event capacity
+                50,                                  // waitlist capacity
+                registrationStart,                   // registration start
+                registrationEnd,                     // registration end
+                true,                                // is reoccurring
+                reoccurringEnd,                      // reoccurring end
+                ReoccurringType.Weekly,              // reoccurring type
+                true,                                // geolocation tracking
+                null                               // poster
+        );
+        // Add to manager
+        EventManager.getInstance().createEvent(sampleEvent);
+        // -----------------------------
+        // -----------------------------
+
         update();
 
         // observe event manager
         EventManager.getInstance().addView(this);
-
-
-        // -----------------------------
-        // --- TESTING PURPOSES ONLY ---
-        // -----------------------------
-
-//        Profile organizer = new Profile(
-//                "Alice Johnson",
-//                "alice.johnson@example.com",
-//                "+1-780-555-0123",
-//                Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
-//        );
-//        Geolocation location = new Geolocation(
-//                "Yo Mamas House",
-//                -113.5244,
-//                53.5232
-//        );
-//        // Start from current time
-//        Calendar calendar = Calendar.getInstance();
-//        // Registration starts in 2 minutes
-//        calendar.add(Calendar.MINUTE, 1);
-//        Timestamp registrationStart = new Timestamp(calendar.getTime());
-//        // Registration ends 2 minutes after it starts
-//        calendar.add(Calendar.MINUTE, 1);
-//        Timestamp registrationEnd = new Timestamp(calendar.getTime());
-//        // Event starts 2 minutes after registration closes
-//        calendar.add(Calendar.MINUTE, 1);
-//        Timestamp eventStart = new Timestamp(calendar.getTime());
-//        // Event ends 2 minutes after it starts
-//        calendar.add(Calendar.MINUTE, 1);
-//        Timestamp eventEnd = new Timestamp(calendar.getTime());
-//        // Reoccurring end is 2 minutes after event ends
-//        calendar.add(Calendar.MINUTE, 1);
-//        Timestamp reoccurringEnd = new Timestamp(calendar.getTime());
-//        // Create event (chronologically valid)
-//        Event sampleEvent = new Event(
-//                "Campus Hackathon 2025",             // name
-//                "A short test hackathon for debugging",  // description
-//                organizer,                           // organizer
-//                location,                            // location
-//                eventStart,                          // event start
-//                eventEnd,                            // event end
-//                1,                                   // event capacity
-//                50,                                  // waitlist capacity
-//                registrationStart,                   // registration start
-//                registrationEnd,                     // registration end
-//                true,                                // is reoccurring
-//                reoccurringEnd,                      // reoccurring end
-//                ReoccurringType.Weekly,              // reoccurring type
-//                true,                                // geolocation tracking
-//                null                               // poster
-//        );
-//        // Add to manager
-//        EventManager.getInstance().createEvent(sampleEvent);
-
-        // -----------------------------
     }
 
     @Override
