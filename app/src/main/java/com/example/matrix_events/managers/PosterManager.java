@@ -67,9 +67,67 @@ public class PosterManager extends Model implements DBListener<Poster> {
         }).addOnSuccessListener(downloadUri -> {
             Poster poster = new Poster(downloadUri.toString(), eventId, fileName);
             createPoster(poster);
+
+            // waiting for the poster to appear in Firebase with its ID
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+                private int attempts = 0;
+                private final int MAX_ATTEMPTS = 50; // 5 seconds max
+
+                @Override
+                public void run() {
+                    // look for the poster in Firebase
+                    Poster createdPoster = findPosterByEventIdAndFileName(eventId, fileName);
+
+                    if (createdPoster != null && createdPoster.getId() != null && !createdPoster.getId().isEmpty()) {
+                        // found with an ID
+                        Log.d(TAG, "Poster created with ID: " + createdPoster.getId());
+                        callback.onSuccess(createdPoster);
+                    } else if (attempts < MAX_ATTEMPTS) {
+                        // try again in 100ms
+                        attempts++;
+                        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(this, 100);
+                    } else {
+                        // timeout
+                        callback.onFailure(new Exception("Timeout waiting for poster ID assignment"));
+                    }
+                }
+            }, 100);
+
+        }).addOnFailureListener(callback::onFailure);
+    }
+
+    private Poster findPosterByEventIdAndFileName(String eventId, String fileName) {
+        for (Poster poster : posters) {
+            if (eventId.equals(poster.getEventId()) && fileName.equals(poster.getFileName())) {
+                return poster;
+            }
+        }
+        return null;
+    }
+
+
+    public void updatePosterImage(Uri imageUri, Poster poster, PosterUploadCallback callback) {
+        if (imageUri == null) {
+            callback.onFailure(new IllegalArgumentException("No image selected"));
+            return;
+        }
+
+        StorageReference posterRef = posterStorageRef.child(poster.getFileName());
+
+        UploadTask uploadTask = posterRef.putFile(imageUri);
+
+        uploadTask.continueWithTask(task -> {
+            if (!task.isSuccessful()) {
+                throw task.getException();
+            }
+            return posterRef.getDownloadUrl();
+        }).addOnSuccessListener(downloadUri -> {
+            poster.setImageUrl(downloadUri.toString());
+            updatePoster(poster);
             callback.onSuccess(poster);
         }).addOnFailureListener(callback::onFailure);
     }
+
 
     /**
      * Gets the posters
