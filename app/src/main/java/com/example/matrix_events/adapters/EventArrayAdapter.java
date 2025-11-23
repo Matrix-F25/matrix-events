@@ -5,20 +5,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.utils.TimestampConverter;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
 public class EventArrayAdapter extends ArrayAdapter<Event> {
-    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList) {
+
+    private boolean isAdmin;
+    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList, boolean isAdmin) {
         super(context, 0, arrayList);
+        this.isAdmin = isAdmin;
+    }
+
+    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList) {
+        this(context, arrayList, false);
     }
 
     @NonNull
@@ -54,6 +63,16 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
                     .into(posterImageView);
         } else { // show the placeholder image if a poster wasn't uploaded
             posterImageView.setImageResource(R.drawable.placeholder);
+        }
+
+        ImageButton deleteButton = convertView.findViewById(R.id.admin_delete_button);
+        if (isAdmin) {
+            deleteButton.setVisibility(View.VISIBLE);
+            deleteButton.setOnClickListener(v -> {
+                EventManager.getInstance().deleteEvent(event);
+            });
+        } else {
+            deleteButton.setVisibility(View.GONE);
         }
 
         return convertView;
