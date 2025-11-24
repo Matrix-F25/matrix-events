@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.utils.TimestampConverter;
 import com.bumptech.glide.Glide;
 
@@ -21,13 +20,20 @@ import java.util.ArrayList;
 public class EventArrayAdapter extends ArrayAdapter<Event> {
 
     private boolean isAdmin;
-    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList, boolean isAdmin) {
+    private OnEventDeleteListener deleteListener;
+
+    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList, boolean isAdmin, OnEventDeleteListener listener) {
         super(context, 0, arrayList);
         this.isAdmin = isAdmin;
+        this.deleteListener = listener;
     }
 
     public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList) {
-        this(context, arrayList, false);
+        this(context, arrayList, false, null);
+    }
+
+    public interface OnEventDeleteListener {
+        void onDeleteClick(Event event);
     }
 
     @NonNull
@@ -69,9 +75,11 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         if (isAdmin) {
             deleteButton.setVisibility(View.VISIBLE);
             deleteButton.setOnClickListener(v -> {
-                EventManager.getInstance().deleteEvent(event);
+                if (deleteListener != null) {
+                    deleteListener.onDeleteClick(event);
+                }
             });
-        } else {
+        } else if (deleteButton != null) {
             deleteButton.setVisibility(View.GONE);
         }
 
