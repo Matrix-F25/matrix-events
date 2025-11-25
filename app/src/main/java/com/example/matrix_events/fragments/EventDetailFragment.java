@@ -21,17 +21,23 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
 
     View view = null;
     private Event event = null;
+    private Boolean isAdmin;
 
     public EventDetailFragment() {
         super(R.layout.fragment_event_detail);
     }
 
-    public static EventDetailFragment newInstance(Event event) {
+    public static EventDetailFragment newInstance(Event event, boolean isAdmin) {
         EventDetailFragment fragment = new EventDetailFragment();
         Bundle args = new Bundle();
         args.putSerializable("event", event);
+        args.putBoolean("isAdmin", isAdmin);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static EventDetailFragment newInstance(Event event) {
+        return newInstance(event, false);
     }
 
     @Override
@@ -40,6 +46,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
         this.view = view;
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable("event");
+            isAdmin = getArguments().getBoolean("isAdmin", false);
         }
         assert event != null;
 
@@ -159,6 +166,8 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
         Button acceptButton = view.findViewById(R.id.accept_button);
         Button declineButton = view.findViewById(R.id.decline_button);
         Button waitlistButton = view.findViewById(R.id.event_waitlist_join_button);
+        View buttonBar = view.findViewById(R.id.button_bar);
+
 
         String deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -166,6 +175,12 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
         acceptButton.setVisibility(View.GONE);
         declineButton.setVisibility(View.GONE);
         waitlistButton.setVisibility(View.GONE);
+
+        if (isAdmin) {
+            buttonBar.setVisibility(View.GONE);
+        } else {
+            buttonBar.setVisibility(View.VISIBLE);
+        }
 
         // Handle UI based on the event's lifecycle
 

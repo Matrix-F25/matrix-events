@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -12,12 +13,27 @@ import androidx.annotation.Nullable;
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.utils.TimestampConverter;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
 public class EventArrayAdapter extends ArrayAdapter<Event> {
-    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList) {
+
+    private boolean isAdmin;
+    private OnEventDeleteListener deleteListener;
+
+    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList, boolean isAdmin, OnEventDeleteListener listener) {
         super(context, 0, arrayList);
+        this.isAdmin = isAdmin;
+        this.deleteListener = listener;
+    }
+
+    public EventArrayAdapter(@NonNull Context context, @NonNull ArrayList<Event> arrayList) {
+        this(context, arrayList, false, null);
+    }
+
+    public interface OnEventDeleteListener {
+        void onDeleteClick(Event event);
     }
 
     @NonNull
@@ -44,7 +60,28 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
         ImageView posterImageView = convertView.findViewById(R.id.poster_imageview);
         assert posterImageView != null;
-        posterImageView.setImageResource(R.drawable.placeholder);
+
+        // to show the poster without clicking on the actual event
+        if (event.getPoster() != null && event.getPoster().getImageUrl() != null) { // if an event has a poster and the poster url exists
+            Glide.with(getContext())
+                    .load(event.getPoster().getImageUrl())
+                    .placeholder(R.drawable.placeholder)
+                    .into(posterImageView);
+        } else { // show the placeholder image if a poster wasn't uploaded
+            posterImageView.setImageResource(R.drawable.placeholder);
+        }
+
+        ImageButton deleteButton = convertView.findViewById(R.id.admin_delete_button);
+        if (isAdmin) {
+            deleteButton.setVisibility(View.VISIBLE);
+            deleteButton.setOnClickListener(v -> {
+                if (deleteListener != null) {
+                    deleteListener.onDeleteClick(event);
+                }
+            });
+        } else if (deleteButton != null) {
+            deleteButton.setVisibility(View.GONE);
+        }
 
         return convertView;
     }
