@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class EventSearchActivity extends AppCompatActivity implements View {
-    ArrayList<Event> allEvents = new ArrayList<>();
-    ArrayList<Event> events = new ArrayList<>();
+    ArrayList<Event> allEvents;
+    ArrayList<Event> events;
     EventArrayAdapter eventArrayAdapter;
 
     @Override
@@ -49,6 +49,8 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_event_search))
                 .commit();
 
+        allEvents = new ArrayList<>();
+        events = new ArrayList<>();
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
         ListView eventListView = findViewById(R.id.event_search_listview);
         eventListView.setAdapter(eventArrayAdapter);
