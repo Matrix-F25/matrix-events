@@ -36,11 +36,11 @@
             android:background="@color/grey"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Push Notification Settings Header -->
+        <!-- Notification Settings Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/push_notification_settings_page_header"
+            android:text="@string/notification_settings_page_header"
             android:textSize="20sp"
             android:textStyle="bold"
             app:drawableLeftCompat="@drawable/ic_blank_notification"/>
@@ -51,16 +51,16 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Email Notifications Header -->
+        <!-- In-App Notifications Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/email_notifications_header"
+            android:text="@string/in_app_notifications_header"
             android:textSize="18sp"/>
 
-        <!-- Email Admin Switch -->
+        <!-- In-App Admin Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/email_admin_switch"
+            android:id="@+id/in_app_admin_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/admin_switch"
@@ -68,9 +68,9 @@
             app:trackTint="@color/switch_track_color"
             tools:ignore="RtlSymmetry" />
 
-        <!-- Email Organizer Switch -->
+        <!-- In-App Organizer Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/email_organizer_switch"
+            android:id="@+id/in_app_organizer_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/organizer_switch"
@@ -78,16 +78,16 @@
             app:trackTint="@color/switch_track_color"
             tools:ignore="RtlSymmetry" />
 
-        <!-- Phone Notifications Header -->
+        <!-- Push Notifications Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/phone_notifications_header"
+            android:text="@string/push_notifications_header"
             android:textSize="18sp"/>
 
         <!-- Phone Admin Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/phone_admin_switch"
+            android:id="@+id/push_admin_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/admin_switch"
@@ -97,7 +97,7 @@
 
         <!-- Phone Organizer Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/phone_organizer_switch"
+            android:id="@+id/push_organizer_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/organizer_switch"
@@ -137,6 +137,31 @@
             android:text="@string/device_id_switch"
             app:trackTint="@color/switch_track_color"/>
     -->
+
+        <!-- Accessibility Settings Header -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/accessibility_settings_page_header"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:drawableLeftCompat="@drawable/ic_accessibility"/>
+
+        <!-- Divider -->
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Dark Mode Switch -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/dark_mode_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dark_mode_switch"
+            android:paddingStart="20dp"
+            app:trackTint="@color/switch_track_color"
+            tools:ignore="RtlSymmetry" />
 
         <!-- Divider -->
         <com.google.android.material.divider.MaterialDivider

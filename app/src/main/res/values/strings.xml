@@ -34,14 +34,16 @@
 
     <!-- Strings related to Settings -->
     <string name="settings_page_title">Settings</string>
-    <string name="push_notification_settings_page_header">Push Notification Settings</string>
-    <string name="email_notifications_header"><u>Email Notifications:</u></string>
-    <string name="phone_notifications_header"><u>Phone Notifications:</u></string>
+    <string name="notification_settings_page_header">Notification Settings</string>
+    <string name="in_app_notifications_header"><u>In-App Notifications:</u></string>
+    <string name="push_notifications_header"><u>Push Notifications:</u></string>
     <string name="admin_switch">• Enable Admin Notifications</string>
     <string name="organizer_switch">• Enable Organizer Notifications</string>
     <string name="account_settings_page_header">Account Settings</string>
     <string name="geolocation_switch">Enable Geolocation Access</string>
     <string name="device_id_switch">Enable Device ID Auto-login</string>
+    <string name="dark_mode_switch">Enable Dark Mode</string>
+    <string name="accessibility_settings_page_header">Accessibility</string>
     <string name="terms_conditions_header">Click Here For Terms &amp; Conditions</string>
     <string name="terms_conditions_text">T</string>
     <string name="logout_button_text">Log Out</string>
