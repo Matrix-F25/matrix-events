@@ -105,9 +105,15 @@ public class AdminEventsActivity extends AppCompatActivity implements View, Even
     private void cancelAndNotify(Event event) {
         List<String> usersToNotify = new ArrayList<>();
 
-        if (event.getWaitList() != null) usersToNotify.addAll(event.getWaitList());
-        if (event.getPendingList() != null) usersToNotify.addAll(event.getPendingList());
-        if (event.getAcceptedList() != null) usersToNotify.addAll(event.getAcceptedList());
+        if (event.getWaitList() != null) {
+            usersToNotify.addAll(event.getWaitList());
+        }
+        if (event.getPendingList() != null) {
+            usersToNotify.addAll(event.getPendingList());
+        }
+        if (event.getAcceptedList() != null) {
+            usersToNotify.addAll(event.getAcceptedList());
+        }
 
         Profile sender = event.getOrganizer();
         String message = "Event '" + event.getName() + "' has been cancelled. Sorry!";
