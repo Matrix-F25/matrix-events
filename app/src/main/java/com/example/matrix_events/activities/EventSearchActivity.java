@@ -33,6 +33,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
     ArrayList<Event> allEvents;
     ArrayList<Event> events;
     EventArrayAdapter eventArrayAdapter;
+    private String currentSearchQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,8 @@ public class EventSearchActivity extends AppCompatActivity implements View {
             @Override public void afterTextChanged(Editable s) {}
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterEvents(s.toString());
+                currentSearchQuery = s.toString();
+                filterEvents(currentSearchQuery);
             }
         });
 
@@ -164,8 +166,12 @@ public class EventSearchActivity extends AppCompatActivity implements View {
     public void update() {
         allEvents.clear();
         allEvents.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
-        events.clear();
-        events.addAll(allEvents);
+        if (currentSearchQuery.isEmpty()) {
+            events.clear();
+            events.addAll(allEvents);
+        } else {
+            filterEvents(currentSearchQuery);
+        }
         eventArrayAdapter.notifyDataSetChanged();
     }
 }
