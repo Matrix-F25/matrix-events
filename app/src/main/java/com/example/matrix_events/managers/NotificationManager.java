@@ -121,6 +121,16 @@ public class NotificationManager extends Model implements DBListener<Notificatio
     @Override
     public void readAllAsync_Complete(List<Notification> objects) {
         Log.d(TAG, "NotificationManager read all complete, notifying views");
+
+        // Patch old notifications with missing types
+        for (Notification n : objects) {
+            if (n.getTypeRaw() == null) {
+                Log.d(TAG, "Missing type for notification " + n.getId() + " - assigning default ORGANIZER");
+                n.setTypeEnum(Notification.NotificationType.ORGANIZER); // default
+                connector.updateAsync(n);
+            }
+        }
+
         notifications = objects;
         // Notify views of notification changes
         notifyViews();

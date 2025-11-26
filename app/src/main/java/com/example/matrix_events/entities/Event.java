@@ -322,7 +322,7 @@ public class Event extends DBObject implements Serializable {
                     + "at your earliest convenience.\n\n"
                     + "This is an automated message.";
             Timestamp now = Timestamp.now();
-            Notification notification = new Notification(sender, receiver, message, now);
+            Notification notification = new Notification(sender, receiver, message, Notification.NotificationType.ORGANIZER, now);
             NotificationManager.getInstance().createNotification(notification);
         }
     }

@@ -1,6 +1,9 @@
 package com.example.matrix_events.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -9,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -21,9 +25,15 @@ import com.example.matrix_events.managers.ProfileManager;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String PREFS_NAME = "AppPreferences";
+    private static final String KEY_NOTIF_PERMISSION_ASKED = "notif_permission_asked";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        askForNotificationPermissionOnce();
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -72,5 +82,64 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void askForNotificationPermissionOnce() {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) return; // Not needed before Android 13+
+
+        boolean alreadyAsked = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getBoolean(KEY_NOTIF_PERMISSION_ASKED, false);
+        if (alreadyAsked) return;
+
+        // Show polite explanation dialog
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("Enable Notifications?")
+                .setMessage("We use notifications to let you know when organizers or admins send important updates. You can change this anytime in Settings.")
+                .setPositiveButton("Allow", (dialog, which) -> {
+                    // Mark that we asked
+                    getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                            .edit()
+                            .putBoolean(KEY_NOTIF_PERMISSION_ASKED, true)
+                            .apply();
+
+                    // Now request the real OS permission
+                    requestNotificationPermission();
+                })
+                .setNegativeButton("Not now", (dialog, which) -> {
+                    // User said no — still mark as asked
+                    getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                            .edit()
+                            .putBoolean(KEY_NOTIF_PERMISSION_ASKED, true)
+                            .apply();
+                })
+                .show();
+    }
+
+    private void requestNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                        1001
+                );
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1001) {
+            if (grantResults.length > 0 &&
+                    grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+
+                Toast.makeText(this, "Notifications enabled!", Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(this, "Notifications disabled. You can enable them in Settings.", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

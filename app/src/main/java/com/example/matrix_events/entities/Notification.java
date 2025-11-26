@@ -14,9 +14,14 @@ import com.google.firebase.Timestamp;
  * details about the sender, receiver, message content, and a timestamp.
  */
 public class Notification extends DBObject implements Serializable {
+    public enum NotificationType {
+        ADMIN,
+        ORGANIZER
+    }
     private Profile sender;
     private Profile receiver;
     private String message;
+    private NotificationType type; // Admin or Organizer
     private Timestamp timestamp;
     private boolean readFlag = false;
 
@@ -31,12 +36,15 @@ public class Notification extends DBObject implements Serializable {
      * @param sender    The {@link Profile} of the user sending the notification. Cannot be null.
      * @param receiver  The {@link Profile} of the user receiving the notification. Cannot be null.
      * @param message   The content of the notification message. Cannot be null.
+     * @param type      The type of notification: Admin or Organizer.
      * @param timestamp The time at which the notification was sent. Cannot be null.
      */
-    public Notification(@NonNull Profile sender, @NonNull Profile receiver, @NonNull String message, @NonNull Timestamp timestamp) {
+    public Notification(@NonNull Profile sender, @NonNull Profile receiver, @NonNull String message, @NonNull NotificationType type, @NonNull Timestamp timestamp) {
+
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
+        this.type = (type != null) ? type: NotificationType.ORGANIZER;
         this.timestamp = timestamp;
     }
 
@@ -129,4 +137,11 @@ public class Notification extends DBObject implements Serializable {
     public void setReadFlag(boolean read) {
         this.readFlag = read;
     }
+
+    // TODO: Add Java Docs
+    public NotificationType getTypeEnum() { return (type != null) ? type : NotificationType.ORGANIZER; }
+
+    public NotificationType getTypeRaw() { return type; }
+
+    public void setTypeEnum(NotificationType type) { this.type = (type != null) ? type : NotificationType.ORGANIZER; }
 }

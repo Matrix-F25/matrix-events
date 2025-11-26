@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-messaging:25.0.1")
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation(libs.firebase.storage)
     testImplementation(libs.junit)

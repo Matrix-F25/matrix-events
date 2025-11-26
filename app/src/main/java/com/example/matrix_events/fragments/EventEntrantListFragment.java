@@ -132,7 +132,7 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
         Profile sender = event.getOrganizer();
         Timestamp now = Timestamp.now();
         for (Profile receiver : profileArray) {
-            Notification notification = new Notification(sender, receiver, message, now);
+            Notification notification = new Notification(sender, receiver, message, Notification.NotificationType.ORGANIZER, now);
             NotificationManager.getInstance().createNotification(notification);
         }
         Toast.makeText(requireContext(), "Message sent to entrants!", Toast.LENGTH_LONG).show();

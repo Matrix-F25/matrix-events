@@ -20,8 +20,10 @@ import com.example.matrix_events.entities.ReoccurringType;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
 import com.google.firebase.Timestamp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +47,19 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                 .setReorderingAllowed(true)
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_event_search))
                 .commit();
+
+        // Request FCM Token as soon as User Logs in because User must have a Profile to receive Notifications
+        FirebaseMessaging.getInstance().getToken()
+                .addOnSuccessListener(token -> {
+                    String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                    ProfileManager profileManager = ProfileManager.getInstance();
+                    Profile profile = profileManager.getProfileByDeviceId(deviceId);
+
+                    if (profile != null && (profile.getFCMToken() == null || !profile.getFCMToken().equals(token))) {
+                        profile.setFCMToken(token);
+                        profileManager.updateProfile(profile);
+                    }
+                });
 
         events = new ArrayList<>();
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);

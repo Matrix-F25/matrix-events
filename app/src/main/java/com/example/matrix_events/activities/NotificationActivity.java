@@ -14,6 +14,7 @@ import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.NotificationArrayAdapter;
 import com.example.matrix_events.entities.Notification;
 import com.example.matrix_events.fragments.NavigationBarFragment;
+import com.example.matrix_events.fragments.NotificationSeeMoreFragment;
 import com.example.matrix_events.managers.NotificationManager;
 import com.example.matrix_events.mvc.View;
 
@@ -25,6 +26,7 @@ public class NotificationActivity extends AppCompatActivity implements View {
     private ArrayList<Notification> notifications;
     private NotificationArrayAdapter notificationArrayAdapter;
     private String deviceId;
+    private String notificationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +49,22 @@ public class NotificationActivity extends AppCompatActivity implements View {
         ListView notificationListView = findViewById(R.id.notification_listview);
         notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);
         notificationListView.setAdapter(notificationArrayAdapter);
-
-        update();
+        notificationId = getIntent().getStringExtra("notificationId");
+        if (notificationId != null) {
+            Notification target = NotificationManager.getInstance().getNotificationByDBID(notificationId);
+            if (target != null) {
+                // Optional: open See More fragment instantly
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main, NotificationSeeMoreFragment.newInstance(target, "entrant"))
+                        .addToBackStack(null)
+                        .commit();
+            }
+        }
 
         // observe notification manager
         NotificationManager.getInstance().addView(this);
+        update();
+
     }
 
     @Override
