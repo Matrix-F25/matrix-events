@@ -1,11 +1,15 @@
 package com.example.matrix_events.managers;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.matrix_events.database.DBConnector;
 import com.example.matrix_events.database.DBListener;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.mvc.Model;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,8 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     private static final String TAG = "ProfileManager";
     private List<Profile> profiles = new ArrayList<>();
     private final DBConnector<Profile> connector = new DBConnector<Profile>("profiles", this, Profile.class);
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private final StorageReference profileStorageRef = storage.getReference("profiles"); // Profile Folder in Firebase Storage
 
     // Singleton
     private static ProfileManager manager = new ProfileManager();
@@ -29,6 +35,12 @@ public class ProfileManager extends Model implements DBListener<Profile> {
      * @return The single, static instance of ProfileManager.
      */
     public static ProfileManager getInstance() { return manager; }
+
+    // Callback Interface
+    public interface ProfileImageUploadCallback {
+        void onSuccess(String downloadUrl);
+        void onFailure(Exception e);
+    }
 
     // Profile getters
 
@@ -111,6 +123,44 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     }
 
     /**
+     * Upload profile image and update profile's imageUrl in Firestore.
+     * fileName uses deviceId to keep it unique per user (replace if re-uploading).
+     */
+    public void uploadProfilePicture(Uri imageUri, Profile profile, ProfileImageUploadCallback callback) {
+        if (imageUri == null || profile == null) {
+            callback.onFailure(new IllegalArgumentException("Missing image or profile"));
+            return;
+        }
+        // Permanent Filename per User for Replacement
+        String fileName = "profile_" + profile.getDeviceId() + ".jpg";
+
+        // If profile already has a stored file name, delete the old file
+        String previousFile = profile.getProfilePictureFileName();
+        if (previousFile != null && !previousFile.equals(fileName)) {
+            StorageReference oldRef = profileStorageRef.child(previousFile);
+            oldRef.delete().addOnSuccessListener(a -> {
+                Log.d("ProfileManager", "Old Profile Picture Deleted.");
+            }).addOnFailureListener(e -> {
+                Log.w("ProfileManager", "Failed to Delete Old Profile Picture.", e);
+            });
+        }
+
+        StorageReference ref = profileStorageRef.child(fileName);
+
+        UploadTask uploadTask = ref.putFile(imageUri);
+        uploadTask.continueWithTask(task -> {
+            if (!task.isSuccessful()) throw task.getException();
+            return ref.getDownloadUrl();
+        }).addOnSuccessListener(uri -> {
+            String downloadUrl = uri.toString();
+            profile.setProfilePictureUrl(downloadUrl);
+            profile.setProfilePictureFileName(fileName);
+            updateProfile(profile); // Update Firestore via DBConnector
+            callback.onSuccess(downloadUrl);
+        }).addOnFailureListener(callback::onFailure);
+    }
+
+    /**
      * Callback method invoked by {@link DBConnector} when the profile data changes in Firestore.
      * It updates the local profile cache and notifies all registered views of the change.
      *
@@ -119,7 +169,8 @@ public class ProfileManager extends Model implements DBListener<Profile> {
     @Override
     public void readAllAsync_Complete(List<Profile> objects) {
         Log.d(TAG, "ProfileManager read all complete, notifying views");
-        profiles = objects;
+        profiles.clear();
+        profiles.addAll(objects);
         // Notify views of profile changes
         notifyViews();
     }

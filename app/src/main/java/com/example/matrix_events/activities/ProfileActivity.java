@@ -1,16 +1,20 @@
 package com.example.matrix_events.activities;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.NavigationBarFragment;
@@ -18,12 +22,16 @@ import com.example.matrix_events.fragments.SettingsFragment;
 import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity implements View {
     // Declarations
+    private ShapeableImageView profilePictureView;
+    private ActivityResultLauncher<String> pickImageLauncher;
+    private Uri selectedImageUri;
     private TextInputEditText profileName;
     private TextInputEditText profileEmail;
     private TextInputEditText profilePhoneNumber;
@@ -55,6 +63,8 @@ public class ProfileActivity extends AppCompatActivity implements View {
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Initialize View Attributes
+        profilePictureView = findViewById(R.id.profile_picture_imageView);
+        MaterialButton profilePictureAddButton = findViewById(R.id.profile_picture_add_button);
         profileName = findViewById(R.id.profile_name);
         profileEmail = findViewById(R.id.profile_email);
         profilePhoneNumber = findViewById(R.id.profile_phone_number);
@@ -67,12 +77,77 @@ public class ProfileActivity extends AppCompatActivity implements View {
         // Observe Profile Manager
         profileManager.addView(this);
 
+        // Set Profile Picture (Default if none)
+        loadProfilePictureIfAvailable();
+
+        // Register the Image Picker (MIME type "image/*")
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        selectedImageUri = uri;
+                        // Optionally show preview immediately
+                        Glide.with(this)
+                                .load(uri)
+                                .circleCrop() // not necessary if ShapeableImageView handles shape
+                                .into(profilePictureView);
+
+                        // Upload to Firebase Storage and update profile
+                        uploadSelectedProfileImage();
+                    }
+                }
+        );
+
         // Set On Click Listeners
+        profilePictureAddButton.setOnClickListener(v -> {
+            // Launch Picker for Images
+            pickImageLauncher.launch("image/*");
+        });
         updateButton.setOnClickListener(v -> updateProfile());
         settingsButton.setOnClickListener(v -> openSettings());
 
         update();
     }
+
+    private void loadProfilePictureIfAvailable() {
+        Profile p = profileManager.getProfileByDeviceId(deviceId);
+        if (p != null && p.getProfilePictureUrl() != null && !p.getProfilePictureUrl().isEmpty()) {
+            Glide.with(this).load(p.getProfilePictureUrl()).into(profilePictureView);
+        } else {
+            // Show Default Placeholder
+            profilePictureView.setImageResource(R.drawable.default_profile_picture);
+        }
+    }
+
+    private void uploadSelectedProfileImage() {
+        if (selectedImageUri == null) return;
+
+        // Optionally show a progress indicator here
+        Profile current = profileManager.getProfileByDeviceId(deviceId);
+        if (current == null) {
+            Toast.makeText(this, "No profile found; please sign up first.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        profileManager.uploadProfilePicture(selectedImageUri, current, new ProfileManager.ProfileImageUploadCallback() {
+            @Override
+            public void onSuccess(String downloadUrl) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ProfileActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                    Glide.with(ProfileActivity.this).load(downloadUrl).into(profilePictureView);
+                });
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ProfileActivity.this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    // optionally restore previous image
+                });
+            }
+        });
+    }
+
 
     // Update User's Profile
     private void updateProfile() {

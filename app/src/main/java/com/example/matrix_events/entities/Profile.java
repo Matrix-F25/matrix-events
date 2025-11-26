@@ -3,6 +3,7 @@ package com.example.matrix_events.entities;
 import androidx.annotation.NonNull;
 
 import com.example.matrix_events.database.DBObject;
+import com.google.firebase.firestore.Exclude;
 
 import java.io.Serializable;
 
@@ -12,14 +13,18 @@ public class Profile extends DBObject implements Serializable {
     private String email;
     private String phoneNumber; // optional, can be null
     private String deviceId;
+    private String profilePictureUrl;
+    private String profilePictureFileName;
+    private String FCMToken = "";
 
     // Profile Notification Preferences
     // Notifications on by Default
-    private boolean emailAdminNotifications = true;
-    private boolean emailOrganizerNotifications = true;
-    private boolean phoneAdminNotifications = true;
-    private boolean phoneOrganizerNotifications = true;
+    private boolean inAppAdminNotifications = true;
+    private boolean inAppOrganizerNotifications = true;
+    private boolean pushAdminNotifications = true;
+    private boolean pushOrganizerNotifications = true;
     private boolean notificationsEnabled = true;
+
     private boolean isAdmin = false;
 
     // Constructors
@@ -30,6 +35,10 @@ public class Profile extends DBObject implements Serializable {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.deviceId = deviceId;
+
+        // Safe defaults for new fields
+        this.profilePictureUrl = "";
+        this.profilePictureFileName = "";
     }
 
     // Getters and Setters
@@ -54,35 +63,45 @@ public class Profile extends DBObject implements Serializable {
     public String getDeviceId() {
         return deviceId;
     }
+    public String getFCMToken() { return FCMToken; }
+    public void setFCMToken(String FCMToken) { this.FCMToken = FCMToken; }
     public boolean isNotificationsEnabled() {
         return notificationsEnabled;
     }
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
-    public boolean isEmailAdminNotifications() {
-        return emailAdminNotifications;
+    public boolean isInAppAdminNotifications() {
+        return inAppAdminNotifications;
     }
-    public void setEmailAdminNotifications(boolean emailAdminNotifications) {
-        this.emailAdminNotifications = emailAdminNotifications;
+    public void setInAppAdminNotifications(boolean inAppAdminNotifications) {
+        this.inAppAdminNotifications = inAppAdminNotifications;
     }
-    public boolean isEmailOrganizerNotifications() {
-        return emailOrganizerNotifications;
+    public boolean isInAppOrganizerNotifications() {
+        return inAppOrganizerNotifications;
     }
-    public void setEmailOrganizerNotifications(boolean emailOrganizerNotifications) {
-        this.emailOrganizerNotifications = emailOrganizerNotifications;
+    public void setInAppOrganizerNotifications(boolean inAppOrganizerNotifications) {
+        this.inAppOrganizerNotifications = inAppOrganizerNotifications;
     }
-    public boolean isPhoneAdminNotifications() {
-        return phoneAdminNotifications;
+    public boolean isPushAdminNotifications() {
+        return pushAdminNotifications;
     }
-    public void setPhoneAdminNotifications(boolean phoneAdminNotifications) {
-        this.phoneAdminNotifications = phoneAdminNotifications;
+    public void setPushAdminNotifications(boolean pushAdminNotifications) {
+        this.pushAdminNotifications = pushAdminNotifications;
     }
-    public boolean isPhoneOrganizerNotifications() { return phoneOrganizerNotifications; }
-    public void setPhoneOrganizerNotifications(boolean phoneOrganizerNotifications) {
-        this.phoneOrganizerNotifications = phoneOrganizerNotifications;
+    public boolean isPushOrganizerNotifications() { return pushOrganizerNotifications; }
+    public void setPushOrganizerNotifications(boolean pushOrganizerNotifications) {
+        this.pushOrganizerNotifications = pushOrganizerNotifications;
     }
     public boolean isAdmin() { return isAdmin; }
     public void setAdmin(boolean admin) { isAdmin = admin; }
 
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = (profilePictureUrl == null) ? "" : profilePictureUrl;
+    }
+    public String getProfilePictureFileName() { return profilePictureFileName; }
+    public void setProfilePictureFileName(String profilePictureFileName) {
+        this.profilePictureFileName = profilePictureFileName;
+    }
 }

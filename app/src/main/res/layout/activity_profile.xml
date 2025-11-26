@@ -54,7 +54,7 @@
 
         <!-- Profile Picture -->
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/profile_picture_imageView"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
@@ -66,12 +66,13 @@
 
         <!-- Overlaid "+" button -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/profile_image_add_button"
+            android:id="@+id/profile_picture_add_button"
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:backgroundTint="@color/grey"
+            android:contentDescription="@string/add_profile_picture"
             app:strokeWidth="2dp"
             app:strokeColor="@color/filter_grey2"
             app:icon="@drawable/ic_add"
@@ -88,7 +89,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="70dp"
-        android:paddingVertical="5dp"
+        android:paddingVertical="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
