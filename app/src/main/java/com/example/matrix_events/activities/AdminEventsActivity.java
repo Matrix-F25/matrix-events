@@ -118,7 +118,7 @@ public class AdminEventsActivity extends AppCompatActivity implements View, Even
             Profile receiver = ProfileManager.getInstance().getProfileByDeviceId(deviceId);
             // if the profile exists, create a notification
             if (receiver != null) {
-                Notification notification = new Notification(sender, receiver, message, currentTime);
+                Notification notification = new Notification(sender, receiver, message, Notification.NotificationType.ORGANIZER, currentTime);
                 NotificationManager.getInstance().createNotification(notification);
             }
         }
