@@ -9,6 +9,7 @@ import com.example.matrix_events.managers.NotificationManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.google.firebase.Timestamp;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +26,14 @@ public class Event extends DBObject implements Serializable {
     private String description;
     private Profile organizer;
     private Geolocation location;
-    private Timestamp eventStartDateTime;
-    private Timestamp eventEndDateTime;
+    private transient Timestamp eventStartDateTime;
+    private transient Timestamp eventEndDateTime;
     private Integer eventCapacity;
     private Integer waitlistCapacity;                       // can be null if no limit
-    private Timestamp registrationStartDateTime;
-    private Timestamp registrationEndDateTime;
+    private transient Timestamp registrationStartDateTime;
+    private transient Timestamp registrationEndDateTime;
     private Boolean isReoccurring = false;
-    private Timestamp reoccurringEndDateTime;               // can be null if not reoccurring
+    private transient Timestamp reoccurringEndDateTime;     // can be null if not reoccurring
     private ReoccurringType reoccurringType;                // can be null if not reoccurring
     private Boolean geolocationTrackingEnabled = true;
     private Poster poster;                                  // can be null if no poster
@@ -638,4 +639,35 @@ public class Event extends DBObject implements Serializable {
      * @param pendingExpired The new pending expired status.
      */
     public void setPendingExpired(boolean pendingExpired) { this.pendingExpired = pendingExpired; }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+
+        // manually write the Timestamp fields as milliseconds (long)
+        out.writeLong(eventStartDateTime.toDate().getTime());
+        out.writeLong(eventEndDateTime.toDate().getTime());
+        out.writeLong(registrationStartDateTime.toDate().getTime());
+        out.writeLong(registrationEndDateTime.toDate().getTime());
+
+        // reoccurring end date can be null
+        out.writeLong(reoccurringEndDateTime != null ? reoccurringEndDateTime.toDate().getTime() : -1L);
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+
+        // manually read the Timestamp fields and convert back to Firebase Timestamp
+        long start = in.readLong();
+        eventStartDateTime = new Timestamp(new java.util.Date(start));
+        long end = in.readLong();
+        eventEndDateTime = new Timestamp(new java.util.Date(end));
+        long regStart = in.readLong();
+        registrationStartDateTime = new Timestamp(new java.util.Date(regStart));
+        long regEnd = in.readLong();
+        registrationEndDateTime = new Timestamp(new java.util.Date(regEnd));
+
+        // reoccurring end date can be null
+        long reoccurringEnd = in.readLong();
+        reoccurringEndDateTime = reoccurringEnd != -1L ? new Timestamp(new java.util.Date(reoccurringEnd)) : null;
+    }
 }
