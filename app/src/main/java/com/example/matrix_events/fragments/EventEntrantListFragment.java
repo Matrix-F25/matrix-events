@@ -1,10 +1,19 @@
 package com.example.matrix_events.fragments;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -21,7 +30,10 @@ import com.example.matrix_events.managers.NotificationManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.google.firebase.Timestamp;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class EventEntrantListFragment extends Fragment implements com.example.matrix_events.mvc.View, ProfileArrayAdapter.Listener {
 
@@ -36,6 +48,9 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
     private ListType listType;
     private ArrayList<Profile> profileArray;
     private ProfileArrayAdapter profileAdapter;
+    private ActivityResultLauncher<Intent> downloadCSVLauncher;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
     public EventEntrantListFragment() {
         super(R.layout.fragment_event_entrant_list);
@@ -48,6 +63,28 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
         args.putSerializable("listType", listType);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        downloadCSVLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri uri = result.getData().getData();
+                        if (uri != null) {
+                            writeCSVToURI(uri);
+                        } else {
+                            // handle case where URI is null (e.g. user canceled after initial selection)
+                            Toast.makeText(requireContext(), "File location selection canceled.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else if (result.getResultCode() != Activity.RESULT_CANCELED) {
+                        // handle other non-OK results
+                        Toast.makeText(requireContext(), "File creation failed or canceled.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     @Override
@@ -96,7 +133,13 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
 
         Button downloadCSVButton = view.findViewById(R.id.ent_list_download_button);
         downloadCSVButton.setOnClickListener(v -> {
-            // TODO
+            Log.d("DEBUG", "Starting list CSV download");
+            if (profileArray.isEmpty()) {
+                Toast.makeText(requireContext(), "No entrants in list!", Toast.LENGTH_LONG).show();
+            }
+            else {
+                createCSVFile();
+            }
         });
 
         update();
@@ -111,6 +154,69 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
         super.onDestroy();
         EventManager.getInstance().removeView(this);
         ProfileManager.getInstance().removeView(this);
+        executorService.shutdownNow();
+    }
+
+    private void createCSVFile() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");
+
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        String filename = "Entrants_" + listType.toString() + "_" + timestamp + ".csv";
+
+        intent.putExtra(Intent.EXTRA_TITLE, filename);
+        downloadCSVLauncher.launch(intent);
+    }
+
+    private void writeCSVToURI(Uri uri) {
+        final ArrayList<Profile> dataToWrite = new ArrayList<>(profileArray);
+        final Context applicationContext = requireContext().getApplicationContext();
+
+        executorService.execute(() -> {
+            try {
+                try (OutputStream outputStream = applicationContext.getContentResolver().openOutputStream(uri)) {
+                    if (outputStream == null) {
+                        throw new Exception("Failed to open output stream.");
+                    }
+
+                    StringBuilder csvContent = new StringBuilder();
+                    csvContent.append("Name,Email,Phone Number\n");
+
+                    for (Profile profile : dataToWrite) {
+                        String name = escapeCSVField(profile.getName());
+                        String email = escapeCSVField(profile.getEmail());
+                        String phone = escapeCSVField(profile.getPhoneNumber());
+
+                        csvContent.append(name).append(",")
+                                .append(email).append(",")
+                                .append(phone).append("\n");
+                    }
+
+                    outputStream.write(csvContent.toString().getBytes());
+                    mainThreadHandler.post(() -> {
+                        Toast.makeText(applicationContext, "Export successful!", Toast.LENGTH_LONG).show();
+                    });
+
+                }
+            } catch (Exception e) {
+                Log.e("EventEntrantList", "Error writing CSV file", e);
+                mainThreadHandler.post(() -> {
+                    Toast.makeText(applicationContext, "Error saving file: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        });
+    }
+
+    private String escapeCSVField(String field) {
+        if (field == null) {
+            return "";
+        }
+        // if the field contains a comma, newline, or double quote, wrap it in double quotes.
+        if (field.contains(",") || field.contains("\n") || field.contains("\"")) {
+            return "\"" + field.replace("\"", "\"\"") + "\"";
+        }
+        return field;
     }
 
     @Override
