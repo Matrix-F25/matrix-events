@@ -118,90 +118,21 @@ public class AdminProfileActivity extends AppCompatActivity implements View, Pro
             profileArrayAdapter.notifyDataSetChanged();
         }
     }
-
     public void cancelProfile(String deviceID) {
 
         Profile profileToDelete = ProfileManager.getInstance().getProfileByDeviceId(deviceID);
 
         new AlertDialog.Builder(this)
                 .setTitle("Delete Profile")
-                .setMessage("Are you sure you want to delete " + profileToDelete.getName() + "? This cannot be undone.")
+                .setMessage("Are you sure you want to delete " + profileToDelete.getName() + "? This will also cancel and delete any events they organized.")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    deleteProfile(profileToDelete);
-                    Toast.makeText(this, "Profile deleted and removed from all events.", Toast.LENGTH_SHORT).show();
+
+                    EventManager.getInstance().removeFromAllEvents(deviceID); // first, remove the user from all events
+                    ProfileManager.getInstance().deleteProfile(profileToDelete); // then, delete the profile
+
+                    Toast.makeText(this, "Profile deleted.", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
-    }
-
-    private void deleteProfile(Profile profile) {
-
-        String deviceId = profile.getDeviceId();
-        List<Event> allEvents = new ArrayList<>(EventManager.getInstance().getEvents());
-
-        for (Event event : allEvents) {
-
-            boolean isModified = false;
-
-            // first, we check if the user is an organizer of an event
-            if (event.getOrganizer().getDeviceId().equals(deviceId)) {
-                notifyAndDeleteEvent(event); // if they are the organizer, it notifies all the people associated with the event. the profile, along with the event, are also deleted
-                continue;
-            }
-
-            // remove users from all the lists
-            if (event.getWaitList().remove(deviceId)) {
-                isModified = true;
-            }
-            if (event.getPendingList().remove(deviceId)) {
-                isModified = true;
-            }
-            if (event.getAcceptedList().remove(deviceId)) {
-                isModified = true;
-            }
-            if (event.getDeclinedList().remove(deviceId)) {
-                isModified = true;
-            }
-
-            // update the event if the list was modified
-            // no need to update if
-            if (isModified) {
-                EventManager.getInstance().updateEvent(event);
-            }
-        }
-
-        // delete the profile
-        // profile is deleted normally if they are not the organizer of that event
-        ProfileManager.getInstance().deleteProfile(profile);
-    }
-
-    // used when the profile to be deleted is an organizer
-    private void notifyAndDeleteEvent(Event event) {
-
-        List<String> usersToNotify = new ArrayList<>();
-
-        if (event.getWaitList() != null) {
-            usersToNotify.addAll(event.getWaitList());
-        }
-        if (event.getPendingList() != null) {
-            usersToNotify.addAll(event.getPendingList());
-        }
-        if (event.getAcceptedList() != null) {
-            usersToNotify.addAll(event.getAcceptedList());
-        }
-
-        Profile sender = event.getOrganizer();
-        String message = "Event '" + event.getName() + "' has been cancelled because the organizer's account was removed.";
-        Timestamp currentTime = Timestamp.now();
-
-        for (String userId : usersToNotify) {
-            Profile receiver = ProfileManager.getInstance().getProfileByDeviceId(userId);
-            if (receiver != null) {
-                Notification notification = new Notification(sender, receiver, message, currentTime);
-                NotificationManager.getInstance().createNotification(notification);
-            }
-        }
-
-        EventManager.getInstance().deleteEvent(event);
     }
 }
