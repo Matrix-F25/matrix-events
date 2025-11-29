@@ -3,9 +3,7 @@ package com.example.matrix_events.fragments;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,7 +12,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -32,8 +29,6 @@ import com.google.android.material.materialswitch.MaterialSwitch;
  */
 public class EventEditFragment extends Fragment implements com.example.matrix_events.mvc.View {
     private static final String TAG = "EventEditFragment";
-    private static final String ARG_EVENT = "event";
-    private static final String ARG_EVENT_ID = "event_id";
 
     View view = null;
     ImageView posterImage;
@@ -43,6 +38,9 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
     private EditText eventNameInput;
     private EditText eventDescriptionInput;
     private EditText eventLocationInput;
+
+    private Button backButton, confirmChangesButton, deleteEventButton;
+    private boolean isUpdating = false;
 
 
     // Launcher for selecting an image from the gallery
@@ -70,46 +68,29 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
     public static EventEditFragment newInstance(Event event) {
         EventEditFragment fragment = new EventEditFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_EVENT, event);
-        /*
-        // Pass ID since it might be lost during Event serialization it was rawr
-        if (event != null) {
-            args.putString(ARG_EVENT_ID, event.getId());
-        }
-         */
+        args.putSerializable("event", event);
         fragment.setArguments(args);
         return fragment;
     }
-    /*
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-            // Restore the ID if it was lost it was even harder rawwr
-            if (event != null) {
-                String eventId = getArguments().getString(ARG_EVENT_ID);
-                if (eventId != null) {
-                    event.setId(eventId);
-                }
-
-            }
-        }
-    }
-
-     */
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
         if (getArguments() != null) {
-            event = (Event) getArguments().getSerializable(ARG_EVENT);
+            event = (Event) getArguments().getSerializable("event");
         }
         assert event != null;
 
-        Button backButton = view.findViewById(R.id.back_btn);
+        backButton = view.findViewById(R.id.back_btn);
         if (backButton != null) {
-            backButton.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+            backButton.setOnClickListener(v -> {
+                if (!isUpdating) {
+                    getParentFragmentManager().popBackStack();
+                } else {
+                    Toast.makeText(requireContext(), "Please wait, updating event...", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         update();
@@ -132,6 +113,19 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
         }
     }
 
+    public void setLoading(boolean loading) {
+        isUpdating = loading;
+        if (backButton != null) {
+            backButton.setEnabled(!loading);
+        }
+        if (confirmChangesButton != null) {
+            confirmChangesButton.setEnabled(!loading);
+        }
+        if (deleteEventButton != null) {
+            deleteEventButton.setEnabled(!loading);
+        }
+    }
+
     public void render() {
         // Display poster image if available
         posterImage = view.findViewById(R.id.event_poster_image);
@@ -147,8 +141,9 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
         }
 
         Button uploadPosterButton = view.findViewById(R.id.upload_poster_btn);
-        Button confirmChangesButton = view.findViewById(R.id.confirm_changes_btn);
-        Button deleteEventButton = view.findViewById(R.id.delete_event_btn);
+        confirmChangesButton = view.findViewById(R.id.confirm_changes_btn);
+        deleteEventButton = view.findViewById(R.id.delete_event_btn);
+
         geolocationTrackingSwitch = view.findViewById(R.id.geolocation_tracking_switch);
         eventNameInput = view.findViewById(R.id.event_name_input);
         eventDescriptionInput = view.findViewById(R.id.event_description_input);
@@ -186,6 +181,8 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
      * Uploads the selected poster image and updates the event in Firestore.
      */
     private void uploadPosterThenUpdateEvent() {
+        // start loading state
+        setLoading(true);
 
         if (eventNameInput != null) {
             event.setName(eventNameInput.getText().toString().trim());
@@ -211,12 +208,15 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
             // if poster exists (updates)
             Poster currentPoster = event.getPoster();
             if (currentPoster != null) {
-                PosterManager.getInstance().updatePosterImage(posterUri, currentPoster, // creating poster
+                // updating poster
+                PosterManager.getInstance().updatePosterImage(posterUri, currentPoster,
                         new PosterManager.PosterUploadCallback() {
                             @Override
                             public void onSuccess(Poster poster) {
                                 EventManager.getInstance().updateEvent(event);
 
+                                // stop loading and close fragment
+                                setLoading(false);
                                 if (isAdded() && getContext() != null) {
                                     Toast.makeText(requireContext(), "Event updated successfully!", Toast.LENGTH_SHORT).show();
                                     getParentFragmentManager().popBackStack();
@@ -226,6 +226,7 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
                             @Override
                             public void onFailure(Exception e) {
                                 Log.e(TAG, "Poster update failed", e);
+                                setLoading(false);
                                 if (isAdded() && getContext() != null) {
                                     Toast.makeText(requireContext(), "Poster update failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                 }
@@ -234,15 +235,17 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
             }
             // if poster doesn't exist (uploads)
             else {
-                PosterManager.getInstance().uploadPosterImage(posterUri, event.getId(), // creating poster
+                // creating poster
+                PosterManager.getInstance().uploadPosterImage(posterUri, event.getId(),
                         new PosterManager.PosterUploadCallback() {
                             @Override
                             public void onSuccess(Poster poster) {
-                                // Update event with new poster details
-                                poster.setEventId(event.getId());
+                                // poster has its Firestore ID
                                 event.setPoster(poster);
                                 EventManager.getInstance().updateEvent(event);
 
+                                // stop loading and close fragment
+                                setLoading(false);
                                 if (isAdded() && getContext() != null) {
                                     Toast.makeText(requireContext(), "Event updated successfully!", Toast.LENGTH_SHORT).show();
                                     getParentFragmentManager().popBackStack();
@@ -252,6 +255,7 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
                             @Override
                             public void onFailure(Exception e) {
                                 Log.e(TAG, "Poster upload failed", e);
+                                setLoading(false);
                                 if (isAdded() && getContext() != null) {
                                     Toast.makeText(requireContext(), "Poster upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                 }
@@ -261,18 +265,29 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
         } else {
             // Just update the event details (e.g. geolocation tracking) without changing poster
             EventManager.getInstance().updateEvent(event);
-            Toast.makeText(requireContext(), "Event updated successfully!", Toast.LENGTH_SHORT).show();
-            getParentFragmentManager().popBackStack();
+
+            // wait before closing
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                setLoading(false);
+                Toast.makeText(requireContext(), "Event updated successfully!", Toast.LENGTH_SHORT).show();
+                getParentFragmentManager().popBackStack();
+            }, 500);
         }
     }
     /**
      * Deletes the current event from Firebase and navigates back.
      */
     private void deleteEvent() {
-        if (event != null) {
+        if (event != null && !isUpdating) {
+            setLoading(true);
             EventManager.getInstance().deleteEvent(event);
-            Toast.makeText(requireContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
-            getParentFragmentManager().popBackStack();
+
+            // wait before deleting
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                setLoading(false);
+                Toast.makeText(requireContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                getParentFragmentManager().popBackStack();
+            }, 500);
         }
     }
 }

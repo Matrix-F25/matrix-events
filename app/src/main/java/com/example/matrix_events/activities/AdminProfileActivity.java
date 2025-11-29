@@ -1,17 +1,37 @@
 package com.example.matrix_events.activities;
 
 import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.adapters.ProfileArrayAdapter;
+import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Notification;
+import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.AdminNavigationBarFragment;
+import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.NotificationManager;
+import com.example.matrix_events.managers.ProfileManager;
+import com.example.matrix_events.mvc.View;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.Timestamp;
 
-public class AdminProfileActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdminProfileActivity extends AppCompatActivity implements View, ProfileArrayAdapter.Listener {
+    private ArrayList<Profile> profiles;
+    private ProfileArrayAdapter profileArrayAdapter;
+    private TabLayout tabLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,5 +46,93 @@ public class AdminProfileActivity extends AppCompatActivity {
                 .setReorderingAllowed(true)
                 .replace(R.id.admin_navigation_bar_fragment, AdminNavigationBarFragment.newInstance(R.id.nav_admin_profile))
                 .commit();
+
+        profiles = new ArrayList<>();
+        ListView adminProfileList = findViewById(R.id.profile_listview);
+        profileArrayAdapter = new ProfileArrayAdapter(this, profiles, true, this);
+        adminProfileList.setAdapter(profileArrayAdapter);
+
+        tabLayout = findViewById(R.id.profile_tabs);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                update();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        update();
+
+        ProfileManager.getInstance().addView(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ProfileManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+
+        profiles.clear();
+        List<Profile> allProfiles = ProfileManager.getInstance().getProfiles();
+        List<Event> allEvents = EventManager.getInstance().getEvents();
+        int selectedTab = tabLayout.getSelectedTabPosition();
+
+        // just shows all the profiles
+        if (selectedTab == 0) {
+            profiles.addAll(allProfiles);
+
+            // the organizers tab
+        } else if (selectedTab == 1) {
+
+            for (Profile profile : allProfiles) {
+
+                boolean isOrganizer = false;
+
+                // go through all events
+                for (Event event : allEvents) {
+                    if (event.getOrganizer().getDeviceId().equals(profile.getDeviceId())) { // if the event organizer's device id matches the profile's device id, then the profile is an organizer
+                        isOrganizer = true;
+                        break;
+                    }
+                }
+
+                if (isOrganizer) {
+                    profiles.add(profile);
+                }
+            }
+        }
+
+        if (profileArrayAdapter != null) {
+            profileArrayAdapter.notifyDataSetChanged();
+        }
+    }
+    public void cancelProfile(String deviceID) {
+
+        Profile profileToDelete = ProfileManager.getInstance().getProfileByDeviceId(deviceID);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Profile")
+                .setMessage("Are you sure you want to delete " + profileToDelete.getName() + "? This will also cancel and delete any events they organized.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+
+                    EventManager.getInstance().removeFromAllEvents(deviceID); // first, remove the user from all events
+                    ProfileManager.getInstance().deleteProfile(profileToDelete); // then, delete the profile
+
+                    Toast.makeText(this, "Profile deleted.", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }

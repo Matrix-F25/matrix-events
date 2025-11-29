@@ -1,6 +1,8 @@
 package com.example.matrix_events.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import com.example.matrix_events.utils.TimestampConverter;
 
 public class OrganizerEventFragment extends Fragment implements com.example.matrix_events.mvc.View {
 
+    private static final String TAG = "OrganizerEventFragment";
     View view = null;
     private Event event = null;
 
@@ -101,6 +104,11 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
 
     @Override
     public void update() {
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skipping update");
+            return;
+        }
+
         event = EventManager.getInstance().getEventByDBID(event.getId());
         if (event != null) {
             render();
@@ -108,12 +116,22 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
     }
 
     public void render() {
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skipping update");
+            return;
+        }
+
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+
         // Display poster image if available
         ImageView posterImage = view.findViewById(R.id.org_event_poster_image);
 
         if (event.getPoster() != null && event.getPoster().getImageUrl() != null) {
             String posterUrl = event.getPoster().getImageUrl();
-            Glide.with(requireContext())
+            Glide.with(context)
                     .load(posterUrl)
                     .placeholder(R.drawable.placeholder)        // optional
                     .error(R.drawable.placeholder)              // optional

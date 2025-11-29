@@ -35,16 +35,20 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.firebase.Timestamp;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class EventCreateFragment extends Fragment {
 
+    View view = null;
     private EditText nameInput, descriptionInput, capacityInput, locationInput, waitlistCapacityInput;
-    private Button startDateButton, endDateButton, regStartButton, regEndButton, createButton, uploadPosterButton, reoccurringEndDateButton, backButton;
     private MaterialSwitch isReoccurringSwitch, geolocationTrackingSwitch;
     private Spinner reoccurringTypeSpinner;
     private View reoccurringSection;
     private Timestamp eventStart, eventEnd, regStart, regEnd, reoccurringEndDateTime;
     private Uri posterUri = null;
+
+    private Button backButton, createButton;
+    private boolean isCreating = false;
 
     private static final String TAG = "EventCreateFragment";
 
@@ -60,36 +64,43 @@ public class EventCreateFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_event_create, container, false);
+    }
 
-        View view = inflater.inflate(R.layout.fragment_event_create, container, false);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.view = view;
 
+        backButton = view.findViewById(R.id.back_btn);
+        backButton.setOnClickListener(v -> {
+            if (!isCreating) {
+                getParentFragmentManager().popBackStack();
+            } else {
+                Toast.makeText(requireContext(), "Please wait, creating event...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        render();
+    }
+
+    public void render() {
+        // Inputs
         nameInput = view.findViewById(R.id.event_name_input);
         descriptionInput = view.findViewById(R.id.event_description_input);
         capacityInput = view.findViewById(R.id.event_capacity_input);
         waitlistCapacityInput = view.findViewById(R.id.waitlist_capacity_input);
         locationInput = view.findViewById(R.id.event_location_input);
 
+        // Show/hide reoccurring section
         isReoccurringSwitch = view.findViewById(R.id.is_reoccurring_switch);
         reoccurringSection = view.findViewById(R.id.reoccurring_section);
-        reoccurringTypeSpinner = view.findViewById(R.id.reoccurring_type_spinner);
-        reoccurringEndDateButton = view.findViewById(R.id.reoccurring_end_date_btn);
-        geolocationTrackingSwitch = view.findViewById(R.id.geolocation_tracking_switch);
-
-        regStartButton = view.findViewById(R.id.reg_start_date_btn);
-        regEndButton = view.findViewById(R.id.reg_end_date_btn);
-        startDateButton = view.findViewById(R.id.event_start_date_btn);
-        endDateButton = view.findViewById(R.id.event_end_date_btn);
-
-        uploadPosterButton = view.findViewById(R.id.upload_poster_btn);
-        createButton = view.findViewById(R.id.create_event_btn);
-        backButton = view.findViewById(R.id.back_btn);
-
-        // Show/hide reoccurring section
         isReoccurringSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             reoccurringSection.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
 
         // Spinner setup using enum
+        reoccurringTypeSpinner = view.findViewById(R.id.reoccurring_type_spinner);
         ArrayAdapter<ReoccurringType> typeAdapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_spinner_item,
@@ -99,20 +110,34 @@ public class EventCreateFragment extends Fragment {
         reoccurringTypeSpinner.setAdapter(typeAdapter);
 
         // Pick reoccurring end date
+        Button reoccurringEndDateButton = view.findViewById(R.id.reoccurring_end_date_btn);
         reoccurringEndDateButton.setOnClickListener(v -> pickDateTime(ts -> reoccurringEndDateTime = ts));
 
+        geolocationTrackingSwitch = view.findViewById(R.id.geolocation_tracking_switch);
+
+        // Pick registration start date
+        Button regStartButton = view.findViewById(R.id.reg_start_date_btn);
         regStartButton.setOnClickListener(v -> pickDateTime(ts -> regStart = ts));
+
+        // Pick registration end date
+        Button regEndButton = view.findViewById(R.id.reg_end_date_btn);
         regEndButton.setOnClickListener(v -> pickDateTime(ts -> regEnd = ts));
+
+        // Pick event start date
+        Button startDateButton = view.findViewById(R.id.event_start_date_btn);
         startDateButton.setOnClickListener(v -> pickDateTime(ts -> eventStart = ts));
+
+        // Pick event end date
+        Button endDateButton = view.findViewById(R.id.event_end_date_btn);
         endDateButton.setOnClickListener(v -> pickDateTime(ts -> eventEnd = ts));
 
+        // Upload poster
+        Button uploadPosterButton = view.findViewById(R.id.upload_poster_btn);
         uploadPosterButton.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
-        createButton.setOnClickListener(v -> uploadPosterThenCreateEvent());
-        backButton.setOnClickListener(v -> {
-            getParentFragmentManager().popBackStack();
-        });
 
-        return view;
+        // Create event
+        createButton = view.findViewById(R.id.create_event_btn);
+        createButton.setOnClickListener(v -> uploadPosterThenCreateEvent());
     }
 
     private interface TimestampCallback {
@@ -137,6 +162,16 @@ public class EventCreateFragment extends Fragment {
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
+    }
+
+    public void setLoading(boolean loading) {
+        isCreating = loading;
+        if (createButton != null) {
+            createButton.setEnabled(!loading);
+        }
+        if (backButton != null) {
+            backButton.setEnabled(!loading);
+        }
     }
 
     private void uploadPosterThenCreateEvent() {
@@ -167,15 +202,14 @@ public class EventCreateFragment extends Fragment {
                 return;
             }
 
+            // start loading state
+            setLoading(true);
+
             String deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             Profile organizer = ProfileManager.getInstance().getProfileByDeviceId(deviceId);
             Geolocation location = new Geolocation(locationName, -123.3656, 48.4284);
 
-            // temp fix for asynch shenanigans, sets aside eventId so poster doesn't grab null because firebase takes forever to create id for event
-            String eventId = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                    .collection("events").document().getId();
-
-            // Create the base event first (without poster)
+            // create the base event first (without poster)
             Event newEvent = new Event(
                     name,
                     description,
@@ -194,32 +228,86 @@ public class EventCreateFragment extends Fragment {
                     null
             );
 
-            newEvent.setId(eventId);
-
-            // upload the poster after event creation (using its id)
+            // create event with poster if uploaded
             if (posterUri != null) {
-                PosterManager.getInstance().uploadPosterImage(posterUri, eventId,
-                        new PosterManager.PosterUploadCallback() {
-                            @Override
-                            public void onSuccess(Poster poster) {
-                                poster.setEventId(eventId);
-                                newEvent.setPoster(poster);
+                // get current event count before creating event
+                final int eventCountBefore = EventManager.getInstance().getEvents().size();
 
-                                // poster is not null
-                                EventManager.getInstance().createEvent(newEvent);
-                                Toast.makeText(requireContext(), "Event and poster uploaded!", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-                                Log.e(TAG, "Poster upload failed", e);
-                                Toast.makeText(requireContext(), "Poster upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
-            } else {
-                // poster is null
+                // create event first using DBConnector
                 EventManager.getInstance().createEvent(newEvent);
-                Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show();
+
+                // wait for event to get its ID from Firestore
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+                    private int attempts = 0;
+                    private final int MAX_ATTEMPTS = 50; // 5 seconds max
+
+                    @Override
+                    public void run() {
+                        // check if a new event has been added
+                        List<Event> currentEvents = EventManager.getInstance().getEvents();
+
+                        if (currentEvents.size() > eventCountBefore) {
+                            // find the newest event by this organizer with matching details
+                            Event createdEvent = null;
+                            for (Event event : currentEvents) {
+                                if (event.getId() != null && !event.getId().isEmpty() &&
+                                        event.getName().equals(name) &&
+                                        event.getOrganizer().getDeviceId().equals(deviceId)) {
+                                    createdEvent = event;
+                                    break;
+                                }
+                            }
+                            if (createdEvent != null) {
+                                // event has its ID
+                                String eventId = createdEvent.getId();
+
+                                PosterManager.getInstance().uploadPosterImage(posterUri, eventId,
+                                        new PosterManager.PosterUploadCallback() {
+                                            @Override
+                                            public void onSuccess(Poster poster) {
+                                                // poster has its Firestore ID
+                                                Event latestEvent = EventManager.getInstance().getEventByDBID(eventId);
+                                                if (latestEvent != null) {
+                                                    latestEvent.setPoster(poster);
+                                                    EventManager.getInstance().updateEvent(latestEvent);
+                                                }
+
+                                                // stop loading and close fragment
+                                                setLoading(false);
+                                                Toast.makeText(requireContext(), "Event and poster uploaded!", Toast.LENGTH_SHORT).show();
+                                                getParentFragmentManager().popBackStack();
+                                            }
+
+                                            @Override
+                                            public void onFailure(Exception e) {
+                                                Log.e(TAG, "Poster upload failed", e);
+                                                setLoading(false);
+                                                Toast.makeText(requireContext(), "Poster upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                            } else if (attempts < MAX_ATTEMPTS) {
+                                // try again in 100ms
+                                attempts++;
+                                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(this, 100);
+                            } else {
+                                // timeout
+                                Log.e(TAG, "Timeout waiting for event ID");
+                                setLoading(false);
+                                Toast.makeText(requireContext(), "Error: Timeout creating event", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                }, 100);
+            } else {
+                // null poster
+                EventManager.getInstance().createEvent(newEvent);
+
+                // wait before closing
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    setLoading(false);
+                    Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show();
+                    getParentFragmentManager().popBackStack();
+                    }, 500);
             }
 
         } catch (Exception e) {
