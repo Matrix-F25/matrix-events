@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.matrix_events.database.DBConnector;
 import com.example.matrix_events.database.DBListener;
+import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Poster;
 import com.example.matrix_events.mvc.Model;
 import com.google.firebase.storage.FirebaseStorage;
@@ -162,16 +163,29 @@ public class PosterManager extends Model implements DBListener<Poster> {
      * @param poster The {@link Poster} object to delete. Its ID must be set.
      */
     public void deletePoster(Poster poster) {
-        if (poster.getImageUrl() != null) {
-            StorageReference imageRef = storage.getReferenceFromUrl(poster.getImageUrl());
-            imageRef.delete().addOnSuccessListener(aVoid -> {
-                Log.d(TAG, "Poster deleted successfully");
-            }).addOnFailureListener(exception -> {
-                Log.e(TAG, "Error deleting poster", exception);
-            });
-        }
 
-        connector.deleteAsync(poster);
+        String eventId = poster.getEventId();
+
+        if (eventId != null) {
+            Event event = EventManager.getInstance().getEventByDBID(eventId);
+
+            // if the event still exists, set the poster to null
+            if (event != null) {
+                event.setPoster(null);
+                EventManager.getInstance().updateEvent(event);
+            }
+
+            if (poster.getImageUrl() != null) {
+                StorageReference imageRef = storage.getReferenceFromUrl(poster.getImageUrl());
+                imageRef.delete().addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Poster deleted successfully");
+                }).addOnFailureListener(exception -> {
+                    Log.e(TAG, "Error deleting poster", exception);
+                });
+            }
+
+            connector.deleteAsync(poster);
+        }
     }
 
     /**
