@@ -162,6 +162,15 @@ public class PosterManager extends Model implements DBListener<Poster> {
      * @param poster The {@link Poster} object to delete. Its ID must be set.
      */
     public void deletePoster(Poster poster) {
+        if (poster.getImageUrl() != null) {
+            StorageReference imageRef = storage.getReferenceFromUrl(poster.getImageUrl());
+            imageRef.delete().addOnSuccessListener(aVoid -> {
+                Log.d(TAG, "Poster deleted successfully");
+            }).addOnFailureListener(exception -> {
+                Log.e(TAG, "Error deleting poster", exception);
+            });
+        }
+
         connector.deleteAsync(poster);
     }
 
