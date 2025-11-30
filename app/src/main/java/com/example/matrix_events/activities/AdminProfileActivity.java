@@ -14,15 +14,14 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.ProfileArrayAdapter;
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.entities.Notification;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.AdminNavigationBarFragment;
+import com.example.matrix_events.fragments.AdminProfileDetailsFragment;
 import com.example.matrix_events.managers.EventManager;
-import com.example.matrix_events.managers.NotificationManager;
 import com.example.matrix_events.managers.ProfileManager;
+//import com.example.matrix_events.managers.AdminProfileDetailsFragment;
 import com.example.matrix_events.mvc.View;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +47,18 @@ public class AdminProfileActivity extends AppCompatActivity implements View, Pro
                 .commit();
 
         profiles = new ArrayList<>();
-        ListView adminProfileList = findViewById(R.id.profile_listview);
+        ListView adminProfileListView = findViewById(R.id.profile_listview);
         profileArrayAdapter = new ProfileArrayAdapter(this, profiles, true, this);
-        adminProfileList.setAdapter(profileArrayAdapter);
+        adminProfileListView.setAdapter(profileArrayAdapter);
+
+        adminProfileListView.setOnItemClickListener((parent, view, position, id) -> {
+            Profile selectedProfile = profiles.get(position);
+            AdminProfileDetailsFragment fragment = AdminProfileDetailsFragment.newInstance(selectedProfile);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         tabLayout = findViewById(R.id.profile_tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
