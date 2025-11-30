@@ -3,7 +3,6 @@ package com.example.matrix_events.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.fragments.AdminNavigationBarFragment;
 
 public class AdminActivity extends AppCompatActivity {
 
@@ -34,28 +34,12 @@ public class AdminActivity extends AppCompatActivity {
             finish();
         });
 
-        ImageView adminNotificationsButton = findViewById(R.id.notifications_admin_logo);
-        adminNotificationsButton.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminActivity.this, AdminNotificationActivity.class);
-            startActivity(intent);
-        });
-
-        ImageView adminPostersButton = findViewById(R.id.poster_admin_logo);
-        adminPostersButton.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminActivity.this, AdminPostersActivity.class);
-            startActivity(intent);
-        });
-
-        ImageView adminEventsButton = findViewById(R.id.event_admin_logo);
-        adminEventsButton.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminActivity.this, AdminEventsActivity.class);
-            startActivity(intent);
-        });
-
-        ImageView adminProfileButton = findViewById(R.id.profile_admin_logo);
-        adminProfileButton.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminActivity.this, AdminProfileActivity.class);
-            startActivity(intent);
-        });
+        // Admin Navigation Bar Fragment
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.admin_navigation_bar_fragment, new AdminNavigationBarFragment())
+                    .commit();
+        }
     }
 }
