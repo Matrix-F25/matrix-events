@@ -50,6 +50,7 @@ public class SignUpFragment extends Fragment {
                 String name = editTextName.getText().toString().trim();
                 String email = editTextEmailAddress.getText().toString().trim();
                 String phone = editTextPhone.getText().toString().trim();
+                String actualPhone;
 
                 // check that required inputs have been made
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email)) {
@@ -68,8 +69,14 @@ public class SignUpFragment extends Fragment {
                     return; // breaks onClick()
                 }
 
+                if (TextUtils.isEmpty(phone)) {
+                    actualPhone = null;
+                } else {
+                    actualPhone = phone;
+                }
+
                 // create new profile
-                Profile profile = new Profile(name, email, TextUtils.isEmpty(phone) ? null : phone, deviceId); // if phone number is left empty then null, otherwise the input
+                Profile profile = new Profile(name, email, actualPhone, deviceId); // uses actualPhone now
                 manager.createProfile(profile);
                 Toast.makeText(getActivity(), "Profile created successfully. Please login to proceed", Toast.LENGTH_LONG).show();
 
