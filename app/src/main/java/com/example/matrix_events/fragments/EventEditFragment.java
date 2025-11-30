@@ -282,7 +282,9 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
     private void deleteEvent() {
         if (event != null && !isUpdating) {
             setLoading(true);
-            EventManager.getInstance().deleteEvent(event);
+
+            String eventCancelledMessage = "Urgent: The event '" + event.getName() + "' has been cancelled by the organizer.";
+            EventManager.getInstance().cancelEventAndNotifyUsers(event, eventCancelledMessage);
 
             // wait before deleting
             new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {

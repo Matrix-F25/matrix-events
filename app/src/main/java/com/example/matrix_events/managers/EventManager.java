@@ -8,6 +8,7 @@ import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Notification;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.mvc.Model;
+import com.example.matrix_events.managers.NotificationManager;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
@@ -198,7 +199,14 @@ public class EventManager extends Model implements DBListener<Event> {
      *
      * @param event The {@link Event} object to delete. Its ID must be set.
      */
-    public void deleteEvent(Event event) { connector.deleteAsync(event); }
+    public void deleteEvent(Event event) {
+
+        if (event.getPoster() != null && event.getPoster().getImageUrl() != null) {
+            PosterManager.getInstance().deletePoster(event.getPoster());
+        }
+
+        connector.deleteAsync(event);
+    }
 
     public void cancelEventAndNotifyUsers(Event event, String message) {
 
@@ -212,6 +220,9 @@ public class EventManager extends Model implements DBListener<Event> {
         }
         if (event.getAcceptedList() != null) {
             usersToNotify.addAll(event.getAcceptedList());
+        }
+        if (event.getDeclinedList() != null) {
+            usersToNotify.addAll(event.getDeclinedList());
         }
 
         Profile sender = event.getOrganizer();

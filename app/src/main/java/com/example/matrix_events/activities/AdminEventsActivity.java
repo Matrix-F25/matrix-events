@@ -95,7 +95,7 @@ public class AdminEventsActivity extends AppCompatActivity implements View, Even
                 .setTitle("Delete Event")
                 .setMessage("Are you sure you want to delete '" + event.getName() + "'? This cannot be undone.")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    String adminMessage = "Important: The event '" + event.getName() + "' has been cancelled by the admin. Sorry!";
+                    String adminMessage = "Urgent: The event '" + event.getName() + "' has been cancelled by the admin. Sorry!";
                     EventManager.getInstance().cancelEventAndNotifyUsers(event, adminMessage);
 
                     Toast.makeText(this, "Event deleted and users notified.", Toast.LENGTH_SHORT).show();
