@@ -291,18 +291,6 @@
                 android:background="#E0E0E0"
                 android:layout_marginBottom="16dp"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/terms_back_button"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="@string/terms_back_button"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:backgroundTint="#388E3C"
-                app:cornerRadius="8dp" />
-
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
