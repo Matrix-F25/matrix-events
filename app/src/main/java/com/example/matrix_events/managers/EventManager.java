@@ -213,6 +213,9 @@ public class EventManager extends Model implements DBListener<Event> {
         if (event.getAcceptedList() != null) {
             usersToNotify.addAll(event.getAcceptedList());
         }
+        if (event.getDeclinedList() != null) {
+            usersToNotify.addAll(event.getDeclinedList());
+        }
 
         Profile sender = event.getOrganizer();
         Timestamp currentTime = Timestamp.now();
