@@ -1,6 +1,8 @@
 package com.example.matrix_events.activities;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -21,6 +23,8 @@ import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.mvc.View;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +43,9 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
     private ArrayList<Event> eventArray;
     private EventArrayAdapter eventAdapter;
     private TextView listTitleTextview;
+
+    private MaterialButtonToggleGroup toggleGroup;
+    private MaterialButton waitlistButton, notSelectedButton, pendingButton, acceptedButton, declinedButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,32 +89,28 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
 
         listTitleTextview = findViewById(R.id.entrant_list_title_textview);
 
-        Button waitlistButton = findViewById(R.id.entrant_waitlisted_button);
-        waitlistButton.setOnClickListener(v -> {
-            selection = Selection.Waitlist;
-            update();
-        });
-        Button notSelectedButton = findViewById(R.id.entrant_not_selected_button);
-        notSelectedButton.setOnClickListener(v -> {
-            selection = Selection.NotSelected;
-            update();
-        });
-        Button pendingButton = findViewById(R.id.entrant_pending_button);
-        pendingButton.setOnClickListener(v -> {
-            selection = Selection.Pending;
-            update();
-        });
-        Button acceptedButton = findViewById(R.id.entrant_accepted_button);
-        acceptedButton.setOnClickListener(v -> {
-            selection = Selection.Accepted;
-            update();
-        });
-        Button declinedButton = findViewById(R.id.entrant_declined_button);
-        declinedButton.setOnClickListener(v -> {
-            selection = Selection.Declined;
-            update();
+        toggleGroup = findViewById(R.id.filter_toggle_group);
+        waitlistButton = findViewById(R.id.entrant_waitlisted_button);
+        notSelectedButton = findViewById(R.id.entrant_not_selected_button);
+        pendingButton = findViewById(R.id.entrant_pending_button);
+        acceptedButton = findViewById(R.id.entrant_accepted_button);
+        declinedButton = findViewById(R.id.entrant_declined_button);
+
+        toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == R.id.entrant_waitlisted_button) selection = Selection.Waitlist;
+                else if (checkedId == R.id.entrant_not_selected_button) selection = Selection.NotSelected;
+                else if (checkedId == R.id.entrant_pending_button) selection = Selection.Pending;
+                else if (checkedId == R.id.entrant_accepted_button) selection = Selection.Accepted;
+                else if (checkedId == R.id.entrant_declined_button) selection = Selection.Declined;
+
+                updateButtonStyles();
+                update();
+            }
         });
 
+        // Initial update
+        updateButtonStyles();
         update();
 
         // observe event manager
@@ -118,6 +121,35 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
     protected void onDestroy() {
         super.onDestroy();
         EventManager.getInstance().removeView(this);
+    }
+
+    private void updateButtonStyles() {
+        int green = Color.parseColor("#388E3C");
+        int white = Color.WHITE;
+
+        MaterialButton[] buttons = {waitlistButton, pendingButton, acceptedButton, declinedButton, notSelectedButton};
+
+        for (MaterialButton btn : buttons) {
+            if (btn == null) continue;
+
+            boolean isSelected = false;
+            if (selection == Selection.Waitlist && btn == waitlistButton) isSelected = true;
+            else if (selection == Selection.Pending && btn == pendingButton) isSelected = true;
+            else if (selection == Selection.Accepted && btn == acceptedButton) isSelected = true;
+            else if (selection == Selection.Declined && btn == declinedButton) isSelected = true;
+            else if (selection == Selection.NotSelected && btn == notSelectedButton) isSelected = true;
+
+            if (isSelected) {
+                btn.setBackgroundTintList(ColorStateList.valueOf(green));
+                btn.setTextColor(white);
+                btn.setStrokeWidth(0);
+            } else {
+                btn.setBackgroundTintList(ColorStateList.valueOf(white));
+                btn.setTextColor(green);
+                btn.setStrokeColor(ColorStateList.valueOf(green));
+                btn.setStrokeWidth(2); // approx 1dp
+            }
+        }
     }
 
     @Override
