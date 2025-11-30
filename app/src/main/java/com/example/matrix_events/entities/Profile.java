@@ -21,6 +21,7 @@ public class Profile extends DBObject implements Serializable {
     private boolean phoneOrganizerNotifications = true;
     private boolean notificationsEnabled = true;
     private boolean isAdmin = false;
+    private String profilePictureUrl;
 
     // Constructors
     public Profile() {} // Required for Firestore
@@ -54,6 +55,8 @@ public class Profile extends DBObject implements Serializable {
     public String getDeviceId() {
         return deviceId;
     }
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
     public boolean isNotificationsEnabled() {
         return notificationsEnabled;
     }
