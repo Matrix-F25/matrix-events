@@ -1,4 +1,4 @@
-package com.example.matrix_events;
+package com.example.matrix_events.unit.managers;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 

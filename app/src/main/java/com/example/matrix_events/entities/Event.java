@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an event within the application.
@@ -39,7 +40,7 @@ public class Event extends DBObject implements Serializable {
     private transient Timestamp reoccurringEndDateTime;     // can be null if not reoccurring
     private ReoccurringType reoccurringType;                // can be null if not reoccurring
     private Boolean requireGeolocationTracking = true;
-    private HashMap<String, GeoPoint> geolocationMap = new HashMap<>(); ;   // store deviceID -> location of where entrants joined the event IF requireGeolocationTracking
+    private transient HashMap<String, GeoPoint> geolocationMap = new HashMap<>(); ;   // store deviceID -> location of where entrants joined the event IF requireGeolocationTracking
     private Poster poster;                                  // can be null if no poster
     private String qrCodeHash;
     private List<String> waitList = new ArrayList<>();      // holds profile deviceId
@@ -691,6 +692,15 @@ public class Event extends DBObject implements Serializable {
 
         // reoccurring end date can be null
         out.writeLong(reoccurringEndDateTime != null ? reoccurringEndDateTime.toDate().getTime() : -1L);
+
+        // manually write the GeolocationMap
+        // GeoPoint is NOT serializable, so we must decompose it.
+        out.writeInt(geolocationMap.size());
+        for (Map.Entry<String, GeoPoint> entry : geolocationMap.entrySet()) {
+            out.writeUTF(entry.getKey());
+            out.writeDouble(entry.getValue().getLatitude());
+            out.writeDouble(entry.getValue().getLongitude());
+        }
     }
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -709,5 +719,15 @@ public class Event extends DBObject implements Serializable {
         // reoccurring end date can be null
         long reoccurringEnd = in.readLong();
         reoccurringEndDateTime = reoccurringEnd != -1L ? new Timestamp(new java.util.Date(reoccurringEnd)) : null;
+
+        // manually read the GeolocationMap
+        int mapSize = in.readInt();
+        geolocationMap = new HashMap<>();
+        for (int i = 0; i < mapSize; i++) {
+            String key = in.readUTF();
+            double lat = in.readDouble();
+            double lon = in.readDouble();
+            geolocationMap.put(key, new GeoPoint(lat, lon));
+        }
     }
 }

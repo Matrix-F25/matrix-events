@@ -1,5 +1,4 @@
-package com.example.matrix_events;
-
+package com.example.matrix_events.unit.managers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

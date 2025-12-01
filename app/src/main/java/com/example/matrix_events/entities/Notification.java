@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.example.matrix_events.database.DBObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import com.google.firebase.Timestamp;
 
@@ -17,7 +18,7 @@ public class Notification extends DBObject implements Serializable {
     private Profile sender;
     private Profile receiver;
     private String message;
-    private Timestamp timestamp;
+    private transient Timestamp timestamp;
     private boolean readFlag = false;
 
     /**
@@ -128,5 +129,22 @@ public class Notification extends DBObject implements Serializable {
      */
     public void setReadFlag(boolean read) {
         this.readFlag = read;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        // Manually write the Timestamp as milliseconds (long)
+        out.writeLong(timestamp != null ? timestamp.toDate().getTime() : -1L);
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        // Manually read the milliseconds and reconstruct the Firebase Timestamp
+        long time = in.readLong();
+        if (time != -1L) {
+            this.timestamp = new Timestamp(new java.util.Date(time));
+        } else {
+            this.timestamp = null;
+        }
     }
 }
