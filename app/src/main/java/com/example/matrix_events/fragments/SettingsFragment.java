@@ -27,10 +27,8 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
     // Declarations
     private String deviceId;
     private boolean isUpdatingUI = false; // Listener Guard Flag
-    private MaterialSwitch emailAdminSwitch;
-    private MaterialSwitch emailOrganizerSwitch;
-    private MaterialSwitch phoneAdminSwitch;
-    private MaterialSwitch phoneOrganizerSwitch;
+    private MaterialSwitch adminPushNotificationSwitch;
+    private MaterialSwitch organizerPushNotificationSwitch;
     private MaterialButton logoutButton;
     private MaterialButton deleteProfileButton;
     private MaterialTextView termsConditionsClickable;
@@ -52,10 +50,8 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
         deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Initialize all switches and buttons
-        emailAdminSwitch = view.findViewById(R.id.email_admin_switch);
-        emailOrganizerSwitch = view.findViewById(R.id.email_organizer_switch);
-        phoneAdminSwitch = view.findViewById(R.id.phone_admin_switch);
-        phoneOrganizerSwitch = view.findViewById(R.id.phone_organizer_switch);
+        adminPushNotificationSwitch = view.findViewById(R.id.admin_push_switch);
+        organizerPushNotificationSwitch = view.findViewById(R.id.organizer_push_switch);
         logoutButton = view.findViewById(R.id.profile_logout_button);
         deleteProfileButton = view.findViewById(R.id.profile_delete_button);
         termsConditionsClickable = view.findViewById(R.id.terms_conditions_clickable);
@@ -77,29 +73,18 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
 
     // Method to Set Up All Switch Listeners
     private void setupSwitchListeners() {
-        emailAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        adminPushNotificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isUpdatingUI) return; // Listener Guard
-            currentProfile.setEmailAdminNotifications(isChecked);
+            currentProfile.setAdminPushNotifications(isChecked);
             profileManager.updateProfile(currentProfile);
         });
 
-        emailOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        organizerPushNotificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isUpdatingUI) return; // Listener Guard
-            currentProfile.setEmailOrganizerNotifications(isChecked);
+            currentProfile.setOrganizerPushNotifications(isChecked);
             profileManager.updateProfile(currentProfile);
         });
 
-        phoneAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isUpdatingUI) return; // Listener Guard
-            currentProfile.setPhoneAdminNotifications(isChecked);
-            profileManager.updateProfile(currentProfile);
-        });
-
-        phoneOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isUpdatingUI) return; // Listener Guard
-            currentProfile.setPhoneOrganizerNotifications(isChecked);
-            profileManager.updateProfile(currentProfile);
-        });
     }
 
     // Method to Set Up all Button Listeners
@@ -209,11 +194,8 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
         currentProfile = profileManager.getProfileByDeviceId(deviceId);
 
         if (currentProfile != null) {
-            emailAdminSwitch.setChecked(currentProfile.isEmailAdminNotifications());
-            emailOrganizerSwitch.setChecked(currentProfile.isEmailOrganizerNotifications());
-            phoneAdminSwitch.setChecked(currentProfile.isPhoneAdminNotifications());
-            phoneOrganizerSwitch.setChecked(currentProfile.isPhoneOrganizerNotifications());
-
+            adminPushNotificationSwitch.setChecked(currentProfile.isAdminPushNotifications());
+            organizerPushNotificationSwitch.setChecked(currentProfile.isOrganizerPushNotifications());
         }
         isUpdatingUI = false; // resume listeners
     }
