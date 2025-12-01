@@ -31,15 +31,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
- * Activity responsible for searching and filtering the list of events.
+ * Activity responsible for searching, browsing, and filtering the list of events.
  * <p>
- * This class allows users to browse all available events and filter them using two criteria:
+ * This class serves as a <b>View</b> in the MVC architecture, observing the {@link EventManager}
+ * for data updates. It provides a search interface allowing users to find events based on
+ * text queries and status criteria.
+ * </p>
+ * <p>
+ * <b>Filtering Logic:</b>
+ * The activity applies an "AND" condition to filters:
  * <ul>
- * <li><b>Text Search:</b> Filters by Event Name and Location.</li>
- * <li><b>Status Dropdown:</b> Filters by time (Upcoming/Past) and availability (Registration Open).</li>
+ * <li><b>Text Search:</b> Matches against Event Name OR Location (case-insensitive).</li>
+ * <li><b>Status Dropdown:</b> Filters by logical state (Upcoming, Registration Open, Past, or All).</li>
  * </ul>
- * The filtering logic uses an "AND" condition, meaning an event must match BOTH the text
- * and the selected status to appear in the list.
  * </p>
  */
 public class EventSearchActivity extends AppCompatActivity implements View {
@@ -66,8 +70,15 @@ public class EventSearchActivity extends AppCompatActivity implements View {
     /**
      * Called when the activity is starting.
      * <p>
-     * Initializes the UI layout, sets up the list adapter, configures the search bar listener,
-     * initializes the filter dropdown, and registers as a View for the EventManager.
+     * Performs the following initialization tasks:
+     * <ol>
+     * <li>Sets up the UI layout and edge-to-edge display.</li>
+     * <li>Initializes the bottom navigation bar.</li>
+     * <li>Configures the {@link ListView} and {@link EventArrayAdapter}.</li>
+     * <li>Sets up the text search listener to trigger real-time filtering.</li>
+     * <li>Configures the status dropdown menu.</li>
+     * <li>Registers this activity as an observer of the {@link EventManager}.</li>
+     * </ol>
      * </p>
      *
      * @param savedInstanceState If the activity is being re-initialized after previously being
@@ -128,59 +139,6 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                     .commit();
         }));
 
-        /*
-        // -----------------------------
-        // --- TESTING PURPOSES ONLY ---
-        // -----------------------------
-        Profile organizer = new Profile(
-                "Alice Johnson",
-                "alice.johnson@example.com",
-                "+1-780-555-0123",
-                Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
-        );
-        String location = "Yo Mamas House";
-        // Start from current time
-        Calendar calendar = Calendar.getInstance();
-        // Registration starts in 2 minutes
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp registrationStart = new Timestamp(calendar.getTime());
-        // Registration ends 2 minutes after it starts
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp registrationEnd = new Timestamp(calendar.getTime());
-        // Event starts 2 minutes after registration closes
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp eventStart = new Timestamp(calendar.getTime());
-        // Event ends 2 minutes after it starts
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp eventEnd = new Timestamp(calendar.getTime());
-        // Reoccurring end is 2 minutes after event ends
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp reoccurringEnd = new Timestamp(calendar.getTime());
-        // Create event (chronologically valid)
-        Event sampleEvent = new Event(
-                "Campus Hackathon 2025",             // name
-                "A short test hackathon for debugging",  // description
-                organizer,                           // organizer
-                location,                            // location
-                eventStart,                          // event start
-                eventEnd,                            // event end
-                1,                                   // event capacity
-                50,                                  // waitlist capacity
-                registrationStart,                   // registration start
-                registrationEnd,                     // registration end
-                true,                                // is reoccurring
-                reoccurringEnd,                      // reoccurring end
-                ReoccurringType.Weekly,              // reoccurring type
-                true,                                // geolocation tracking
-                null                               // poster
-        );
-        // Add to manager
-        EventManager.getInstance().createEvent(sampleEvent);
-        // -----------------------------
-        // -----------------------------
-
-         */
-
         // Initial Data Load
         update();
 
@@ -189,10 +147,11 @@ public class EventSearchActivity extends AppCompatActivity implements View {
     }
 
     /**
-     * Configures the exposed dropdown menu for filtering events.
+     * Configures the exposed dropdown menu (AutoCompleteTextView) for filtering events.
      * <p>
-     * Creates an adapter with the filter options (All, Upcoming, Registration Open, Past)
-     * and sets a listener to trigger filtering whenever the selection changes.
+     * It populates the adapter with the filter constants (e.g., "All Events", "Upcoming")
+     * and sets the initial selection to "Registration Open". It also attaches a listener
+     * to trigger {@link #filterEvents()} whenever the user selects a new option.
      * </p>
      */
     private void setupFilterDropdown() {
@@ -216,10 +175,17 @@ public class EventSearchActivity extends AppCompatActivity implements View {
      * This method iterates through the master list ({@code allEvents}) and checks each event
      * against two criteria:
      * <ol>
-     * <li><b>Text Search:</b> Does the Name or Location match the query string?</li>
-     * <li><b>Status Filter:</b> Does the event match the selected dropdown state (e.g., Upcoming)?</li>
+     * <li><b>Text Search:</b> Checks if the query string is contained within the Event Name OR Location.</li>
+     * <li><b>Status Filter:</b>
+     * <ul>
+     * <li>{@code FILTER_UPCOMING}: Uses {@link Event#isBeforeEventStart()}.</li>
+     * <li>{@code FILTER_REG_OPEN}: Uses {@link Event#isRegistrationOpen()}.</li>
+     * <li>{@code FILTER_CLOSED}: Uses {@link Event#isEventComplete()}.</li>
+     * </ul>
+     * </li>
      * </ol>
-     * Only events satisfying BOTH criteria are added to the display list ({@code events}).
+     * Only events satisfying <b>BOTH</b> criteria are added to the display list ({@code events}).
+     * Finally, it notifies the adapter to refresh the UI.
      * </p>
      */
     private void filterEvents() {
@@ -276,9 +242,9 @@ public class EventSearchActivity extends AppCompatActivity implements View {
     /**
      * MVC Callback: Updates the list when the Model data changes.
      * <p>
-     * Fetches the complete list of events from the {@link EventManager} and re-applies
-     * the current filters. Using {@code getEvents()} (all events) instead of filtered getters
-     * allows the local filtering logic to handle states like "Past / Closed".
+     * This method fetches the complete, fresh list of events from the {@link EventManager}.
+     * It then calls {@link #filterEvents()} to re-apply the user's current search and
+     * filter criteria to the new data set.
      * </p>
      */
     @Override

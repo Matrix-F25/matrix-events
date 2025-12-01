@@ -18,11 +18,39 @@ import com.example.matrix_events.mvc.View;
 
 import java.util.ArrayList;
 
+/**
+ * Activity responsible for the Administrator's view of system notifications.
+ * <p>
+ * This activity acts as a comprehensive log for Admins, allowing them to view <b>all</b>
+ * notifications sent within the system, regardless of the sender or receiver.
+ * It implements {@link View} to stay synchronized with the {@link NotificationManager}.
+ * </p>
+ * <p>
+ * Unlike the standard user notification screen, this activity configures the
+ * {@link NotificationArrayAdapter} in "admin" mode, which enables specific administrative
+ * actions (like permanently deleting a message from the database).
+ * </p>
+ */
 public class AdminNotificationActivity extends AppCompatActivity implements View {
 
     private ArrayList<Notification> notifications;
     private NotificationArrayAdapter notificationArrayAdapter;
 
+    /**
+     * Called when the activity is starting.
+     * <p>
+     * Initializes the UI layout and performs the following specific setups:
+     * <ul>
+     * <li><b>Navigation:</b> Loads the {@link AdminNavigationBarFragment} highlighting the Notifications tab.</li>
+     * <li><b>Adapter:</b> Initializes the {@link NotificationArrayAdapter} with the "admin" flag.
+     * This alters the list item layout to show both Sender and Receiver names and enables hard-delete functionality.</li>
+     * <li><b>MVC Registration:</b> Registers this activity as an observer of {@link NotificationManager}.</li>
+     * </ul>
+     * </p>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     * shut down then this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +68,8 @@ public class AdminNotificationActivity extends AppCompatActivity implements View
 
         notifications = new ArrayList<>();
         ListView adminNotificationList = findViewById(R.id.notification_listview);
+
+        // Initialize adapter in "admin" mode
         notificationArrayAdapter = new NotificationArrayAdapter(this, notifications, "admin");
         adminNotificationList.setAdapter(notificationArrayAdapter);
 
@@ -48,12 +78,26 @@ public class AdminNotificationActivity extends AppCompatActivity implements View
         NotificationManager.getInstance().addView(this);
     }
 
+    /**
+     * Cleanup method called when the activity is destroyed.
+     * <p>
+     * Unregisters this activity from the {@link NotificationManager} to prevent memory leaks.
+     * </p>
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         NotificationManager.getInstance().removeView(this);
     }
 
+    /**
+     * MVC Callback: Updates the list when the Model data changes.
+     * <p>
+     * This method fetches the complete list of <b>all</b> notifications from
+     * {@link NotificationManager#getNotifications()} (no filtering by device ID)
+     * and refreshes the adapter.
+     * </p>
+     */
     @Override
     public void update() {
         notifications.clear();
