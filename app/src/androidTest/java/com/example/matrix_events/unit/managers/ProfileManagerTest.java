@@ -133,7 +133,9 @@ public class ProfileManagerTest implements View {
         // Modify fields
         String newName = "Updated Name " + UUID.randomUUID().toString();
         profile.setName(newName);
-        profile.setNotificationsEnabled(false); // Change boolean flag
+
+        // Update: Changed from setNotificationsEnabled to setAdminPushNotifications based on Profile refactor
+        profile.setAdminPushNotifications(false);
 
         latch = new CountDownLatch(1);
         profileManager.updateProfile(profile);
@@ -144,7 +146,7 @@ public class ProfileManagerTest implements View {
         // Verify update in local cache
         Profile updated = profileManager.getProfileByDBID(testProfileDbId);
         assertEquals("Name should be updated", newName, updated.getName());
-        assertFalse("Notifications should be disabled", updated.isNotificationsEnabled());
+        assertFalse("Admin Push Notifications should be disabled", updated.isAdminPushNotifications());
     }
 
     // ==========================================
