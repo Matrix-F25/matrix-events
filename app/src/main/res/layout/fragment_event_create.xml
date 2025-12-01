@@ -128,12 +128,12 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/geolocation_tracking_switch"
-                android:text="Enable Geolocation Tracking"
-                android:checked="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Require Geolocation Tracking"
                 app:thumbTint="#388E3C"
-                app:trackTint="#C8E6C9"/>
+                app:trackTint="#C8E6C9" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/is_reoccurring_switch"

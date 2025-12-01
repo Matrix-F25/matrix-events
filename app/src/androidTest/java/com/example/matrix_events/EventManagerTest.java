@@ -3,7 +3,6 @@ package com.example.matrix_events;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.entities.Geolocation;
 import com.example.matrix_events.entities.Poster;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.managers.EventManager;

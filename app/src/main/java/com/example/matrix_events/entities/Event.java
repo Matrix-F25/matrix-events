@@ -8,10 +8,13 @@ import com.example.matrix_events.database.DBObject;
 import com.example.matrix_events.managers.NotificationManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,7 +28,7 @@ public class Event extends DBObject implements Serializable {
     private String name;
     private String description;
     private Profile organizer;
-    private Geolocation location;
+    private String location;
     private transient Timestamp eventStartDateTime;
     private transient Timestamp eventEndDateTime;
     private Integer eventCapacity;
@@ -35,7 +38,8 @@ public class Event extends DBObject implements Serializable {
     private Boolean isReoccurring = false;
     private transient Timestamp reoccurringEndDateTime;     // can be null if not reoccurring
     private ReoccurringType reoccurringType;                // can be null if not reoccurring
-    private Boolean geolocationTrackingEnabled = true;
+    private Boolean requireGeolocationTracking = true;
+    private HashMap<String, GeoPoint> geolocationMap = new HashMap<>(); ;   // store deviceID -> location of where entrants joined the event IF requireGeolocationTracking
     private Poster poster;                                  // can be null if no poster
     private List<String> waitList = new ArrayList<>();      // holds profile deviceId
     private List<String> pendingList = new ArrayList<>();
@@ -57,7 +61,7 @@ public class Event extends DBObject implements Serializable {
      * @param name                       The name of the event. Cannot be null.
      * @param description                The description of the event. Cannot be null.
      * @param organizer                  The profile of the event organizer. Cannot be null.
-     * @param location                   The geolocation of the event. Cannot be null.
+     * @param location                   The string location of the event. Cannot be null.
      * @param eventStartDateTime         The start date and time of the event. Cannot be null.
      * @param eventEndDateTime           The end date and time of the event. Cannot be null.
      * @param eventCapacity              The maximum number of attendees for the event. Cannot be null.
@@ -67,16 +71,16 @@ public class Event extends DBObject implements Serializable {
      * @param isReoccurring              Flag indicating if the event is reoccurring. Cannot be null.
      * @param reoccurringEndDateTime     The end date for reoccurring events. Can be null if not reoccurring.
      * @param reoccurringType            The type of reoccurrence (e.g., daily, weekly). Can be null if not reoccurring.
-     * @param geolocationTrackingEnabled Flag indicating if geolocation tracking is enabled for this event. Cannot be null.
+     * @param requireGeolocationTracking Flag indicating if geolocation tracking is required for this event. Cannot be null.
      * @param poster                     The poster for the event. Can be null if there is no poster.
      * @throws IllegalArgumentException if any date/time constraints are violated.
      */
     public Event(@NonNull String name, @NonNull String description, @NonNull Profile organizer,
-                 @NonNull Geolocation location, @NonNull Timestamp eventStartDateTime, @NonNull Timestamp eventEndDateTime,
+                 @NonNull String location, @NonNull Timestamp eventStartDateTime, @NonNull Timestamp eventEndDateTime,
                  @NonNull Integer eventCapacity, Integer waitlistCapacity,
                  @NonNull Timestamp registrationStartDateTime, @NonNull Timestamp registrationEndDateTime,
                  @NonNull Boolean isReoccurring, Timestamp reoccurringEndDateTime, ReoccurringType reoccurringType,
-                 @NonNull Boolean geolocationTrackingEnabled, Poster poster) {
+                 @NonNull Boolean requireGeolocationTracking, Poster poster) {
         // Logic checks
         Timestamp now = Timestamp.now();
         if (registrationStartDateTime.compareTo(now) <= 0)
@@ -107,7 +111,7 @@ public class Event extends DBObject implements Serializable {
         this.registrationStartDateTime = registrationStartDateTime;
         this.registrationEndDateTime = registrationEndDateTime;
         this.isReoccurring = isReoccurring;
-        this.geolocationTrackingEnabled = geolocationTrackingEnabled;
+        this.requireGeolocationTracking = requireGeolocationTracking;
 
         // Optional fields (nullable)
         this.waitlistCapacity = waitlistCapacity;              // null: no waitlist limit
@@ -122,6 +126,7 @@ public class Event extends DBObject implements Serializable {
      * Checks if the current time is before the registration period begins.
      * @return {@code true} if registration has not yet started, {@code false} otherwise.
      */
+    @Exclude
     public boolean isBeforeRegistrationStart() {
         Timestamp now = Timestamp.now();
         // Check if registration is yet to open
@@ -132,6 +137,7 @@ public class Event extends DBObject implements Serializable {
      * Checks if the event is currently within its registration period.
      * @return {@code true} if registration is currently open, {@code false} otherwise.
      */
+    @Exclude
     public boolean isRegistrationOpen() {
         Timestamp now = Timestamp.now();
         // Check if registration is currently open
@@ -142,6 +148,7 @@ public class Event extends DBObject implements Serializable {
      * Checks if the registration period for the event has ended.
      * @return {@code true} if registration is closed, {@code false} otherwise.
      */
+    @Exclude
     public boolean isRegistrationClosed() {
         Timestamp now = Timestamp.now();
         // Check if registration is closed
@@ -152,6 +159,7 @@ public class Event extends DBObject implements Serializable {
      * Checks if the current time is before the event is scheduled to start.
      * @return {@code true} if the event has not yet started, {@code false} otherwise.
      */
+    @Exclude
     public boolean isBeforeEventStart() {
         Timestamp now = Timestamp.now();
         // Check if event is yet to start
@@ -162,6 +170,7 @@ public class Event extends DBObject implements Serializable {
      * Checks if the event is currently in progress.
      * @return {@code true} if the event is ongoing, {@code false} otherwise.
      */
+    @Exclude
     public boolean isEventOngoing() {
         Timestamp now = Timestamp.now();
         // Check if event is currently going on
@@ -172,6 +181,7 @@ public class Event extends DBObject implements Serializable {
      * Checks if the event (or its reoccurrence period) has concluded.
      * @return {@code true} if the event is complete, {@code false} otherwise.
      */
+    @Exclude
     public boolean isEventComplete() {
         Timestamp now = Timestamp.now();
         if (isReoccurring) {
@@ -191,7 +201,7 @@ public class Event extends DBObject implements Serializable {
      * @param deviceId The device ID of the user to check.
      * @return {@code true} if the user is on the waitlist, {@code false} otherwise.
      */
-    public boolean inWaitList(String deviceId) {
+    public boolean inWaitList(@NonNull String deviceId) {
         return waitList.contains(deviceId);
     }
 
@@ -200,8 +210,9 @@ public class Event extends DBObject implements Serializable {
      * The user is added only if registration is open, the waitlist is not full,
      * and the user is not already on the waitlist.
      * @param deviceID The device ID of the user to add.
+     * @param userLocation The geolocation of the user (can be null).
      */
-    public void joinWaitList(String deviceID) {
+    public void joinWaitList(@NonNull String deviceID, GeoPoint userLocation) {
         // Check if registration is open
         if (!isRegistrationOpen()) {
             return;
@@ -217,6 +228,11 @@ public class Event extends DBObject implements Serializable {
             return;
         }
         waitList.add(deviceID);
+
+        // Store location if required and provided
+        if (requireGeolocationTracking && userLocation != null) {
+            geolocationMap.put(deviceID, userLocation);
+        }
     }
 
     /**
@@ -224,7 +240,10 @@ public class Event extends DBObject implements Serializable {
      * @param deviceID The device ID of the user to remove.
      * @return {@code true} if the user was successfully removed, {@code false} otherwise.
      */
-    public boolean leaveWaitList(String deviceID) {
+    public boolean leaveWaitList(@NonNull String deviceID) {
+        // remove deviceID from geolocationMap
+        geolocationMap.remove(deviceID);
+        // remove deviceID from waitlist
         return waitList.remove(deviceID);
     }
 
@@ -233,7 +252,7 @@ public class Event extends DBObject implements Serializable {
      * @param deviceId The device ID of the user to check.
      * @return {@code true} if the user is on the pending list, {@code false} otherwise.
      */
-    public boolean inPendingList(String deviceId) {
+    public boolean inPendingList(@NonNull String deviceId) {
         return pendingList.contains(deviceId);
     }
 
@@ -242,7 +261,7 @@ public class Event extends DBObject implements Serializable {
      * @param deviceId The device ID of the user to check.
      * @return {@code true} if the user is on the accepted list, {@code false} otherwise.
      */
-    public boolean inAcceptedList(String deviceId) {
+    public boolean inAcceptedList(@NonNull String deviceId) {
         return acceptedList.contains(deviceId);
     }
 
@@ -252,7 +271,7 @@ public class Event extends DBObject implements Serializable {
      * there is capacity, and the user is currently on the pending list.
      * @param deviceId The device ID of the user to accept.
      */
-    public void joinAcceptedList(String deviceId) {
+    public void joinAcceptedList(@NonNull String deviceId) {
         // Check if registration is closed and event has not started
         if (!isRegistrationClosed() || !isBeforeEventStart()) {
             return;
@@ -278,7 +297,7 @@ public class Event extends DBObject implements Serializable {
      * @param deviceId The device ID of the user to check.
      * @return {@code true} if the user is on the declined list, {@code false} otherwise.
      */
-    public boolean inDeclinedList(String deviceId) {
+    public boolean inDeclinedList(@NonNull String deviceId) {
         return declinedList.contains(deviceId);
     }
 
@@ -288,7 +307,7 @@ public class Event extends DBObject implements Serializable {
      * by moving them to the pending list and sending them a notification.
      * @param deviceId The device ID of the user to decline.
      */
-    public void joinDeclinedList(String deviceId) {
+    public void joinDeclinedList(@NonNull String deviceId) {
         // Check if registration is closed and event has not started
         if (!isRegistrationClosed() || !isBeforeEventStart()) {
             return;
@@ -380,17 +399,17 @@ public class Event extends DBObject implements Serializable {
 
     /**
      * Gets the location of the event.
-     * @return The event's geolocation.
+     * @return The event's string location.
      */
-    public Geolocation getLocation() {
+    public String getLocation() {
         return location;
     }
 
     /**
      * Sets the location of the event.
-     * @param location The new event's geolocation. Cannot be null.
+     * @param location The new event's string location. Cannot be null.
      */
-    public void setLocation(@NonNull Geolocation location) {
+    public void setLocation(@NonNull String location) {
         this.location = location;
     }
 
@@ -510,7 +529,7 @@ public class Event extends DBObject implements Serializable {
      * Sets the end date and time for a reoccurring event.
      * @param reoccurringEndDateTime The new reoccurring end timestamp.
      */
-    public void setReoccurringEndDateTime(Timestamp reoccurringEndDateTime) {
+    public void setReoccurringEndDateTime(@NonNull Timestamp reoccurringEndDateTime) {
         this.reoccurringEndDateTime = reoccurringEndDateTime;
     }
 
@@ -529,19 +548,27 @@ public class Event extends DBObject implements Serializable {
     }
 
     /**
-     * Checks if geolocation tracking is enabled for the event.
-     * @return {@code true} if geolocation tracking is enabled, {@code false} otherwise.
+     * Checks if geolocation tracking is required for the event.
+     * @return {@code true} if geolocation tracking is required, {@code false} otherwise.
      */
-    public Boolean isGeolocationTrackingEnabled() {
-        return geolocationTrackingEnabled;
+    public Boolean isGeolocationTrackingRequired() {
+        return requireGeolocationTracking;
     }
 
     /**
-     * Sets whether geolocation tracking is enabled for the event.
-     * @param geolocationTrackingEnabled The new geolocation tracking status. Cannot be null.
+     * Sets whether geolocation tracking is required for the event.
+     * @param requireGeolocationTracking The new geolocation tracking status. Cannot be null.
      */
-    public void setGeolocationTrackingEnabled(@NonNull Boolean geolocationTrackingEnabled) {
-        this.geolocationTrackingEnabled = geolocationTrackingEnabled;
+    public void setRequireGeolocationTracking(@NonNull Boolean requireGeolocationTracking) {
+        this.requireGeolocationTracking = requireGeolocationTracking;
+    }
+
+    public HashMap<String, GeoPoint> getGeolocationMap() {
+        return geolocationMap;
+    }
+
+    public void setGeolocationMap(@NonNull HashMap<String, GeoPoint> geolocationMap) {
+        this.geolocationMap = geolocationMap;
     }
 
     /**
@@ -566,7 +593,7 @@ public class Event extends DBObject implements Serializable {
      * Sets the list of device IDs on the waitlist.
      * @param waitList The new waitlist.
      */
-    public void setWaitList(List<String> waitList) { this.waitList = waitList; }
+    public void setWaitList(@NonNull List<String> waitList) { this.waitList = waitList; }
 
     /**
      * Gets the list of device IDs on the pending list.
@@ -578,7 +605,7 @@ public class Event extends DBObject implements Serializable {
      * Sets the list of device IDs on the pending list.
      * @param pendingList The new pending list.
      */
-    public void setPendingList(List<String> pendingList) { this.pendingList = pendingList; }
+    public void setPendingList(@NonNull List<String> pendingList) { this.pendingList = pendingList; }
 
     /**
      * Gets the list of device IDs on the accepted (attending) list.
@@ -590,7 +617,7 @@ public class Event extends DBObject implements Serializable {
      * Sets the list of device IDs on the accepted (attending) list.
      * @param acceptedList The new accepted list.
      */
-    public void setAcceptedList(List<String> acceptedList) { this.acceptedList = acceptedList; }
+    public void setAcceptedList(@NonNull List<String> acceptedList) { this.acceptedList = acceptedList; }
 
     /**
      * Gets the list of device IDs on the declined list.
@@ -602,7 +629,7 @@ public class Event extends DBObject implements Serializable {
      * Sets the list of device IDs on the declined list.
      * @param declinedList The new declined list.
      */
-    public void setDeclinedList(List<String> declinedList) { this.declinedList = declinedList; }
+    public void setDeclinedList(@NonNull List<String> declinedList) { this.declinedList = declinedList; }
 
     /**
      * Checks if the registration opened flag is set.

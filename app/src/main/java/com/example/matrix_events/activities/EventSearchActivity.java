@@ -16,7 +16,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.EventArrayAdapter;
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.entities.Geolocation;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.entities.ReoccurringType;
 import com.example.matrix_events.fragments.EventDetailFragment;
@@ -87,11 +86,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                 "+1-780-555-0123",
                 Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
         );
-        Geolocation location = new Geolocation(
-                "Yo Mamas House",
-                -113.5244,
-                53.5232
-        );
+        String location = "Yo Mamas House";
         // Start from current time
         Calendar calendar = Calendar.getInstance();
         // Registration starts in 2 minutes
@@ -148,7 +143,7 @@ public class EventSearchActivity extends AppCompatActivity implements View {
             String lower = query.toLowerCase();
             for (Event e : allEvents) {
                 if (e.getName().toLowerCase().contains(lower) ||
-                    e.getLocation().getName().toLowerCase().contains(lower)) {
+                    e.getLocation().toLowerCase().contains(lower)) {
                     events.add(e);
                 }
             }
