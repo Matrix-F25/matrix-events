@@ -1,200 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- Could use fixing, so that it fills the entire screen no matter the screen dimensions -->
-<!-- Attributes will need id's if switched to constraint layout -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
+    android:background="@android:color/white"
     android:padding="16dp">
 
-    <!-- Container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:spacing="12dp">
+        android:orientation="vertical">
 
-        <!-- Settings Page Title -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Top Bar -->
+        <RelativeLayout
+            android:id="@+id/settings_top_bar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_page_title"
-            android:textSize="24sp"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:paddingBottom="8dp" />
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="-16dp"
+            android:layout_marginEnd="-16dp"
+            android:layout_marginTop="-16dp"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:padding="12dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/settings_back_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/back_button_text"
+                android:textColor="#388E3C"
+                app:icon="@drawable/abc_ic_ab_back_material"
+                app:iconTint="#388E3C"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:id="@+id/settings_page_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_page_title"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/grey"
+            android:background="#E0E0E0"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Notification Settings Header -->
+        <!-- Push Notification Settings Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/notification_settings_page_header"
-            android:textSize="20sp"
+            android:text="@string/push_notification_settings_page_header"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:drawableLeftCompat="@drawable/ic_blank_notification"/>
+            android:textColor="@android:color/black"
+            app:drawableLeftCompat="@drawable/ic_blank_notification"
+            app:drawableTint="@android:color/black"
+            android:layout_marginBottom="8dp"/>
 
         <!-- Divider -->
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:dividerColor="#E0E0E0"/>
 
-        <!-- In-App Notifications Header -->
+        <!-- Email Notifications Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/in_app_notifications_header"
-            android:textSize="18sp"/>
+            android:text="@string/email_notifications_header"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            android:layout_marginBottom="8dp"/>
 
-        <!-- In-App Admin Switch -->
+        <!-- Email Admin Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/in_app_admin_switch"
+            android:id="@+id/email_admin_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/admin_switch"
             android:paddingStart="20dp"
-            app:trackTint="@color/switch_track_color"
+            app:thumbTint="#388E3C"
+            app:trackTint="#C8E6C9"
             tools:ignore="RtlSymmetry" />
 
-        <!-- In-App Organizer Switch -->
+        <!-- Email Organizer Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/in_app_organizer_switch"
+            android:id="@+id/email_organizer_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/organizer_switch"
             android:paddingStart="20dp"
-            app:trackTint="@color/switch_track_color"
+            app:thumbTint="#388E3C"
+            app:trackTint="#C8E6C9"
             tools:ignore="RtlSymmetry" />
 
-        <!-- Push Notifications Header -->
+        <!-- Phone Notifications Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/push_notifications_header"
-            android:textSize="18sp"/>
+            android:text="@string/phone_notifications_header"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
 
         <!-- Phone Admin Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/push_admin_switch"
+            android:id="@+id/phone_admin_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/admin_switch"
             android:paddingStart="20dp"
-            app:trackTint="@color/switch_track_color"
+            app:thumbTint="#388E3C"
+            app:trackTint="#C8E6C9"
             tools:ignore="RtlSymmetry" />
 
         <!-- Phone Organizer Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/push_organizer_switch"
+            android:id="@+id/phone_organizer_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/organizer_switch"
             android:paddingStart="20dp"
-            app:trackTint="@color/switch_track_color"
-            tools:ignore="RtlSymmetry" />
-
-    <!--
-        Account Settings Header
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/account_settings_page_header"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:drawableLeftCompat="@drawable/ic_profile"/>
-
-        Divider
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"/>
-
-        Geolocation Switch
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/geolocation_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/geolocation_switch"
-            app:trackTint="@color/switch_track_color"/>
-
-        Device Id Switch
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/device_id_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/device_id_switch"
-            app:trackTint="@color/switch_track_color"/>
-    -->
-
-        <!-- Accessibility Settings Header -->
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/accessibility_settings_page_header"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:drawableLeftCompat="@drawable/ic_accessibility"/>
-
-        <!-- Divider -->
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Dark Mode Switch -->
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/dark_mode_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/dark_mode_switch"
-            android:paddingStart="20dp"
-            app:trackTint="@color/switch_track_color"
+            app:thumbTint="#388E3C"
+            app:trackTint="#C8E6C9"
             tools:ignore="RtlSymmetry" />
 
         <!-- Divider -->
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:dividerColor="#E0E0E0"/>
 
-        <!-- Logout Button -->
+        <!-- Logout Button  -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/profile_logout_button"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:text="@string/logout_button_text"
             android:textSize="20sp"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/black"
-            app:cornerRadius="10dp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            app:strokeColor="#388E3C"
             app:strokeWidth="2dp"
-            android:layout_marginTop="8dp" />
+            app:cornerRadius="10dp"
+            android:layout_marginBottom="12dp" />
 
         <!-- Delete Profile Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/profile_delete_button"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:text="@string/delete_profile_button_text"
             android:textSize="20sp"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/logout_red"
+            android:textStyle="bold"
+            android:textColor="#D32F2F"
+            app:strokeColor="#D32F2F"
             app:cornerRadius="10dp"
             app:strokeWidth="2dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="24dp" />
 
         <!-- Terms & Conditions Clickable Header -->
         <com.google.android.material.textview.MaterialTextView
@@ -208,20 +191,8 @@
             android:clickable="true"
             android:focusable="true"
             android:layout_marginTop="10dp"
-            app:drawableLeftCompat="@drawable/ic_terms_conditions" />
-
-        <!-- Back Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/settings_back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/back_button_text"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/black"
-            app:cornerRadius="10dp"
-            app:strokeWidth="2dp"
-            android:layout_marginTop="140dp" />
+            app:drawableLeftCompat="@drawable/ic_terms_conditions"
+            app:drawableTint="#757575"/>
 
     </LinearLayout>
 

@@ -5,106 +5,163 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".activities.EntrantMyEventsActivity">
 
-    <Button
-        android:id="@+id/entrant_switch_to_org_button"
-        android:layout_width="wrap_content"
+    <!-- Mode Switcher -->
+    <LinearLayout
+        android:id="@+id/mode_switch_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Go to Organizer View"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:gravity="center"
+        android:padding="8dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/entrant_switch_to_org_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go to Organizer View"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="#388E3C"
+            app:strokeColor="#388E3C"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/entrant_title_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
         android:text="My Events"
+        android:textColor="@android:color/black"
         android:textSize="34sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entrant_switch_to_org_button" />
+        app:layout_constraintTop_toBottomOf="@+id/mode_switch_container" />
 
-    <Button
-        android:id="@+id/entrant_waitlisted_button"
-        android:layout_width="wrap_content"
+    <!-- Filter Buttons (Toggle Group) -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/filter_toggle_group"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="Waitlisted"
-        app:layout_constraintEnd_toStartOf="@+id/entrant_not_selected_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entrant_title_static" />
-
-    <Button
-        android:id="@+id/entrant_not_selected_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:text="Not Selected"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/entrant_waitlisted_button"
-        app:layout_constraintTop_toBottomOf="@+id/entrant_title_static" />
-
-    <Button
-        android:id="@+id/entrant_pending_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Pending"
-        app:layout_constraintEnd_toStartOf="@+id/entrant_accepted_button"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        app:checkedButton="@id/entrant_waitlisted_button"
+        app:layout_constraintTop_toBottomOf="@+id/entrant_title_static"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entrant_waitlisted_button" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/entrant_accepted_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Accepted"
-        app:layout_constraintEnd_toStartOf="@+id/entrant_declined_button"
-        app:layout_constraintStart_toEndOf="@+id/entrant_pending_button"
-        app:layout_constraintTop_toBottomOf="@+id/entrant_waitlisted_button" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/entrant_waitlisted_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Waitlist"
+            android:textSize="10sp"
+            android:padding="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="48dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="#388E3C"
+            app:strokeColor="#388E3C"
+            app:backgroundTint="@android:color/white"/>
 
-    <Button
-        android:id="@+id/entrant_declined_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Declined"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/entrant_accepted_button"
-        app:layout_constraintTop_toBottomOf="@+id/entrant_waitlisted_button" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/entrant_pending_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pending"
+            android:textSize="10sp"
+            android:padding="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="48dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="#388E3C"
+            app:strokeColor="#388E3C"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/entrant_accepted_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Accepted"
+            android:textSize="10sp"
+            android:padding="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="48dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="#388E3C"
+            app:strokeColor="#388E3C"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/entrant_declined_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Declined"
+            android:textSize="10sp"
+            android:padding="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="48dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="#388E3C"
+            app:strokeColor="#388E3C"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/entrant_not_selected_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Not Selected"
+            android:textSize="10sp"
+            android:padding="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="48dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="#388E3C"
+            app:strokeColor="#388E3C"/>
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <TextView
         android:id="@+id/entrant_list_title_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
         android:text="Waitlisted"
-        android:textSize="24sp"
+        android:textColor="#616161"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entrant_pending_button" />
+        app:layout_constraintTop_toBottomOf="@+id/filter_toggle_group" />
 
     <ListView
         android:id="@+id/entrant_listview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:clickable="true"
+        android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="8dp"
-        android:focusable="true"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/navigation_bar_fragment"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.559"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/entrant_list_title_textview" />
 

@@ -2,6 +2,8 @@ package com.example.matrix_events.activities;
 
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -22,6 +24,7 @@ import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -29,9 +32,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class EventSearchActivity extends AppCompatActivity implements View {
-
+    ArrayList<Event> allEvents;
     ArrayList<Event> events;
     EventArrayAdapter eventArrayAdapter;
+    private String currentSearchQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +65,22 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                     }
                 });
 
+        allEvents = new ArrayList<>();
         events = new ArrayList<>();
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
         ListView eventListView = findViewById(R.id.event_search_listview);
         eventListView.setAdapter(eventArrayAdapter);
+        TextInputEditText searchInput = findViewById(R.id.search_input);
+
+        // Updates Results, when User Types
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                currentSearchQuery = s.toString();
+                filterEvents(currentSearchQuery);
+            }
+        });
 
         eventListView.setOnItemClickListener(((parent, view, position, id) -> {
             Log.d("DEBUG", "event clicked");
@@ -139,6 +155,22 @@ public class EventSearchActivity extends AppCompatActivity implements View {
         EventManager.getInstance().addView(this);
     }
 
+    private void filterEvents(String query) {
+        events.clear();
+        if (query == null || query.trim().isEmpty()) {
+            events.addAll(allEvents);
+        } else {
+            String lower = query.toLowerCase();
+            for (Event e : allEvents) {
+                if (e.getName().toLowerCase().contains(lower) ||
+                    e.getLocation().getName().toLowerCase().contains(lower)) {
+                    events.add(e);
+                }
+            }
+        }
+        eventArrayAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -147,8 +179,14 @@ public class EventSearchActivity extends AppCompatActivity implements View {
 
     @Override
     public void update() {
-        events.clear();
-        events.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
+        allEvents.clear();
+        allEvents.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
+        if (currentSearchQuery.isEmpty()) {
+            events.clear();
+            events.addAll(allEvents);
+        } else {
+            filterEvents(currentSearchQuery);
+        }
         eventArrayAdapter.notifyDataSetChanged();
     }
 }

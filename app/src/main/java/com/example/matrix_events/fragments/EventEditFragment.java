@@ -1,5 +1,6 @@
 package com.example.matrix_events.fragments;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.matrix_events.R;
+import com.example.matrix_events.activities.OrganizerMyEventsActivity;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Geolocation;
 import com.example.matrix_events.entities.Poster;
@@ -280,13 +282,20 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
     private void deleteEvent() {
         if (event != null && !isUpdating) {
             setLoading(true);
-            EventManager.getInstance().deleteEvent(event);
+
+            String eventCancelledMessage = "Urgent: The event '" + event.getName() + "' has been cancelled by the organizer.";
+            EventManager.getInstance().cancelEventAndNotifyUsers(event, eventCancelledMessage);
 
             // wait before deleting
             new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                 setLoading(false);
                 Toast.makeText(requireContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
-                getParentFragmentManager().popBackStack();
+
+                // Navigate directly back to OrganizerMyEventsActivity
+                Intent intent = new Intent(requireContext(), OrganizerMyEventsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                requireActivity().finish();
             }, 500);
         }
     }

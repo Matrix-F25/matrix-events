@@ -34,6 +34,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="fitCenter"
         android:padding="3dp"
+        app:tint="#757575"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
@@ -101,14 +102,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_name_header"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            android:layout_marginBottom="4dp"/>
 
         <!-- Name Input Text Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="#388E3C"
+            app:hintTextColor="#388E3C">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/profile_name"
@@ -123,14 +129,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_email_header"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            android:layout_marginBottom="4dp"/>
 
         <!-- Email Input Text Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="#388E3C"
+            app:hintTextColor="#388E3C">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/profile_email"
@@ -145,14 +156,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_phone_header"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            android:layout_marginBottom="4dp"/>
 
         <!-- Phone Number Input Text Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="24dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="#388E3C"
+            app:hintTextColor="#388E3C">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/profile_phone_number"
@@ -166,11 +182,12 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/profile_update_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_height="56dp"
             android:text="@string/update_button_text"
-            android:textSize="20sp"
-            app:backgroundTint="@color/black" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="#388E3C"
+            app:cornerRadius="8dp" />
 
     </LinearLayout>
 

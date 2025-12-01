@@ -53,7 +53,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         waitlistButton.setOnClickListener(v -> {
             EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.WAITING_LIST);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
@@ -61,7 +61,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         pendingListButton.setOnClickListener(v -> {
             EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.PENDING_LIST);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
@@ -69,7 +69,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         acceptedListButton.setOnClickListener(v -> {
             EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.ACCEPTED_LIST);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
@@ -77,7 +77,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         declinedListButton.setOnClickListener(v -> {
             EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.DECLINED_LIST);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
@@ -85,7 +85,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         editButton.setOnClickListener(v -> {
             EventEditFragment fragment = EventEditFragment.newInstance(event);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });

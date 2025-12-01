@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Checks if app has permission from Android to post push notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -57,7 +58,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".database.MyFirebaseMessagingService"
+            android:name="com.example.matrix_events.database.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

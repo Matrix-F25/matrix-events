@@ -4,6 +4,8 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -28,6 +30,7 @@ import com.example.matrix_events.fragments.OrganizerEventFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.mvc.View;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
@@ -41,6 +44,10 @@ public class OrganizerMyEventsActivity extends AppCompatActivity implements View
     private ArrayList<Event> eventArray;
     private EventArrayAdapter eventAdapter;
     private TextView listTitleTextview;
+    private Button createEventButton;
+    
+    private MaterialButton registrationNotClosedButton;
+    private MaterialButton registrationClosedButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +76,7 @@ public class OrganizerMyEventsActivity extends AppCompatActivity implements View
             Event selectedEvent = eventArray.get(position);
             OrganizerEventFragment fragment = OrganizerEventFragment.newInstance(selectedEvent);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         }));
@@ -98,28 +105,42 @@ public class OrganizerMyEventsActivity extends AppCompatActivity implements View
         }
 
         // Create Event
-        Button createEventButton = findViewById(R.id.organizer_create_event_button);
+        createEventButton = findViewById(R.id.organizer_create_event_button);
         if (createEventButton != null) {
             createEventButton.setOnClickListener(v -> {
                 Fragment fragment = new EventCreateFragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main, fragment).addToBackStack(null).commit();
+                        .replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
             });
         }
 
+        // Manage Visibility of Create Button when Fragment is Open
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                if (createEventButton != null) createEventButton.setVisibility(INVISIBLE);
+            } else {
+                if (createEventButton != null) createEventButton.setVisibility(VISIBLE);
+            }
+        });
+
         listTitleTextview = findViewById(R.id.organizer_list_title_textview);
 
-        Button registrationNotClosedButton = findViewById(R.id.organizer_reg_not_closed_button);
+        registrationNotClosedButton = findViewById(R.id.organizer_reg_not_closed_button);
+        registrationClosedButton = findViewById(R.id.organizer_reg_closed_button);
+
         registrationNotClosedButton.setOnClickListener(v -> {
             selection = Selection.NotClosed;
+            updateButtonStyles();
             update();
         });
-        Button registrationClosedButton = findViewById(R.id.organizer_reg_closed_button);
         registrationClosedButton.setOnClickListener(v -> {
             selection = Selection.Closed;
+            updateButtonStyles();
             update();
         });
 
+        // Initial update
+        updateButtonStyles();
         update();
 
         // observe event manager
@@ -130,6 +151,35 @@ public class OrganizerMyEventsActivity extends AppCompatActivity implements View
     protected void onDestroy() {
         super.onDestroy();
         EventManager.getInstance().removeView(this);
+    }
+
+    private void updateButtonStyles() {
+        int green = Color.parseColor("#388E3C");
+        int white = Color.WHITE;
+
+        if (selection == Selection.NotClosed) {
+            // Not Closed is Selected (Green Filled)
+            registrationNotClosedButton.setBackgroundTintList(ColorStateList.valueOf(green));
+            registrationNotClosedButton.setTextColor(white);
+            registrationNotClosedButton.setStrokeWidth(0);
+
+            // Closed is Unselected (Outlined)
+            registrationClosedButton.setBackgroundTintList(ColorStateList.valueOf(white));
+            registrationClosedButton.setTextColor(green);
+            registrationClosedButton.setStrokeColor(ColorStateList.valueOf(green));
+            registrationClosedButton.setStrokeWidth(2); // approx 1dp or 2px
+        } else {
+            // Closed is Selected (Green Filled)
+            registrationClosedButton.setBackgroundTintList(ColorStateList.valueOf(green));
+            registrationClosedButton.setTextColor(white);
+            registrationClosedButton.setStrokeWidth(0);
+
+            // Not Closed is Unselected (Outlined)
+            registrationNotClosedButton.setBackgroundTintList(ColorStateList.valueOf(white));
+            registrationNotClosedButton.setTextColor(green);
+            registrationNotClosedButton.setStrokeColor(ColorStateList.valueOf(green));
+            registrationNotClosedButton.setStrokeWidth(2);
+        }
     }
 
     @Override

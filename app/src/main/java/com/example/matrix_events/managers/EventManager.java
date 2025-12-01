@@ -5,7 +5,11 @@ import android.util.Log;
 import com.example.matrix_events.database.DBConnector;
 import com.example.matrix_events.database.DBListener;
 import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Notification;
+import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.mvc.Model;
+import com.example.matrix_events.managers.NotificationManager;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,7 +199,69 @@ public class EventManager extends Model implements DBListener<Event> {
      *
      * @param event The {@link Event} object to delete. Its ID must be set.
      */
-    public void deleteEvent(Event event) { connector.deleteAsync(event); }
+    public void deleteEvent(Event event) {
+
+        if (event.getPoster() != null && event.getPoster().getImageUrl() != null) {
+            PosterManager.getInstance().deletePoster(event.getPoster());
+        }
+
+        connector.deleteAsync(event);
+    }
+
+    public void cancelEventAndNotifyUsers(Event event, String message) {
+
+        List<String> usersToNotify = new ArrayList<>();
+
+        if (event.getWaitList() != null) {
+            usersToNotify.addAll(event.getWaitList());
+        }
+        if (event.getPendingList() != null) {
+            usersToNotify.addAll(event.getPendingList());
+        }
+        if (event.getAcceptedList() != null) {
+            usersToNotify.addAll(event.getAcceptedList());
+        }
+        if (event.getDeclinedList() != null) {
+            usersToNotify.addAll(event.getDeclinedList());
+        }
+
+        Profile sender = event.getOrganizer();
+        Timestamp currentTime = Timestamp.now();
+
+        for (String userId : usersToNotify) {
+            Profile receiver = ProfileManager.getInstance().getProfileByDeviceId(userId);
+            if (receiver != null) {
+                Notification notification = new Notification(sender, receiver, message, currentTime);
+                NotificationManager.getInstance().createNotification(notification);
+            }
+        }
+
+        deleteEvent(event);
+    }
+
+    public void removeFromAllEvents(String deviceId) {
+        List<Event> allEvents = new ArrayList<>(events);
+
+        for (Event event : allEvents) {
+
+            if (event.getOrganizer() != null && event.getOrganizer().getDeviceId().equals(deviceId)) {
+                String organizerRemovedMessage = "Urgent: The event '" + event.getName() + "' has been cancelled because the organizer's account was removed.";
+                cancelEventAndNotifyUsers(event, organizerRemovedMessage);
+                continue;
+            }
+
+            // attempt to remove the user from all lists
+            boolean removeFromWaitlist = event.getWaitList().remove(deviceId);
+            boolean removeFromPendingList  = event.getPendingList().remove(deviceId);
+            boolean removeFromAcceptedList = event.getAcceptedList().remove(deviceId);
+            boolean removeFromDeclinedList = event.getDeclinedList().remove(deviceId);
+
+            // if the user has been removed from any list, update the event
+            if (removeFromWaitlist || removeFromPendingList || removeFromAcceptedList || removeFromDeclinedList) {
+                updateEvent(event);
+            }
+        }
+    }
 
     /**
      * Callback method invoked by {@link DBConnector} when the event data changes in Firestore.

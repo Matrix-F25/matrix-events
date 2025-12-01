@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.example.matrix_events.R;
 import com.example.matrix_events.activities.MainActivity;
 import com.example.matrix_events.entities.Profile;
+import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
@@ -168,7 +169,10 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
                 .setMessage("Are you sure you want to delete your profile? This action cannot be undone.")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     if (currentProfile != null) {
+
+                        EventManager.getInstance().removeFromAllEvents(deviceId);
                         profileManager.deleteProfile(currentProfile);
+
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             showToast("Profile Deleted Successfully");
                             navigateToMain();
