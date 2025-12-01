@@ -1,5 +1,8 @@
 package com.example.matrix_events.fragments;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -8,7 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -16,12 +22,34 @@ import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.utils.TimestampConverter;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.tasks.CancellationTokenSource;
+import com.google.firebase.firestore.GeoPoint;
 
 public class EventDetailFragment extends Fragment implements com.example.matrix_events.mvc.View {
 
     View view = null;
     private Event event = null;
     private Boolean isAdmin;
+    private FusedLocationProviderClient fusedLocationClient;
+    private String deviceId;
+
+    // Geolocation permission Launcher
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+        registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                // Permission granted, proceed to get location and join
+                fetchLocationAndJoin();
+            } else {
+                if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Toast.makeText(requireContext(), "Location permission is disabled. Please enable it in Android Settings to join.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(requireContext(), "Location permission is required to join this event.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
     public EventDetailFragment() {
         super(R.layout.fragment_event_detail);
@@ -41,6 +69,12 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
@@ -49,6 +83,8 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
             isAdmin = getArguments().getBoolean("isAdmin", false);
         }
         assert event != null;
+
+        deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         Button backButton = view.findViewById(R.id.event_back_button);
         backButton.setOnClickListener(v -> {
@@ -75,6 +111,50 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
         }
     }
 
+    private void handleJoinWaitlist() {
+//        if (event.getOrganizer().getDeviceId().equals(deviceId)) {
+//            Toast.makeText(requireContext(), "You may not enter your own event!", Toast.LENGTH_LONG).show();
+//            return;
+//        }
+
+        if (event.isGeolocationTrackingRequired()) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Request permission
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            } else {
+                // Permission already granted
+                fetchLocationAndJoin();
+            }
+        } else {
+            // No location required, join with null
+            performJoin(null);
+        }
+    }
+
+    @SuppressLint("MissingPermission")      // Suppress because we check permission before calling this
+    private void fetchLocationAndJoin() {
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.getToken())
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                        performJoin(geoPoint);
+                    } else {
+                        Toast.makeText(requireContext(), "Unable to get location. Ensure GPS is on.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Error fetching location: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void performJoin(GeoPoint location) {
+        event.joinWaitList(deviceId, location);
+        EventManager.getInstance().updateEvent(event);
+        Toast.makeText(requireContext(), "Joined Waitlist!", Toast.LENGTH_SHORT).show();
+    }
+
     public void render() {
         // Display poster image if available
         ImageView posterImage = view.findViewById(R.id.event_poster_image);
@@ -83,8 +163,8 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
             String posterUrl = event.getPoster().getImageUrl();
             Glide.with(requireContext())
                     .load(posterUrl)
-                    .placeholder(R.drawable.placeholder) // optional
-                    .error(R.drawable.placeholder)             // optional
+                    .placeholder(R.drawable.placeholder)        // optional
+                    .error(R.drawable.placeholder)              // optional
                     .into(posterImage);
         } else {
             posterImage.setImageResource(R.drawable.placeholder);
@@ -106,7 +186,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
 
         // Event Location
         TextView eventLocation = view.findViewById(R.id.event_location_textview);
-        eventLocation.setText(event.getLocation().getName());
+        eventLocation.setText(event.getLocation());
 
         // Event Start Date/Time
         TextView eventStartDateTextview = view.findViewById(R.id.event_start_date_textview);
@@ -168,9 +248,6 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
         Button waitlistButton = view.findViewById(R.id.event_waitlist_join_button);
         View buttonBar = view.findViewById(R.id.button_bar);
 
-
-        String deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-
         // Default UI state: hide all action buttons
         acceptButton.setVisibility(View.GONE);
         declineButton.setVisibility(View.GONE);
@@ -206,16 +283,9 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
                 listStatusTextview.setText("Not on the Waitlist");
                 waitlistButton.setText("Join Waitlist");
                 waitlistButton.setOnClickListener(v -> {
-                    if (event.getOrganizer().getDeviceId().equals(deviceId)) {
-                        Toast.makeText(requireContext(), "You may not enter your own event!", Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        event.joinWaitList(deviceId);
-                        EventManager.getInstance().updateEvent(event);
-                    }
+                    handleJoinWaitlist();
                 });
             }
-
         }
         else if (event.isRegistrationClosed() && event.isBeforeEventStart()) {
             // State: Registration is closed, but event hasn't started. Users can accept/decline invitations.
