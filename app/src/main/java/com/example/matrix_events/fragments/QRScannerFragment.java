@@ -28,11 +28,9 @@ public class QRScannerFragment extends Fragment {
     private static final String TAG = "QRScannerFragment";
 
     private DecoratedBarcodeView barcodeView;
-    private boolean isScanning = false;
-
     private Button openEventButton;
-    private Event scannedEvent = null;
-    private boolean hasScannedCode = false;
+    private Event currentValidEvent = null; // currently visible valid QR
+    private boolean invalidToastShown = false;
 
     // Permission launcher
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -58,8 +56,8 @@ public class QRScannerFragment extends Fragment {
         openEventButton.setVisibility(View.GONE);
 
         openEventButton.setOnClickListener(v -> {
-            if (scannedEvent != null) {
-                navigateToEvent(scannedEvent);
+            if (currentValidEvent != null) {
+                navigateToEvent(currentValidEvent);
             }
         });
 
@@ -73,32 +71,33 @@ public class QRScannerFragment extends Fragment {
     }
 
     private void startScanning() {
-        if (barcodeView != null && !isScanning) {
-            isScanning = true;
+        if (barcodeView == null) return;
 
-            barcodeView.decodeContinuous(new BarcodeCallback() {
-                @Override
-                public void barcodeResult(BarcodeResult result) {
+        barcodeView.decodeContinuous(new BarcodeCallback() {
+            @Override
+            public void barcodeResult(BarcodeResult result) {
+                if (result.getText() == null) return;
 
-                    if (hasScannedCode) return;
+                Event event = findEventByQRHash(result.getText());
+                if (event != null) {
+                    // Valid QR: show button and store current event
+                    currentValidEvent = event;
+                    openEventButton.setVisibility(View.VISIBLE);
+                    invalidToastShown = false; // reset invalid toast flag
+                } else {
+                    // Invalid QR: hide button
+                    currentValidEvent = null;
+                    openEventButton.setVisibility(View.GONE);
 
-                    String qrHash = result.getText();
-                    Log.d(TAG, "Barcode scanned: " + qrHash);
-
-                    Event foundEvent = findEventByQRHash(qrHash);
-
-                    if (foundEvent != null) {
-                        scannedEvent = foundEvent;
-                        hasScannedCode = true;
-
-                        barcodeView.pause(); // stop scanner
-                        openEventButton.setVisibility(View.VISIBLE); // show button
-                    } else {
+                    if (!invalidToastShown) {
                         Toast.makeText(requireContext(), "Invalid QR code", Toast.LENGTH_SHORT).show();
+                        invalidToastShown = true; // prevent multiple toasts
                     }
                 }
-            });
-        }
+            }
+        });
+
+        barcodeView.resume();
     }
 
     private Event findEventByQRHash(String qrHash) {
@@ -126,12 +125,9 @@ public class QRScannerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        // Reset scanning and button visibility
-        scannedEvent = null;
-        hasScannedCode = false;
+        currentValidEvent = null;
+        invalidToastShown = false;
         openEventButton.setVisibility(View.GONE);
-
         if (barcodeView != null) {
             barcodeView.resume();
             startScanning();
@@ -142,7 +138,6 @@ public class QRScannerFragment extends Fragment {
     public void onPause() {
         super.onPause();
         if (barcodeView != null) barcodeView.pause();
-        isScanning = false;
     }
 
     @Override
@@ -150,6 +145,5 @@ public class QRScannerFragment extends Fragment {
         super.onDestroyView();
         if (barcodeView != null) barcodeView.pause();
         barcodeView = null;
-        isScanning = false;
     }
 }
