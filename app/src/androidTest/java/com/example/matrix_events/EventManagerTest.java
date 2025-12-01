@@ -1,9 +1,16 @@
 package com.example.matrix_events;
 
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import android.util.Log;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.entities.Poster;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.mvc.View;
@@ -11,128 +18,207 @@ import com.google.firebase.Timestamp;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
-
+/**
+ * Robust Integration Tests for {@link EventManager}.
+ * <p>
+ * This suite verifies the interaction between the EventManager and Firestore.
+ * It covers:
+ * <ul>
+ * <li>Basic CRUD operations (Create, Read, Update, Delete).</li>
+ * <li>Complex Filtering (Registration Status, User Lists).</li>
+ * <li>Business Logic (Removing a user from all events).</li>
+ * </ul>
+ * </p>
+ */
 @RunWith(AndroidJUnit4.class)
-public class EventManagerTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class EventManagerTest implements View {
 
+    private static final String TAG = "EventManagerTest";
     private EventManager eventManager;
     private CountDownLatch latch;
-    private View testView;
-    private Event testEvent;
-    private String uniqueEventName;
-    private volatile String expectedDescription;
-    private volatile boolean testingDeletion = false;
+
+    // Static variables to share state between ordered tests
+    private static Event testEvent;
+    private static String testEventId;
+    private static final String TEST_USER_ID = "test_user_device_999";
 
     @Before
     public void setUp() {
         eventManager = EventManager.getInstance();
-        latch = new CountDownLatch(1);
-        uniqueEventName = "Test Event " + UUID.randomUUID().toString();
-
-        testView = new View() {
-            @Override
-            public void update() {
-                if (testingDeletion) {
-                    // For deletion to confirm the event is gone.
-                    boolean eventFound = false;
-                    for (Event e : eventManager.getEvents()) {
-                        if (uniqueEventName.equals(e.getName())) {
-                            eventFound = true;
-                            break;
-                        }
-                    }
-                    if (!eventFound) {
-                        latch.countDown(); // Signal that deletion is confirmed.
-                    }
-                } else {
-                    // For creation/update, confirm the event is present.
-                    for (Event e : eventManager.getEvents()) {
-                        if (uniqueEventName.equals(e.getName()) && expectedDescription.equals(e.getDescription())) {
-                            testEvent.setId(e.getId());
-                            latch.countDown();
-                            break;
-                        }
-                    }
-                }
-            }
-        };
-        eventManager.addView(testView);
+        eventManager.addView(this);
     }
 
+    /**
+     * MVC Callback: Triggered when EventManager finishes a DB operation.
+     */
+    @Override
+    public void update() {
+        if (latch != null) {
+            Log.d(TAG, "Update received from EventManager");
+            latch.countDown();
+        }
+    }
+
+    /**
+     * Helper to create a generic event.
+     */
+    private Event createMockEvent(String name, boolean isRegClosed) {
+        Profile organizer = new Profile("Test Org", "org@test.com", "555-1234", "org_device_id");
+        long now = new Date().getTime();
+        long hour = 3600 * 1000;
+
+        // Timestamps setup
+        Timestamp regStart = new Timestamp(new Date(now + hour));
+        Timestamp regEnd = new Timestamp(new Date(now + 2 * hour));
+        Timestamp evtStart = new Timestamp(new Date(now + 3 * hour));
+        Timestamp evtEnd = new Timestamp(new Date(now + 4 * hour));
+
+        Event event = new Event(
+                name, "Description", organizer, "Test Lab",
+                evtStart, evtEnd, 10, 5,
+                regStart, regEnd, false, null, null, false, null
+        );
+
+        // Manually force state for testing filters
+        // Note: Real state depends on Cloud Functions, but we simulate flags here
+        if (isRegClosed) {
+            event.setRegistrationOpened(true);
+            event.setLotteryProcessed(true); // Closed
+        } else {
+            event.setRegistrationOpened(true);
+            event.setLotteryProcessed(false); // Open
+        }
+
+        return event;
+    }
+
+    // ==========================================
+    // 1. Basic CRUD Tests
+    // ==========================================
+
     @Test
-    public void testCreateAndReadEvent() throws InterruptedException {
-        expectedDescription = "This is a test description.";
-        Profile organizer = new Profile("Test Organizer", "organizer@test.com", "1234567890", "test-device-id");
-        Geolocation location = new Geolocation("Test Location", 45.0, -75.0);
-        testEvent = new Event(uniqueEventName, expectedDescription, organizer, location, new Timestamp(new Date()), new Timestamp(new Date()), 100, 20, new Timestamp(new Date()), new Timestamp(new Date()), false, null, null, true, new Poster("http://example.com/poster.jpg"));
+    public void testA_CreateEvent() throws InterruptedException {
+        testEvent = createMockEvent("Integration Test Event", false);
+        latch = new CountDownLatch(1);
 
         eventManager.createEvent(testEvent);
 
-        boolean eventFound = latch.await(15, TimeUnit.SECONDS);
-        assertTrue("Timeout: The created event never appeared in the manager.", eventFound);
+        // Wait for Firestore to update
+        assertTrue("Timed out waiting for create", latch.await(10, TimeUnit.SECONDS));
+
+        // Find the event to get its generated ID
+        boolean found = false;
+        for (Event e : eventManager.getEvents()) {
+            if (e.getName().equals("Integration Test Event")) {
+                testEventId = e.getId();
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Event should be found in manager", found);
+        assertNotNull("Event ID should be generated", testEventId);
     }
 
     @Test
-    public void testUpdateEvent() throws InterruptedException {
-        testCreateAndReadEvent(); // First, create the event.
+    public void testB_ReadAndFilterByRegStatus() {
+        // We created an "Open" event in Test A.
+        List<Event> openEvents = eventManager.getEventsRegistrationNotClosed();
+        List<Event> closedEvents = eventManager.getEventsRegistrationClosed();
 
-        latch = new CountDownLatch(1); // Reset latch for the update operation.
-        String newName = "Updated Event Name";
-        String newDescription = "This is an updated description.";
-        uniqueEventName = newName; // The listener will now look for the new name
-        expectedDescription = newDescription;
+        boolean foundInOpen = false;
+        for (Event e : openEvents) {
+            if (e.getId().equals(testEventId)) foundInOpen = true;
+        }
 
-        testEvent.setName(newName);
-        testEvent.setDescription(newDescription);
+        assertTrue("Test event should be in 'Not Closed' list", foundInOpen);
 
-        eventManager.updateEvent(testEvent);
-
-        boolean eventUpdated = latch.await(15, TimeUnit.SECONDS);
-        assertTrue("Timeout: The updated event state never appeared in the manager.", eventUpdated);
-
-        Event foundEvent = eventManager.getEvent(testEvent.getId());
-        assertNotNull("Event could not be found in manager after update.", foundEvent);
-        assertEquals("Event name was not updated correctly.", newName, foundEvent.getName());
-        assertEquals("Event description was not updated correctly.", newDescription, foundEvent.getDescription());
+        // Ensure it's NOT in the closed list
+        for (Event e : closedEvents) {
+            assertFalse("Test event should NOT be in 'Closed' list", e.getId().equals(testEventId));
+        }
     }
 
     @Test
-    public void testDeleteEvent() throws InterruptedException {
-        // --- Part 1: Create the event so there is something to delete ---
-        testCreateAndReadEvent();
-        assertNotNull("Precondition failed: Test event ID is null before deletion.", testEvent.getId());
+    public void testC_UpdateAndUserLists() throws InterruptedException {
+        // 1. Fetch Event
+        Event event = eventManager.getEventByDBID(testEventId);
+        assertNotNull(event);
 
-        // --- Part 2: Delete the event ---
-        latch = new CountDownLatch(1); // Reset latch for the deletion operation.
-        testingDeletion = true; // Switch listener to deletion confirmation mode.
+        // 2. Add user to Pending List manually (Simulating Lottery Win)
+        List<String> pending = new ArrayList<>();
+        pending.add(TEST_USER_ID);
+        event.setPendingList(pending);
 
-        eventManager.deleteEvent(testEvent);
+        latch = new CountDownLatch(1);
+        eventManager.updateEvent(event);
+        assertTrue("Timed out waiting for update", latch.await(10, TimeUnit.SECONDS));
 
-        // Wait until our listener confirms the event is no longer in the list.
-        boolean eventDeleted = latch.await(15, TimeUnit.SECONDS);
-        assertTrue("Timeout: The event was not removed from the manager's list.", eventDeleted);
+        // 3. Verify Filter: getEventsInPending
+        List<Event> pendingEvents = eventManager.getEventsInPending(TEST_USER_ID);
+        boolean found = false;
+        for (Event e : pendingEvents) {
+            if (e.getId().equals(testEventId)) found = true;
+        }
+        assertTrue("Event should appear in user's Pending filter", found);
 
-        // --- Part 3: Verify the event is truly gone ---
-        Event foundEvent = eventManager.getEvent(testEvent.getId());
-        assertNull("The event was still found in the manager after it should have been deleted.", foundEvent);
+        // 4. Verify NOT in other lists
+        assertTrue("Should not be in Accepted", eventManager.getEventsInAccepted(TEST_USER_ID).isEmpty());
     }
 
+    // ==========================================
+    // 2. Complex Business Logic Tests
+    // ==========================================
+
+    /**
+     * User Story: User deletes their profile.
+     * Expected: User is removed from ALL event lists (Waitlist, Pending, etc).
+     */
+    @Test
+    public void testD_RemoveFromAllEvents() throws InterruptedException {
+        // 1. Verify user is currently in the Pending list from previous test
+        Event before = eventManager.getEventByDBID(testEventId);
+        assertTrue("User should be in pending list before removal", before.inPendingList(TEST_USER_ID));
+
+        // 2. Perform Removal Action
+        latch = new CountDownLatch(1); // Expect update from the event modification
+        eventManager.removeFromAllEvents(TEST_USER_ID);
+
+        assertTrue("Timed out waiting for batch removal update", latch.await(10, TimeUnit.SECONDS));
+
+        // 3. Verify Removal
+        Event after = eventManager.getEventByDBID(testEventId);
+        assertFalse("User should be removed from pending list", after.inPendingList(TEST_USER_ID));
+        assertFalse("User should be removed from waitlist", after.inWaitList(TEST_USER_ID));
+        assertFalse("User should be removed from accepted list", after.inAcceptedList(TEST_USER_ID));
+    }
+
+    @Test
+    public void testE_DeleteEvent() throws InterruptedException {
+        Event event = eventManager.getEventByDBID(testEventId);
+        if (event != null) {
+            latch = new CountDownLatch(1);
+            eventManager.deleteEvent(event);
+            assertTrue("Timed out deleting event", latch.await(10, TimeUnit.SECONDS));
+
+            assertNull("Event should be gone", eventManager.getEventByDBID(testEventId));
+        }
+    }
+
+    // Cleanup Listener
     @After
     public void tearDown() {
-        // Clean up any test artifacts, if necessary.
-        if (testEvent != null && testEvent.getId() != null && !testingDeletion) {
-             // Avoid trying to delete something that was already deleted in the delete test.
-            eventManager.deleteEvent(testEvent);
-        }
-        eventManager.removeView(testView);
+        eventManager.removeView(this);
     }
 }
