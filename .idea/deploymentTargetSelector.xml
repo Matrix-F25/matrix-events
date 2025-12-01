@@ -5,19 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ProfileManagerTest">
+      <SelectionState runConfigName="ProfileArrayAdapterTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PosterManagerTest">
+      <SelectionState runConfigName="testNotificationOptOut()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="NotificationManagerTest">
+      <SelectionState runConfigName="test_US_01_01_01_JoinWaitlist()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EventArrayAdapterTest">
+      <SelectionState runConfigName="USTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="NotificationArrayAdapterTest">
+      <SelectionState runConfigName="test_US_01_02_01_ProvidePersonalInfo()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
