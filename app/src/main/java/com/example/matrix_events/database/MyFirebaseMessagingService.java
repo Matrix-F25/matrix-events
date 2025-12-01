@@ -7,23 +7,42 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.matrix_events.entities.Profile;
-import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.utils.NotificationUtils;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
+/**
+ * Service responsible for handling incoming Firebase Cloud Messages (FCM).
+ * <p>
+ * This service runs in the background and handles two main tasks:
+ * <ol>
+ * <li><b>Token Refresh:</b> Updates the user's Firestore profile when a new FCM token is generated.</li>
+ * <li><b>Message Reception:</b> Intercepts data payloads, checks user preferences (Admin/Organizer),
+ * and triggers the {@link NotificationUtils} to display a system notification.</li>
+ * </ol>
+ * </p>
+ */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FCMService";
 
-    // Shared Preferences keys (Make sure these match where you save user settings!)
+    // Shared Preferences keys (Must match where you save user settings in the app)
     private static final String PREFS_NAME = "MatrixEventsPrefs";
     private static final String KEY_ALLOW_ADMIN = "allow_admin_push";
     private static final String KEY_ALLOW_ORGANIZER = "allow_organizer_push";
 
+    /**
+     * Called when a new token for this device is generated.
+     * <p>
+     * This typically happens on first app install or if the user clears app data.
+     * We immediately update the 'FCMToken' field in the user's Firestore profile.
+     * </p>
+     *
+     * @param token The new token.
+     */
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
@@ -38,8 +57,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
-                        // Only one profile per device
-                        var doc = querySnapshot.getDocuments().get(0);
+                        // Use explicit type instead of 'var' for compatibility
+                        DocumentSnapshot doc = querySnapshot.getDocuments().get(0);
+
                         // Update the FCM token field in Database
                         doc.getReference().update("FCMToken", token);
                         Log.d(TAG, "FCM token saved to profile: " + doc.getId());
@@ -52,36 +72,54 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 );
     }
 
+    /**
+     * Called when a message is received.
+     * <p>
+     * Logic:
+     * 1. Check if the message contains a data payload.
+     * 2. Extract the 'type' (Admin/Organizer) and 'notificationId'.
+     * 3. Check local SharedPreferences to see if the user has muted this type.
+     * 4. If allowed, show the notification.
+     * </p>
+     *
+     * @param remoteMessage Object representing the message received from Firebase.
+     */
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
         Log.d(TAG, "FCM message received from: " + remoteMessage.getFrom());
 
-        Map<String, String> data = remoteMessage.getData();
-        if (data.size() > 0) {
-            handleDataMessage(data);
+        // Check if message contains a data payload.
+        if (remoteMessage.getData().size() > 0) {
+            handleDataMessage(remoteMessage.getData());
         } else if (remoteMessage.getNotification() != null) {
-            // Fallback: If only a notification payload is sent (not recommended for your requirements),
-            // we treat it as a generic message.
+            // Fallback: If a "Display Notification" is sent instead of a "Data Message",
+            // we handle it here. Note: This only runs if the app is in the FOREGROUND.
+            // Background notifications of this type are handled by the System Tray automatically.
             String title = remoteMessage.getNotification().getTitle();
             String body = remoteMessage.getNotification().getBody();
-            // We can't determine type/id easily here, so we default.
             showNotification(title, body, "0", "generic");
         }
     }
 
+    /**
+     * Processes the data payload from the push notification.
+     *
+     * @param data The Key-Value map from the message.
+     */
     private void handleDataMessage(Map<String, String> data) {
         String title = data.get("title");
         String message = data.get("message");
-        String type = data.get("type"); // e.g., "admin", "organizer"
+        String type = data.get("type"); // Expected values: "admin", "organizer"
         String notificationId = data.get("notificationId");
 
+        // Fallback for ID if missing
         if (notificationId == null) {
             notificationId = String.valueOf(System.currentTimeMillis());
         }
 
-        // 1. CHECK PREFERENCES LOCALLY (Synchronous & Fast)
+        // CHECK PREFERENCES LOCALLY (Synchronous & Fast)
         // We avoid Firestore here to prevent the service from being killed before it finishes.
         if (shouldShowNotification(type)) {
             showNotification(title, message, notificationId, type);
@@ -90,13 +128,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    /**
+     * Checks SharedPreferences to see if the user wants to receive this type of notification.
+     *
+     * @param type The type of notification ("admin" or "organizer").
+     * @return {@code true} if allowed or type is unknown, {@code false} if muted.
+     */
     private boolean shouldShowNotification(String type) {
         if (type == null) return true; // Default to showing if no type specified
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         if (type.equalsIgnoreCase("admin")) {
-            // Default to true if not set
+            // Default to true if preference is not set
             return prefs.getBoolean(KEY_ALLOW_ADMIN, true);
         } else if (type.equalsIgnoreCase("organizer")) {
             return prefs.getBoolean(KEY_ALLOW_ORGANIZER, true);
@@ -105,8 +149,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         return true; // Unknown types show by default
     }
 
+    /**
+     * triggers the actual system notification UI.
+     */
     private void showNotification(String title, String message, String notificationId, String type) {
-        // Pass to your Utility class to handle the actual PendingIntent creation
+        // Pass to your Utility class to handle the actual PendingIntent creation and display
         NotificationUtils.showPushNotification(
                 getApplicationContext(),
                 title,

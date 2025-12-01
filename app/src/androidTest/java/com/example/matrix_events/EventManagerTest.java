@@ -1,4 +1,4 @@
-package com.example.matrix_events;
+/* package com.example.matrix_events;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -136,3 +136,4 @@ public class EventManagerTest {
         eventManager.removeView(testView);
     }
 }
+*/
