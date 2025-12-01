@@ -155,7 +155,7 @@ public class EventCreateFragment extends Fragment {
                             },
                             calendar.get(Calendar.HOUR_OF_DAY),
                             calendar.get(Calendar.MINUTE),
-                            true);
+                            false);
                     timePickerDialog.show();
                 },
                 calendar.get(Calendar.YEAR),

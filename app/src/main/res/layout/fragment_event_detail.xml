@@ -92,7 +92,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Your Status"
+                            android:text="Your Status:"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:textColor="#388E3C"/>
@@ -141,7 +141,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Organizer"
+                    android:text="Organizer: "
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="#616161"/>
@@ -157,7 +157,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Description"
+                    android:text="Description: "
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="#616161"/>
@@ -173,7 +173,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Location"
+                    android:text="Location: "
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="#616161"/>
@@ -181,7 +181,7 @@
                     android:id="@+id/event_location_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Event Location"
+                    android:text="Event Location: "
                     android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="12dp"/>
@@ -203,7 +203,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Start Date"
+                            android:text="Start Date:"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:textColor="#616161"/>
@@ -225,7 +225,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="End Date"
+                            android:text="End Date: "
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:textColor="#616161"/>
@@ -248,7 +248,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Reoccurring Info"
+                            android:text="Reoccurring Info: "
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:textColor="#616161"/>
@@ -265,7 +265,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Registration Period"
+                    android:text="Registration Period: "
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="#616161"
