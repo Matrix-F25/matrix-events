@@ -11,81 +11,77 @@
     <string name="email_address">Email Address</string>
     <string name="full_name">Full Name</string>
 
-<!-- Strings related to Login -->
-<string name="prompt_email">Email</string>
-<string name="prompt_password">Password</string>
-<string name="action_sign_in">Sign in or register</string>
-<string name="action_sign_in_short">Sign in</string>
-<string name="welcome">"Welcome!"</string>
-<string name="invalid_username">Not a valid username</string>
-<string name="invalid_password">Password must be >5 characters</string>
-<string name="login_failed">"Login failed"</string>
-<string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</string>
-<string name="list_result_text">You have been selected!</string>
-<string name="waitlist_noti_title">Swimming Lessons</string>
-<string name="message_noti_title">New message from: Swimming Lessons Organizer (Lisa Smith)</string>
-<string name="message_noti_text">Hey everyone! I just wanted to remind everyone to purchase their pool pass prior to arriving at the facility tomorrow. If not, you won’t be allowed to join the group as space in the facility is limited. \n\nHave a great day!</string>
+    <!-- Strings related to Login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</string>
+    <string name="list_result_text">You have been selected!</string>
+    <string name="waitlist_noti_title">Swimming Lessons</string>
+    <string name="message_noti_title">New message from: Swimming Lessons Organizer (Lisa Smith)</string>
+    <string name="message_noti_text">Hey everyone! I just wanted to remind everyone to purchase their pool pass prior to arriving at the facility tomorrow. If not, you won’t be allowed to join the group as space in the facility is limited. \n\nHave a great day!</string>
 
-<!-- Strings related to Profile -->
-<string name="profile_page_title">My Profile</string>
-<string name="profile_name_header">Name:</string>
-<string name="profile_email_header">Email:</string>
-<string name="profile_phone_header">Phone Number:</string>
-<string name="required_input_field">Required</string>
-<string name="optional_input_field">Optional</string>
-<string name="update_button_text">UPDATE</string>
-<string name="settings_button_description">Settings</string>
+    <!-- Strings related to Profile -->
+    <string name="profile_page_title">My Profile</string>
+    <string name="profile_name_header">Name:</string>
+    <string name="profile_email_header">Email:</string>
+    <string name="profile_phone_header">Phone Number:</string>
+    <string name="required_input_field">Required</string>
+    <string name="optional_input_field">Optional</string>
+    <string name="update_button_text">UPDATE</string>
+    <string name="settings_button_description">Settings</string>
+    <string name="add_profile_picture">Add Profile Picture to Users Account</string>
 
-<!-- Strings related to Settings -->
-<string name="settings_page_title">Settings</string>
-<string name="push_notification_settings_page_header">Push Notification Settings</string>
-<string name="email_notifications_header"><u>Email Notifications:</u></string>
-<string name="phone_notifications_header"><u>Phone Notifications:</u></string>
-<string name="admin_switch">• Enable Admin Notifications</string>
-<string name="organizer_switch">• Enable Organizer Notifications</string>
-<string name="account_settings_page_header">Account Settings</string>
-<string name="geolocation_switch">Enable Geolocation Access</string>
-<string name="device_id_switch">Enable Device ID Auto-login</string>
-<string name="terms_conditions_header">Click Here For Terms &amp; Conditions</string>
-<string name="terms_conditions_text">T</string>
-<string name="logout_button_text">Log Out</string>
-<string name="delete_profile_button_text">Delete Profile</string>
-<string name="back_button_text">Back</string>
+    <!-- Strings related to Settings -->
+    <string name="settings_page_title">Settings</string>
+    <string name="push_notification_settings_page_header">Push Notification Settings</string>
+    <string name="notifications_from_organizers">Enable Notifications from Organizers</string>
+    <string name="notifications_from_admin">Enable Notifications from Admin</string>
+    <string name="terms_conditions_header">Click Here For Terms &amp; Conditions</string>
+    <string name="terms_conditions_text">T</string>
+    <string name="logout_button_text">Log Out</string>
+    <string name="delete_profile_button_text">Delete Profile</string>
+    <string name="back_button_text">Back</string>
 
-<!-- Strings related to Terms & Conditions -->
-<string name="terms_conditions_title"><![CDATA[📄 Terms & Conditions — Event Lottery System]]></string>
-<string name="last_updated">Last Updated: November 3rd, 2025</string>
-<string name="section1_header">1. Overview</string>
-<string name="section1_text">These Terms and Conditions (“Terms”) govern the use of the Matrix-Events mobile application (the “App”), which allows users to register for community events through a random lottery selection process (“Lottery System”). By using the App, you agree to the following Terms.</string>
-<string name="section2_header">2. Purpose</string>
-<string name="section2_text">The App is designed to make event registration fair and accessible for everyone, especially individuals who may have limitations such as work schedules, disabilities, or other commitments that make it difficult to sign up for events on a first-come, first-served basis.</string>
-<string name="section3_header">3. Eligibility</string>
-<string name="section3_text">You must be at least 13 years old or have parental/guardian consent to use the App. Each participant may only submit one entry per event. Duplicate or fraudulent entries may be removed at the discretion of the event organizer.</string>
-<string name="section4_header">4. Lottery Selection Process</string>
-<string name="section4_text">When an event is posted, users may express interest and join a waiting list during the registration period (usually one week). Once the registration period ends, the App will randomly select participants from the waiting list based on available spots. Selected users will be notified through the App (or by email, if applicable). If a selected participant declines or does not confirm within the specified timeframe, another entrant will be drawn at random to fill the spot.</string>
-<string name="section5_header">5. Organizer Responsibilities</string>
-<string name="section5_text">Event organizers are responsible for providing accurate event information, confirming selected participants, and managing cancellations or replacements. Organizers agree to conduct lotteries fairly using the App’s built-in random selection system.</string>
-<string name="section6_header">6. User Responsibilities</string>
-<string name="section6_text">Users must provide accurate information when signing up for events. If selected, users must confirm or decline their spot within the specified time. Failure to respond may result in losing the selection, and another participant may be chosen.</string>
-<string name="section7_header">7. Fair Use</string>
-<string name="section7_text">Any attempts to manipulate or unfairly influence the lottery process, including creating duplicate accounts or providing false information, may result in suspension or removal from the App.</string>
-<string name="section8_header">8. Privacy</string>
-<string name="section8_text">Your personal information is used solely for the purpose of event registration and communication regarding lotteries. No personal data will be shared with third parties except as required by law.</string>
-<string name="section9_header">9. Cancellation and Replacement</string>
-<string name="section9_text">If a confirmed participant cancels, the organizer may trigger a new draw from the waiting list. The replacement participant will be notified and given the same confirmation opportunity as the original selection.</string>
-<string name="section10_header">10. Limitation of Liability</string>
-<string name="section10_text">The App and its developers are not responsible for any losses or damages arising from use of the App, missed notifications, or event cancellations. Participation in the lottery does not guarantee selection.</string>
-<string name="section11_header">11. Modifications to Terms</string>
-<string name="section11_text">These Terms may be updated periodically. Continued use of the App after updates are posted constitutes acceptance of the new Terms.</string>
-<string name="section12_header">12. Contact</string>
-<string name="section12_text">If you have questions about these Terms or the lottery system, please contact us at team_matrix@gmail.com.</string>
-<string name="terms_back_button">Back</string>
+    <!-- Strings related to Terms & Conditions -->
+    <string name="terms_conditions_title"><![CDATA[📄 Terms & Conditions — Event Lottery System]]></string>
+    <string name="last_updated">Last Updated: November 3rd, 2025</string>
+    <string name="section1_header">1. Overview</string>
+    <string name="section1_text">These Terms and Conditions (“Terms”) govern the use of the Matrix-Events mobile application (the “App”), which allows users to register for community events through a random lottery selection process (“Lottery System”). By using the App, you agree to the following Terms.</string>
+    <string name="section2_header">2. Purpose</string>
+    <string name="section2_text">The App is designed to make event registration fair and accessible for everyone, especially individuals who may have limitations such as work schedules, disabilities, or other commitments that make it difficult to sign up for events on a first-come, first-served basis.</string>
+    <string name="section3_header">3. Eligibility</string>
+    <string name="section3_text">You must be at least 13 years old or have parental/guardian consent to use the App. Each participant may only submit one entry per event. Duplicate or fraudulent entries may be removed at the discretion of the event organizer.</string>
+    <string name="section4_header">4. Lottery Selection Process</string>
+    <string name="section4_text">When an event is posted, users may express interest and join a waiting list during the registration period (usually one week). Once the registration period ends, the App will randomly select participants from the waiting list based on available spots. Selected users will be notified through the App (or by email, if applicable). If a selected participant declines or does not confirm within the specified timeframe, another entrant will be drawn at random to fill the spot.</string>
+    <string name="section5_header">5. Organizer Responsibilities</string>
+    <string name="section5_text">Event organizers are responsible for providing accurate event information, confirming selected participants, and managing cancellations or replacements. Organizers agree to conduct lotteries fairly using the App’s built-in random selection system.</string>
+    <string name="section6_header">6. User Responsibilities</string>
+    <string name="section6_text">Users must provide accurate information when signing up for events. If selected, users must confirm or decline their spot within the specified time. Failure to respond may result in losing the selection, and another participant may be chosen.</string>
+    <string name="section7_header">7. Fair Use</string>
+    <string name="section7_text">Any attempts to manipulate or unfairly influence the lottery process, including creating duplicate accounts or providing false information, may result in suspension or removal from the App.</string>
+    <string name="section8_header">8. Privacy</string>
+    <string name="section8_text">Your personal information is used solely for the purpose of event registration and communication regarding lotteries. No personal data will be shared with third parties except as required by law.</string>
+    <string name="section9_header">9. Cancellation and Replacement</string>
+    <string name="section9_text">If a confirmed participant cancels, the organizer may trigger a new draw from the waiting list. The replacement participant will be notified and given the same confirmation opportunity as the original selection.</string>
+    <string name="section10_header">10. Limitation of Liability</string>
+    <string name="section10_text">The App and its developers are not responsible for any losses or damages arising from use of the App, missed notifications, or event cancellations. Participation in the lottery does not guarantee selection.</string>
+    <string name="section11_header">11. Modifications to Terms</string>
+    <string name="section11_text">These Terms may be updated periodically. Continued use of the App after updates are posted constitutes acceptance of the new Terms.</string>
+    <string name="section12_header">12. Contact</string>
+    <string name="section12_text">If you have questions about these Terms or the lottery system, please contact us at team_matrix@gmail.com.</string>
+    <string name="terms_back_button">Back</string>
 
-<!-- Strings related to Event Search -->
-<string name="event_search_page_title">Event Search Page</string>
-<string name="search_events_hint">Search events…</string>
-<string name="event_availability">Event Availability</string>
-<string name="date_filter_button_text">Date</string>
+    <!-- Strings related to Event Search -->
+    <string name="event_search_page_title">Event Search Page</string>
+    <string name="search_events_hint">Search events…</string>
+    <string name="event_availability">Event Availability</string>
+    <string name="date_filter_button_text">Date</string>
     <string name="registration_open">Registration Open</string>
 
 </resources>

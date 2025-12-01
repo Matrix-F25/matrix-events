@@ -12,10 +12,12 @@ import java.util.List;
 
 /**
  * Manages all notification-related data and operations within the application.
+ * <p>
  * This class follows the singleton pattern to provide a centralized point of access
  * for notification data. It connects to the Firestore 'notifications' collection,
  * maintains a local cache of {@link Notification} objects, and notifies registered
  * views of any changes, adhering to the MVC pattern.
+ * </p>
  */
 public class NotificationManager extends Model implements DBListener<Notification> {
     private static final String TAG = "NotificationManager";
@@ -44,13 +46,16 @@ public class NotificationManager extends Model implements DBListener<Notificatio
 
     /**
      * Finds and retrieves a notification by its unique Firestore document ID.
+     * <p>
+     * This method is critical for the Push Notification deep linking feature.
+     * </p>
      *
      * @param id The Firestore document ID of the notification.
      * @return The {@link Notification} object with the matching ID, or {@code null} if no notification is found.
      */
     public Notification getNotificationByDBID(String id) {
         for (Notification notification : notifications) {
-            if (notification.getId().equals(id)) {
+            if (notification.getId() != null && notification.getId().equals(id)) {
                 return notification;
             }
         }
@@ -66,7 +71,8 @@ public class NotificationManager extends Model implements DBListener<Notificatio
     public List<Notification> getReceivedNotificationsByDeviceID(String deviceID) {
         List<Notification> recvNotifications = new ArrayList<>();
         for (Notification notification : notifications) {
-            if (notification.getReceiver().getDeviceId().equals(deviceID)) {
+            // Note: Assuming Profile object is always present on notification.
+            if (notification.getReceiver() != null && notification.getReceiver().getDeviceId().equals(deviceID)) {
                 recvNotifications.add(notification);
             }
         }
@@ -82,7 +88,7 @@ public class NotificationManager extends Model implements DBListener<Notificatio
     public List<Notification> getSentNotificationsByDeviceID(String deviceID) {
         List<Notification> sentNotifications = new ArrayList<>();
         for (Notification notification : notifications) {
-            if (notification.getSender().getDeviceId().equals(deviceID)) {
+            if (notification.getSender() != null && notification.getSender().getDeviceId().equals(deviceID)) {
                 sentNotifications.add(notification);
             }
         }
@@ -100,6 +106,9 @@ public class NotificationManager extends Model implements DBListener<Notificatio
 
     /**
      * Asynchronously updates an existing notification in the Firestore database.
+     * <p>
+     * This is used by Entrants to mark a notification as read (soft delete).
+     * </p>
      *
      * @param notification The {@link Notification} object with updated data. Its ID must be set.
      */
@@ -107,6 +116,9 @@ public class NotificationManager extends Model implements DBListener<Notificatio
 
     /**
      * Asynchronously deletes a notification from the Firestore database.
+     * <p>
+     * This is typically used by Admins or system processes for hard deletion.
+     * </p>
      *
      * @param notification The {@link Notification} object to delete. Its ID must be set.
      */
@@ -114,7 +126,10 @@ public class NotificationManager extends Model implements DBListener<Notificatio
 
     /**
      * Callback method invoked by {@link DBConnector} when the notification data changes in Firestore.
-     * It updates the local notification cache and notifies all registered views of the change.
+     * <p>
+     * This method patches old notifications that might be missing a type field (legacy data)
+     * and updates the local cache before notifying all registered views.
+     * </p>
      *
      * @param objects The updated list of {@link Notification} objects from Firestore.
      */
@@ -124,10 +139,11 @@ public class NotificationManager extends Model implements DBListener<Notificatio
 
         // Patch old notifications with missing types
         for (Notification n : objects) {
+            // Check if type is missing (getTypeRaw returns the raw field value)
             if (n.getTypeRaw() == null) {
                 Log.d(TAG, "Missing type for notification " + n.getId() + " - assigning default ORGANIZER");
-                n.setTypeEnum(Notification.NotificationType.ORGANIZER); // default
-                connector.updateAsync(n);
+                n.setType(Notification.NotificationType.ORGANIZER); // default
+                connector.updateAsync(n); // Asynchronously save the patched object back
             }
         }
 

@@ -3,7 +3,6 @@ package com.example.matrix_events.unit.managers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -49,7 +48,7 @@ public class NotificationManagerTest implements View {
     private NotificationManager notificationManager;
     private CountDownLatch latch;
 
-    // Static variables to persist data across the ordered test steps
+    // Static variables to persist data across test steps
     private static Notification testNotification;
     private static String testNotificationId;
     private static String senderDeviceId;
@@ -90,7 +89,7 @@ public class NotificationManagerTest implements View {
     /**
      * Test A: Create a Notification.
      * <p>
-     * <b>Scenario:</b> Create a new {@link Notification} object and save it to Firestore.<br>
+     * <b>Scenario:</b> Save a new notification to Firestore.<br>
      * <b>Expected Result:</b> The notification is successfully uploaded, and the Manager's local cache
      * updates to include it. We verify this by polling the list until the item appears.
      * </p>
@@ -114,8 +113,6 @@ public class NotificationManagerTest implements View {
         notificationManager.createNotification(testNotification);
 
         // 3. POLLING FIX: Wait for the specific data to arrive.
-        // We cannot rely on a single latch because other updates (like 'patching' in NotificationManager)
-        // might trigger the view update before our new item arrives.
         boolean found = false;
         long endTime = System.currentTimeMillis() + 10000; // 10 second timeout
 
@@ -143,9 +140,9 @@ public class NotificationManagerTest implements View {
     /**
      * Test B: Lookup by DB ID (CRITICAL for Deep Linking).
      * <p>
-     * <b>Scenario:</b> Call {@code getNotificationByDBID} using the ID generated in Test A.<br>
-     * <b>Expected:</b> Returns the correct Notification object. This simulates the exact logic
-     * used by {@code NotificationActivity} when opened via a push notification click.
+     * <b>Scenario:</b> Call {@code getNotificationByDBID} with the ID from Test A.<br>
+     * <b>Expected Result:</b> Returns the correct Notification object. This simulates what
+     * NotificationActivity does when opened via a push notification click.
      * </p>
      */
     @Test
@@ -163,7 +160,7 @@ public class NotificationManagerTest implements View {
      * Test C: Filter by Receiver.
      * <p>
      * <b>Scenario:</b> Call {@code getReceivedNotificationsByDeviceID} for the test receiver.<br>
-     * <b>Expected:</b> Returns a list containing our test notification, verifying the filtering logic.
+     * <b>Expected Result:</b> Returns a list containing our test notification.
      * </p>
      */
     @Test
@@ -180,22 +177,40 @@ public class NotificationManagerTest implements View {
     }
 
     /**
-     * Test D: Delete Notification.
+     * Test D: Filter by Sender.
      * <p>
-     * <b>Scenario:</b> Delete the test notification.<br>
-     * <b>Expected:</b> The notification is removed from the Manager's cache and ID lookup returns null.
+     * <b>Scenario:</b> Call {@code getSentNotificationsByDeviceID} for the test sender.<br>
+     * <b>Expected Result:</b> Returns a list containing our test notification, verifying the filtering logic.
      * </p>
      */
     @Test
-    public void testD_DeleteNotification() throws InterruptedException {
+    public void testD_FilterBySender() {
+        List<Notification> myNotifications = notificationManager.getSentNotificationsByDeviceID(senderDeviceId);
+
+        assertFalse("Should have at least one notification sent", myNotifications.isEmpty());
+
+        boolean found = false;
+        for (Notification n : myNotifications) {
+            if (n.getId().equals(testNotificationId)) found = true;
+        }
+        assertTrue("Test notification should be in sender's list", found);
+    }
+
+    /**
+     * Test E: Delete Notification.
+     * <p>
+     * <b>Scenario:</b> Delete the test notification.<br>
+     * <b>Expected Result:</b> The notification is removed from the Manager's cache and ID lookup returns null.
+     * </p>
+     */
+    @Test
+    public void testE_DeleteNotification() throws InterruptedException {
         Notification target = notificationManager.getNotificationByDBID(testNotificationId);
         if (target != null) {
             // Perform delete
             notificationManager.deleteNotification(target);
 
             // POLLING FIX: Wait for the item to disappear.
-            // Using a latch is unreliable here because other updates might fire first.
-            // We repeatedly check if getNotificationByDBID returns null.
             boolean isGone = false;
             long endTime = System.currentTimeMillis() + 10000; // 10 second timeout
 

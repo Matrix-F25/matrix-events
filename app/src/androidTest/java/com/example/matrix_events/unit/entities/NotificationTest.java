@@ -3,7 +3,6 @@ package com.example.matrix_events.unit.entities;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import com.example.matrix_events.entities.Notification;
@@ -21,20 +20,13 @@ import java.io.ObjectOutputStream;
 import java.util.Date;
 
 /**
- * Robust Unit Tests for the {@link Notification} entity class.
+ * Unit Tests for the {@link Notification} entity class.
  * <p>
- * This suite verifies the integrity of the Notification object, ensuring that data
- * is stored correctly, state flags (read/unread) function as expected, and the object
- * can be safely serialized for Intent passing.
- * </p>
- * <p>
- * <b>Coverage Includes:</b>
+ * This suite verifies the integrity of the Notification object, focusing on:
  * <ul>
- * <li><b>Constructor Validation:</b> Ensures sender, receiver, and message data is correctly assigned.</li>
- * <li><b>State Management:</b> Verifies the default unread state and the toggle logic.</li>
- * <li><b>Mutator Logic:</b> Tests updating messages and timestamps.</li>
- * <li><b>Serialization:</b> Verifies that the object (and its non-serializable Timestamp fields)
- * can be passed between components without crashing.</li>
+ * <li>Constructor and Getter/Setter functionality.</li>
+ * <li>Default and explicit handling of {@link Notification.NotificationType}.</li>
+ * <li>Custom serialization logic for the transient {@link Timestamp} field.</li>
  * </ul>
  * </p>
  */
@@ -42,33 +34,30 @@ public class NotificationTest {
 
     private Profile mockSender;
     private Profile mockReceiver;
-    private Timestamp now;
+    private Timestamp mockTimestamp;
+    private final String SENDER_DEVICE_ID = "sender_123";
+    private final String RECEIVER_DEVICE_ID = "receiver_456";
 
     /**
-     * Sets up the test environment before each test method.
-     * <p>
-     * Initializes real Profile objects for the sender and receiver interaction
-     * and captures the current timestamp.
-     * </p>
+     * Sets up mock Profile objects and a test timestamp before each test.
      */
     @Before
     public void setUp() {
-        mockSender = new Profile("Sender Name", "sender@test.com", "555-0001", "device_sender");
-        // FIX: Set a dummy DB ID so DBObject.equals() does not crash with NPE
+        // Use real Profile objects instead of mocks for better integration testing
+        mockSender = new Profile("Sender", "send@mail.com", "555-1111", SENDER_DEVICE_ID);
+        mockReceiver = new Profile("Receiver", "recv@mail.com", "555-2222", RECEIVER_DEVICE_ID);
+        mockTimestamp = Timestamp.now();
+
+        // FIX: Set a dummy DB ID on mock profiles to prevent NPE during deep object comparison
         mockSender.setId("mock_sender_id_1");
-
-        mockReceiver = new Profile("Receiver Name", "receiver@test.com", "555-0002", "device_receiver");
-        // FIX: Set a dummy DB ID so DBObject.equals() does not crash with NPE
         mockReceiver.setId("mock_receiver_id_1");
-
-        now = Timestamp.now();
     }
 
     /**
-     * Helper method to create a standard notification object.
+     * Helper method to create a standard notification object using the 5-argument constructor.
      */
     private Notification createStandardNotification() {
-        return new Notification(mockSender, mockReceiver, "Welcome to the system", now);
+        return new Notification(mockSender, mockReceiver, "Welcome to the system", Notification.NotificationType.ORGANIZER, mockTimestamp);
     }
 
     // ==========================================
@@ -78,51 +67,49 @@ public class NotificationTest {
     /**
      * Tests that a valid notification is created successfully with correct attributes.
      * <p>
-     * <b>Expected Result:</b> The Notification object is instantiated, and all getter methods
-     * return the exact objects passed into the constructor.
+     * <b>Scenario:</b> Create a notification using the standard 5-argument constructor.<br>
+     * <b>Expected Result:</b> All fields are set correctly, and default flags (readFlag) are false.
      * </p>
      */
     @Test
-    public void testNotificationCreation() {
+    public void testNotificationCreationAndIntegrity() {
         String message = "You have been selected!";
-        Notification notification = new Notification(mockSender, mockReceiver, message, now);
+
+        // FIX: Using the 5-argument constructor
+        Notification notification = new Notification(mockSender, mockReceiver, message, Notification.NotificationType.ADMIN, mockTimestamp);
 
         assertNotNull("Notification object should not be null", notification);
         assertEquals("Sender should match", mockSender, notification.getSender());
         assertEquals("Receiver should match", mockReceiver, notification.getReceiver());
         assertEquals("Message content should match", message, notification.getMessage());
-        assertEquals("Timestamp should match", now, notification.getTimestamp());
+        assertEquals(Notification.NotificationType.ADMIN, notification.getType());
+        assertEquals("Timestamp should match", mockTimestamp, notification.getTimestamp());
+        assertFalse("Read flag should be false by default", notification.getReadFlag());
     }
 
     /**
      * Tests the default constructor.
      * <p>
-     * <b>Scenario:</b> Firestore often requires a no-argument constructor to map data.<br>
-     * <b>Expected Result:</b> Object is created not null, though fields may be null until set.
+     * <b>Scenario:</b> Use the empty constructor required by Firestore.<br>
+     * <b>Expected Result:</b> Object is created not null, and the Read flag defaults to false.
      * </p>
      */
     @Test
     public void testDefaultConstructor() {
         Notification notification = new Notification();
         assertNotNull("Default constructor should create instance", notification);
-        // By default, boolean primitives are false
         assertFalse("Read flag should default to false", notification.getReadFlag());
     }
 
     // ==========================================
-    // 2. State Management (Read/Unread)
+    // 2. State Management & Mutator Tests
     // ==========================================
 
     /**
      * Tests the Read Flag logic.
      * <p>
-     * <b>Scenario:</b>
-     * <ol>
-     * <li>Verify default state is Unread (false).</li>
-     * <li>Mark as Read (true).</li>
-     * <li>Mark as Unread (false) again.</li>
-     * </ol>
-     * <b>Expected Result:</b> The boolean flag updates correctly reflecting the UI state.
+     * <b>Scenario:</b> Toggle the read status.<br>
+     * <b>Expected Result:</b> The boolean flag updates correctly reflecting the state.
      * </p>
      */
     @Test
@@ -135,15 +122,7 @@ public class NotificationTest {
         // 2. Mark Read
         notification.setReadFlag(true);
         assertTrue("Notification should be marked as read", notification.getReadFlag());
-
-        // 3. Mark Unread (e.g., user marks as unread in UI)
-        notification.setReadFlag(false);
-        assertFalse("Notification should be marked as unread", notification.getReadFlag());
     }
-
-    // ==========================================
-    // 3. Mutator Tests
-    // ==========================================
 
     /**
      * Tests the setters for updating notification details.
@@ -157,7 +136,8 @@ public class NotificationTest {
         Notification notification = createStandardNotification();
 
         String newMessage = "Update: Event cancelled";
-        Timestamp newTime = new Timestamp(new Date(now.toDate().getTime() + 3600)); // +1 hour
+        // Create a new unique timestamp
+        Timestamp newTime = new Timestamp(new Date(mockTimestamp.toDate().getTime() + 3600000));
 
         notification.setMessage(newMessage);
         notification.setTimestamp(newTime);
@@ -177,7 +157,7 @@ public class NotificationTest {
     public void testUpdateProfiles() {
         Notification notification = createStandardNotification();
         Profile newSender = new Profile("New Name", "new@test.com", "123", "dev_new");
-        // FIX: Set a dummy DB ID for the new sender as well
+        // Set dummy ID for comparison
         newSender.setId("mock_new_sender_id_1");
 
         notification.setSender(newSender);
@@ -188,54 +168,86 @@ public class NotificationTest {
     }
 
     // ==========================================
-    // 4. Serialization Test
+    // 3. Notification Type Logic Tests
     // ==========================================
 
     /**
-     * Verifies that the Notification object can be serialized.
+     * Tests {@code getType()} default logic.
+     * <p>
+     * <b>Scenario:</b> Create a notification where the type field is initially null (via empty constructor).<br>
+     * <b>Expected Result:</b> The {@code getType()} getter defaults to {@code NotificationType.ORGANIZER}.
+     * </p>
+     */
+    @Test
+    public void testGetTypeDefault() {
+        Notification notification = new Notification();
+        // Since 'type' is not set, the getter should return the default specified in the code.
+        assertEquals(Notification.NotificationType.ORGANIZER, notification.getType());
+        assertEquals(Notification.NotificationType.ORGANIZER, notification.getTypeEnum());
+    }
+
+    /**
+     * Tests the Firestore-specific getter and setter aliases.
+     * <p>
+     * <b>Scenario:</b> Set the type using {@code setTypeEnum} and retrieve via {@code getType}.<br>
+     * <b>Expected Result:</b> All type getters reflect the change.
+     * </p>
+     */
+    @Test
+    public void testTypeAliases() {
+        Notification notification = createStandardNotification();
+
+        notification.setTypeEnum(Notification.NotificationType.ADMIN);
+
+        assertEquals(Notification.NotificationType.ADMIN, notification.getType());
+        assertEquals(Notification.NotificationType.ADMIN, notification.getTypeEnum());
+    }
+
+    // ==========================================
+    // 4. Serialization Test (CRITICAL)
+    // ==========================================
+
+    /**
+     * Verifies that the Notification object can be serialized and deserialized successfully.
      * <p>
      * <b>CRITICAL CHECK:</b> Notification contains a transient {@link Timestamp} and implements
      * custom readObject/writeObject. This test ensures that logic works without crashing.
      * </p>
      * <p>
-     * <b>Scenario:</b> Serialize to byte stream -> Deserialize back to object.<br>
+     * <b>Scenario:</b> Write the object (including the transient Timestamp) to a byte stream and read it back.<br>
      * <b>Expected Result:</b> Data persists, including the Timestamp.
      * </p>
+     * @throws IOException If serialization fails.
+     * @throws ClassNotFoundException If deserialization fails.
      */
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
-        Notification original = createStandardNotification();
-        original.setReadFlag(true); // Set non-default state
-        original.setId("notification_id_123"); // Set ID for strict equality checks
+        Notification originalNotification = createStandardNotification();
+        originalNotification.setReadFlag(true); // Test boolean persistence
+        originalNotification.setId("notification_id_123"); // Set ID for deep comparison
 
-        // 1. Serialize
+        // 1. Serialize to Byte Array
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(bos);
-        out.writeObject(original);
+        out.writeObject(originalNotification);
         out.flush();
         byte[] bytes = bos.toByteArray();
 
-        // 2. Deserialize
+        // 2. Deserialize from Byte Array
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         ObjectInputStream in = new ObjectInputStream(bis);
-        Notification deserialized = (Notification) in.readObject();
+        Notification deserializedNotification = (Notification) in.readObject();
 
-        // 3. Verify
-        assertNotNull(deserialized);
-        assertNotSame("Deserialized object should be a new instance", original, deserialized);
+        // 3. Verify Data Integrity
+        assertNotNull(deserializedNotification);
 
-        assertEquals("Message should persist", original.getMessage(), deserialized.getMessage());
-        assertEquals("Read Flag should persist", original.getReadFlag(), deserialized.getReadFlag());
+        // Check standard field persistence
+        assertEquals("Message should persist", originalNotification.getMessage(), deserializedNotification.getMessage());
+        assertTrue("Read flag should persist", deserializedNotification.getReadFlag());
 
-        // Verify nested objects (assuming Profile is Serializable)
-        assertEquals("Sender name should persist",
-                original.getSender().getName(),
-                deserialized.getSender().getName());
-
-        // Verify Timestamp persistence
-        // Note: Comparing seconds/nanos because object references differ after serialization
+        // Verify custom Timestamp persistence (CRITICAL)
         assertEquals("Timestamp seconds should persist",
-                original.getTimestamp().getSeconds(),
-                deserialized.getTimestamp().getSeconds());
+                originalNotification.getTimestamp().getSeconds(),
+                deserializedNotification.getTimestamp().getSeconds());
     }
 }

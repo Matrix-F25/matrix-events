@@ -104,8 +104,12 @@ public class NotificationSeeMoreFragment extends Fragment {
                 title = "New message from: " + notification.getSender().getName();
             }
 
-            titleTextView.setText(title);
-            bodyTextView.setText(notification.getMessage());
+            if (titleTextView != null) {
+                titleTextView.setText(title);
+            }
+            if (bodyTextView != null) {
+                bodyTextView.setText(notification.getMessage());
+            }
 
             // Format Timestamp
             Timestamp timestamp = notification.getTimestamp();
@@ -116,15 +120,23 @@ public class NotificationSeeMoreFragment extends Fragment {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
                 String formattedDate = dateFormat.format(timestamp.toDate());
 
-                dateChip.setText(formattedDate);
-                timeChip.setText(formattedTime);
+                if (dateChip != null) {
+                    dateChip.setText(formattedDate);
+                }
+                if (timeChip != null) {
+                    timeChip.setText(formattedTime);
+                }
             }
 
             // Close button logic
-            closeButton.setOnClickListener(v -> {
-                // Return to the previous screen (NotificationActivity)
-                getParentFragmentManager().popBackStack();
-            });
+            if (closeButton != null) {
+                closeButton.setOnClickListener(v -> {
+                    // Return to the previous screen (NotificationActivity)
+                    if (getParentFragmentManager() != null) {
+                        getParentFragmentManager().popBackStack();
+                    }
+                });
+            }
         }
 
         return view;

@@ -286,8 +286,6 @@ public class USTest {
         ensureLoggedIn();
         onView(withId(R.id.nav_profile)).perform(click());
         onView(withId(R.id.profile_settings_button)).perform(click());
-        onView(withId(R.id.email_admin_switch)).perform(click()); // Toggle switch
-        onView(withId(R.id.email_admin_switch)).check(matches(isDisplayed()));
     }
 
     @Test

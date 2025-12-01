@@ -80,10 +80,10 @@
 
         <!-- Admin Notifications Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/admin_push_switch"
+            android:id="@+id/push_admin_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Notifications from Admin"
+            android:text="@string/notifications_from_admin"
             android:paddingStart="20dp"
             app:thumbTint="#388E3C"
             app:trackTint="#C8E6C9"
@@ -91,10 +91,10 @@
 
         <!-- Organizer Notifications Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/organizer_push_switch"
+            android:id="@+id/push_organizer_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Notifications from Organizers"
+            android:text="@string/notifications_from_organizers"
             android:paddingStart="20dp"
             app:thumbTint="#388E3C"
             app:trackTint="#C8E6C9"
