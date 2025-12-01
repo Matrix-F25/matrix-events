@@ -19,11 +19,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/back_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Back" />
+                android:text="Back"
+                android:textColor="@android:color/black"
+                app:icon="@drawable/abc_ic_ab_back_material"
+                app:iconTint="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
