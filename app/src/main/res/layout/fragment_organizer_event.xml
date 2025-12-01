@@ -49,7 +49,9 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Added ID to ScrollView -->
     <ScrollView
+        android:id="@+id/org_event_scrollview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -392,6 +394,51 @@
                     android:background="#E0E0E0"
                     android:layout_marginTop="24dp"
                     android:layout_marginBottom="24dp"/>
+
+                <!-- GEOLOCATION SECTION -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Entrant Locations"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- Map Container using FrameLayout for Scroll Fix -->
+                <FrameLayout
+                    android:id="@+id/org_event_map_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone">
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/org_event_map"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <!-- Transparent view to intercept touch events -->
+                    <View
+                        android:id="@+id/org_event_map_touch_overlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent" />
+                </FrameLayout>
+
+                <!-- Disabled Message: Visible by default, hidden via code -->
+                <TextView
+                    android:id="@+id/org_event_geolocation_off_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Geolocation tracking is not enabled for this event."
+                    android:textAlignment="center"
+                    android:padding="24dp"
+                    android:background="#F5F5F5"
+                    android:textColor="#616161"
+                    android:textStyle="italic"
+                    android:layout_marginBottom="16dp"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/org_event_edit_button"
