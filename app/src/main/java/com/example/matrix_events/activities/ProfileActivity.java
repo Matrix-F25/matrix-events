@@ -125,8 +125,6 @@ public class ProfileActivity extends AppCompatActivity implements View {
             profileName.setText(currentProfile.getName());
             profileEmail.setText(currentProfile.getEmail());
             profilePhoneNumber.setText(currentProfile.getPhoneNumber());
-        } else {
-            Toast.makeText(this, "No profile found for this device.", Toast.LENGTH_LONG).show();
         }
     }
 }
