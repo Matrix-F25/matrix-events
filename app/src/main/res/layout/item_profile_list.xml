@@ -9,7 +9,8 @@
     android:layout_marginVertical="4dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="#388E3C">
+    app:cardBackgroundColor="#388E3C"
+    android:descendantFocusability="blocksDescendants">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -38,6 +39,8 @@
             android:contentDescription="Remove Profile"
             android:src="@drawable/ic_notification_x"
             app:tint="@android:color/black"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
