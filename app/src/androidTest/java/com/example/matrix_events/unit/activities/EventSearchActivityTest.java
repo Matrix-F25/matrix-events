@@ -1,4 +1,4 @@
-package com.example.matrix_events;
+package com.example.matrix_events.unit.activities;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
@@ -16,10 +16,12 @@ import android.content.Context;
 import android.provider.Settings;
 
 import androidx.test.espresso.matcher.BoundedMatcher;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.matrix_events.R;
 import com.example.matrix_events.activities.EventSearchActivity;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Profile;
@@ -174,7 +176,7 @@ public class EventSearchActivityTest {
     public void testTextSearch() throws InterruptedException {
         selectDropdownOption("All Events");
 
-        onView(withId(R.id.search_input))
+        onView(ViewMatchers.withId(R.id.search_input))
                 .perform(clearText(), typeText("Secret"), closeSoftKeyboard());
 
         Thread.sleep(1000);

@@ -1,12 +1,14 @@
 package com.example.matrix_events.database;
 
+import java.io.Serializable;
+
 /**
  * An abstract base class for objects that can be stored in the Firestore database.
  * It provides a common 'id' field to store the document ID from Firestore.
  * This class also overrides {@code equals()} and {@code hashCode()} to be based on the object's ID,
  * which is crucial for uniquely identifying and comparing database objects.
  */
-public abstract class DBObject {
+public abstract class DBObject implements Serializable {
     private String id;
 
     /**

@@ -1,4 +1,4 @@
-package com.example.matrix_events;
+package com.example.matrix_events.user_stories;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
