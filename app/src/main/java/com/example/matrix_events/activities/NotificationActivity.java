@@ -29,6 +29,7 @@ public class NotificationActivity extends AppCompatActivity implements View {
     private NotificationArrayAdapter notificationArrayAdapter;
     private String deviceId;
     private String pendingNotificationId = null; // Store the ID until data is ready
+    private String pendingType = null;
     private boolean isDataLoaded = false; // Flag to track if data has loaded
 
     @Override
@@ -78,9 +79,12 @@ public class NotificationActivity extends AppCompatActivity implements View {
     // Process the Intent and Store ID
     private void handleIntent(Intent intent) {
         String idFromIntent = intent.getStringExtra("notificationId");
+        String typeFromIntent = intent.getStringExtra("type");
+
         if (idFromIntent != null) {
-            this.pendingNotificationId = idFromIntent;
-            Log.d("NotificationActivity", "Push notification received with ID: " + pendingNotificationId);
+            pendingNotificationId = idFromIntent;
+            pendingType = typeFromIntent; // NEW
+            Log.d("NotificationActivity", "Push notification received with ID: " + pendingNotificationId + ", type=" + pendingType);
         }
     }
 
@@ -88,14 +92,22 @@ public class NotificationActivity extends AppCompatActivity implements View {
     private void checkPendingNavigation() {
         if (pendingNotificationId != null) {
             Log.d("NotificationActivity", "Attempting navigation for ID: " + pendingNotificationId);
+
             Notification target = NotificationManager.getInstance().getNotificationByDBID(pendingNotificationId);
+
             if (target != null) {
                 Log.d("NotificationActivity", "Target notification found. Navigating to SeeMore.");
+
+                String adapterType = (pendingType != null) ? pendingType : "entrant";
+
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_fragment_container, NotificationSeeMoreFragment.newInstance(target, "entrant"))
+                        .replace(R.id.content_fragment_container,
+                                NotificationSeeMoreFragment.newInstance(target, adapterType))
                         .addToBackStack("notification_detail")
                         .commit();
+
                 pendingNotificationId = null;
+                pendingType = null;
             } else {
                 Log.w("NotificationActivity", "Target notification NOT found in loaded data.");
             }

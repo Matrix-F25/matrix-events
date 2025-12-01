@@ -131,17 +131,23 @@ public class ProfileManager extends Model implements DBListener<Profile> {
             callback.onFailure(new IllegalArgumentException("Missing image or profile"));
             return;
         }
+        // Ensure Profile has an ID
+        if (profile.getId() == null || profile.getId().isEmpty()) {
+            callback.onFailure(new IllegalStateException("Profile ID not set"));
+            return;
+        }
+
         // Permanent Filename per User for Replacement
         String fileName = "profile_" + profile.getDeviceId() + ".jpg";
 
-        // If profile already has a stored file name, delete the old file
+        // If profile already has a stored file name, delete the old file safely
         String previousFile = profile.getProfilePictureFileName();
-        if (previousFile != null && !previousFile.equals(fileName)) {
+        if (previousFile != null && !previousFile.isEmpty() && !previousFile.equals(fileName)) {
             StorageReference oldRef = profileStorageRef.child(previousFile);
             oldRef.delete().addOnSuccessListener(a -> {
-                Log.d("ProfileManager", "Old Profile Picture Deleted.");
+                Log.d(TAG, "Old Profile Picture Deleted.");
             }).addOnFailureListener(e -> {
-                Log.w("ProfileManager", "Failed to Delete Old Profile Picture.", e);
+                Log.w(TAG, "Failed to Delete Old Profile Picture.", e);
             });
         }
 

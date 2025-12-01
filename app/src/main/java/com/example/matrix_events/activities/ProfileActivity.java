@@ -3,6 +3,7 @@ package com.example.matrix_events.activities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -122,27 +123,34 @@ public class ProfileActivity extends AppCompatActivity implements View {
     private void uploadSelectedProfileImage() {
         if (selectedImageUri == null) return;
 
-        // Optionally show a progress indicator here
         Profile current = profileManager.getProfileByDeviceId(deviceId);
         if (current == null) {
             Toast.makeText(this, "No profile found; please sign up first.", Toast.LENGTH_LONG).show();
             return;
         }
 
+        Log.d("ProfileActivity", "Uploading profile picture for deviceId=" + current.getDeviceId() + " URI=" + selectedImageUri);
+
         profileManager.uploadProfilePicture(selectedImageUri, current, new ProfileManager.ProfileImageUploadCallback() {
             @Override
             public void onSuccess(String downloadUrl) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ProfileActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
-                    Glide.with(ProfileActivity.this).load(downloadUrl).into(profilePictureView);
+                    if (!isFinishing() && !isDestroyed()) {
+                        Glide.with(ProfileActivity.this)
+                                .load(downloadUrl)
+                                .circleCrop()
+                                .into(profilePictureView);
+                        Toast.makeText(ProfileActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                    }
                 });
             }
 
             @Override
             public void onFailure(Exception e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ProfileActivity.this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    // optionally restore previous image
+                    if (!isFinishing() && !isDestroyed()) { // Safe UI update
+                        Toast.makeText(ProfileActivity.this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 });
             }
         });

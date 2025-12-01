@@ -13,6 +13,7 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.activities.NotificationActivity;
@@ -25,19 +26,33 @@ public class NotificationUtils {
     public static void showPushNotification(Context context, String title, String message, String notificationId, String type) {
         createNotificationChannel(context);
 
-        // Opens NotificationActivity when Push Notification is Tapped
+        // Android 13+ Permission Check
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            int permissionCheck = ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+            );
+
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                Log.w("NotificationUtils", "POST_NOTIFICATIONS not granted. Cannot show notification.");
+                return;
+            }
+        }
+
+        // Build Intent to Open the Notification SeeMore Fragment
         Intent intent = new Intent(context, NotificationActivity.class);
         intent.putExtra("notificationId", notificationId);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("type", type);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        //TODO: We already have a notification ID in Database, so might not need unique one
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
-                notificationId.hashCode(),
+                notificationId.hashCode(), // ensures unique back stack per notification
                 intent,  // unique ID per notification
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
+        // Build Notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notifications)
                 .setContentTitle(title)
@@ -48,28 +63,20 @@ public class NotificationUtils {
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(context);
-
-        // Use a unique int so multiple notifications stack
-        int notifyId = notificationId.hashCode();
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            manager.notify(notifyId, builder.build());
-        } else {
-            // Notifications Aren't Allowed
-            Log.w("NotificationUtils", "POST_NOTIFICATIONS permission not granted. Skipping notify().");
-        }
+        manager.notify(notificationId.hashCode(), builder.build());
     }
 
     // Create Notification Channel (Required on Android 8+).
     private static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Matrix Events";
-            String description = "Notifications for the Matrix Events app";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            if (notificationManager.getNotificationChannel(CHANNEL_ID) != null) return; // already created
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Matrix Events",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Notifications for the Matrix Events app");
             notificationManager.createNotificationChannel(channel);
         }
     }

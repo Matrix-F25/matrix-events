@@ -14,12 +14,13 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FCMService";
+
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
         Log.d(TAG, "New FCM token: " + token); // Used to display debug messages in Logcat window
 
-        String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),Settings.Secure.ANDROID_ID);
+        String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Direct Firestore query to Update FCM Token for a Profile
         FirebaseFirestore.getInstance()
@@ -43,43 +44,77 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
+    public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String title = remoteMessage.getData().get("title");
-        String message = remoteMessage.getData().get("message");
-        String notificationId = remoteMessage.getData().get("notificationId");
-        String type = remoteMessage.getData().get("type"); // Admin or Organizer
+        Log.d(TAG, "FCM message received");
 
-        String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),Settings.Secure.ANDROID_ID);
+        // Support both notification and data payload
+        final String title = remoteMessage.getData().containsKey("title")
+                ? remoteMessage.getData().get("title")
+                : (remoteMessage.getNotification() != null ? remoteMessage.getNotification().getTitle() : "Matrix Events");
 
-        ProfileManager profileManager = ProfileManager.getInstance();
-        Profile profile = profileManager.getProfileByDeviceId(deviceId);
+        final String message = remoteMessage.getData().containsKey("message")
+                ? remoteMessage.getData().get("message")
+                : (remoteMessage.getNotification() != null ? remoteMessage.getNotification().getBody() : "(no message)");
 
-        // Check if Profile Doesn't Exist
-        if (profile == null) {
-            Log.w(TAG, "No Profile Found For This Device - Cannot Apply Notification Preferences.");
+        final String type = remoteMessage.getData().get("type");
+
+        final String notificationId =
+                remoteMessage.getData().get("notificationId") != null ?
+                        remoteMessage.getData().get("notificationId") :
+                        String.valueOf(System.currentTimeMillis());
+
+        if (type == null) {
+            Log.w(TAG, "Push message missing 'type' field. Ignored.");
             return;
         }
 
-        // Check Profile's Notification Preferences
-        boolean allow = false;
-        if("admin".equalsIgnoreCase(type)) {
-            allow = profile.isPushAdminNotifications();
-        } else if ("organizer".equalsIgnoreCase(type)) {
-            allow = profile.isPushOrganizerNotifications();
-        } else {
-            Log.w(TAG, "Unknown Notification Type: " + type);
-            return;
-        }
+        String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        // Block Push Notification if User Disabled
-        if (!allow) {
-            Log.d(TAG, "Push Notification Blocked By User Preference: Type=" + type);
-            return;
-        }
 
-        // Display a native Android push notification
-        NotificationUtils.showPushNotification(this, title, message, notificationId, type);
+        // Fetch profile directly from Firestore
+        FirebaseFirestore.getInstance()
+                .collection("profiles")
+                .whereEqualTo("deviceId", deviceId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (querySnapshot.isEmpty()) {
+                        Log.w(TAG, "No profile found for this deviceId - cannot apply preferences.");
+                        return;
+                    }
+
+                    var doc = querySnapshot.getDocuments().get(0);
+                    Profile profile = doc.toObject(Profile.class);
+
+                    if (profile == null) {
+                        Log.w(TAG, "Profile object is null.");
+                        return;
+                    }
+
+                    boolean allow = false;
+                    if (type.equalsIgnoreCase("admin")) {
+                        allow = profile.isPushAdminNotifications();
+                    } else if (type.equalsIgnoreCase("organizer")) {
+                        allow = profile.isPushOrganizerNotifications();
+                    }
+
+                    if (!allow) {
+                        Log.d(TAG, "User disabled push notifications for type=" + type);
+                        return;
+                    }
+
+                    // Finally show native push notification
+                    NotificationUtils.showPushNotification(
+                            getApplicationContext(),
+                            title,
+                            message,
+                            notificationId,
+                            type
+                    );
+                })
+                .addOnFailureListener(e ->
+                        Log.e(TAG, "Failed to fetch profile for preferences", e)
+                );
     }
 }
