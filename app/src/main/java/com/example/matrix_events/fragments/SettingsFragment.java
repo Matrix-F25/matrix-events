@@ -140,8 +140,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
                             showToast("Log Out Successful");
                             navigateToMain();
                         }, 800);
-                    } else {
-                        showToast("No profile found for this device");
                     }
                 })
                 .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
@@ -177,8 +175,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
                             showToast("Profile Deleted Successfully");
                             navigateToMain();
                         }, 800);
-                    } else {
-                        showToast("No profile found for this device");
                     }
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
@@ -218,8 +214,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
             phoneAdminSwitch.setChecked(currentProfile.isPhoneAdminNotifications());
             phoneOrganizerSwitch.setChecked(currentProfile.isPhoneOrganizerNotifications());
 
-        } else {
-            showToast("No profile found for this device");
         }
         isUpdatingUI = false; // resume listeners
     }
