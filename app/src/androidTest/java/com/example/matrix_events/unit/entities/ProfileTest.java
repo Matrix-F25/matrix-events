@@ -36,7 +36,8 @@ public class ProfileTest {
      * <p>
      * <b>Expectation:</b>
      * <ul>
-     * <li>Notification flags should default to {@code true}.</li>
+     * <li>Admin Push Notifications should default to {@code true}.</li>
+     * <li>Organizer Push Notifications should default to {@code true}.</li>
      * <li>Admin flag should default to {@code false}.</li>
      * </ul>
      * </p>
@@ -47,11 +48,8 @@ public class ProfileTest {
         assertNotNull("Profile should be instantiated", profile);
 
         // Check Notification Defaults (Should be TRUE)
-        assertTrue("Notifications enabled by default", profile.isNotificationsEnabled());
-        assertTrue("Email Admin Notifs enabled by default", profile.isEmailAdminNotifications());
-        assertTrue("Email Org Notifs enabled by default", profile.isEmailOrganizerNotifications());
-        assertTrue("Phone Admin Notifs enabled by default", profile.isPhoneAdminNotifications());
-        assertTrue("Phone Org Notifs enabled by default", profile.isPhoneOrganizerNotifications());
+        assertTrue("Admin Push Notifs enabled by default", profile.isAdminPushNotifications());
+        assertTrue("Organizer Push Notifs enabled by default", profile.isOrganizerPushNotifications());
 
         // Check Admin Default (Should be FALSE)
         assertFalse("IsAdmin should be false by default", profile.isAdmin());
@@ -89,10 +87,12 @@ public class ProfileTest {
         assertEquals("http://img.url/pic.jpg", profile.getProfilePictureUrl());
 
         // Boolean fields
-        profile.setNotificationsEnabled(false);
+        profile.setAdminPushNotifications(false);
+        profile.setOrganizerPushNotifications(false);
         profile.setAdmin(true);
 
-        assertFalse("Notifications should be disabled", profile.isNotificationsEnabled());
+        assertFalse("Admin Push should be disabled", profile.isAdminPushNotifications());
+        assertFalse("Organizer Push should be disabled", profile.isOrganizerPushNotifications());
         assertTrue("Admin should be enabled", profile.isAdmin());
     }
 
@@ -132,7 +132,10 @@ public class ProfileTest {
     public void testSerialization() throws IOException, ClassNotFoundException {
         Profile original = new Profile(TEST_NAME, TEST_EMAIL, TEST_PHONE, TEST_DEVICE_ID);
         original.setId("persistent_id_123");
-        original.setNotificationsEnabled(false); // Change a boolean default
+
+        // Change boolean defaults to ensure actual values persist, not just defaults re-initializing
+        original.setAdminPushNotifications(false);
+        original.setOrganizerPushNotifications(false);
         original.setProfilePictureUrl("http://pfp.com/image.png");
 
         // 1. Serialize
@@ -161,8 +164,12 @@ public class ProfileTest {
         assertEquals("PFP URL should persist", original.getProfilePictureUrl(), deserialized.getProfilePictureUrl());
 
         // Verify Boolean persistence
-        assertEquals("Notification preference should persist",
-                original.isNotificationsEnabled(),
-                deserialized.isNotificationsEnabled());
+        assertEquals("Admin Push preference should persist",
+                original.isAdminPushNotifications(),
+                deserialized.isAdminPushNotifications());
+
+        assertEquals("Organizer Push preference should persist",
+                original.isOrganizerPushNotifications(),
+                deserialized.isOrganizerPushNotifications());
     }
 }
