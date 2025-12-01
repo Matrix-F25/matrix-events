@@ -158,7 +158,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
 
         // Event Location
         TextView eventLocation = view.findViewById(R.id.org_event_location_textview);
-        eventLocation.setText(event.getLocation().getName());
+        eventLocation.setText(event.getLocation());
 
         // Event Start Date/Time
         TextView eventStartDateTextview = view.findViewById(R.id.org_event_start_date_textview);
