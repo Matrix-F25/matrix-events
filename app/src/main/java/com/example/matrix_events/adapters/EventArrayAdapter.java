@@ -111,15 +111,22 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         // Bind Poster Image
         ImageView posterImageView = convertView.findViewById(R.id.poster_imageview);
         if (posterImageView != null) {
+            View posterContainer = (View) posterImageView.getParent();
             if (event.getPoster() != null && event.getPoster().getImageUrl() != null) {
-                // Load image from URL
+                if (posterContainer != null) {
+                    posterContainer.setVisibility(View.VISIBLE);
+                }
+                posterImageView.setVisibility(View.VISIBLE);
                 Glide.with(getContext())
                         .load(event.getPoster().getImageUrl())
                         .placeholder(R.drawable.placeholder)
                         .into(posterImageView);
             } else {
-                // Show placeholder if no poster exists
-                posterImageView.setImageResource(R.drawable.placeholder);
+                if (posterContainer != null) {
+                    posterContainer.setVisibility(View.GONE);
+                } else {
+                    posterImageView.setVisibility(View.GONE);
+                }
             }
         }
 
