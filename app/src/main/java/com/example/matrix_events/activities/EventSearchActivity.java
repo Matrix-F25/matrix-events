@@ -1,6 +1,7 @@
 package com.example.matrix_events.activities;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,13 +18,17 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.EventArrayAdapter;
 import com.example.matrix_events.entities.Event;
+import com.example.matrix_events.entities.Profile;
+import com.example.matrix_events.entities.ReoccurringType;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.mvc.View;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Activity responsible for searching and filtering the list of events.
@@ -122,6 +127,59 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                     .addToBackStack(null)
                     .commit();
         }));
+
+        /*
+        // -----------------------------
+        // --- TESTING PURPOSES ONLY ---
+        // -----------------------------
+        Profile organizer = new Profile(
+                "Alice Johnson",
+                "alice.johnson@example.com",
+                "+1-780-555-0123",
+                Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
+        );
+        String location = "Yo Mamas House";
+        // Start from current time
+        Calendar calendar = Calendar.getInstance();
+        // Registration starts in 2 minutes
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp registrationStart = new Timestamp(calendar.getTime());
+        // Registration ends 2 minutes after it starts
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp registrationEnd = new Timestamp(calendar.getTime());
+        // Event starts 2 minutes after registration closes
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp eventStart = new Timestamp(calendar.getTime());
+        // Event ends 2 minutes after it starts
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp eventEnd = new Timestamp(calendar.getTime());
+        // Reoccurring end is 2 minutes after event ends
+        calendar.add(Calendar.MINUTE, 1);
+        Timestamp reoccurringEnd = new Timestamp(calendar.getTime());
+        // Create event (chronologically valid)
+        Event sampleEvent = new Event(
+                "Campus Hackathon 2025",             // name
+                "A short test hackathon for debugging",  // description
+                organizer,                           // organizer
+                location,                            // location
+                eventStart,                          // event start
+                eventEnd,                            // event end
+                1,                                   // event capacity
+                50,                                  // waitlist capacity
+                registrationStart,                   // registration start
+                registrationEnd,                     // registration end
+                true,                                // is reoccurring
+                reoccurringEnd,                      // reoccurring end
+                ReoccurringType.Weekly,              // reoccurring type
+                true,                                // geolocation tracking
+                null                               // poster
+        );
+        // Add to manager
+        EventManager.getInstance().createEvent(sampleEvent);
+        // -----------------------------
+        // -----------------------------
+
+         */
 
         // Initial Data Load
         update();
