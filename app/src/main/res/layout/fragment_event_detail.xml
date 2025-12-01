@@ -67,11 +67,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View QR Code"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textColor="#388E3C"
+                app:strokeColor="#388E3C"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="8dp"
                 android:drawableLeft="@android:drawable/ic_menu_share"
-                android:drawablePadding="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/message_textview" />
+                android:drawablePadding="8dp" />
 
             <ImageView
                 android:id="@+id/event_poster_image"
