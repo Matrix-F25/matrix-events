@@ -1,8 +1,12 @@
 
 plugins {
     alias(libs.plugins.android.application)
+
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
+
+    // Secrets Gradle Plugin
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -63,4 +67,10 @@ dependencies {
 
     // Needed for testing intents and navigation
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+
+    // Google Maps SDK for Android
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
+    // Google Location Services (FusedLocationProviderClient)
+    implementation("com.google.android.gms:play-services-location:21.1.0")
 }

@@ -2,9 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Checks if app has permission from Android to post push notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- required for downloading map tiles -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- allows access to precise location (GPS) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- allows access to approximate location (Network/WiFi) -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -57,6 +63,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
         <service
             android:name="com.example.matrix_events.database.MyFirebaseMessagingService"
             android:exported="false">
@@ -65,4 +74,5 @@
             </intent-filter>
         </service>
     </application>
+
 </manifest>

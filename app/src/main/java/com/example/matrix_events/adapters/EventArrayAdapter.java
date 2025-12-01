@@ -56,7 +56,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
         TextView locationTextview = convertView.findViewById(R.id.location_textview);
         assert locationTextview != null;
-        locationTextview.setText(event.getLocation().getName());
+        locationTextview.setText(event.getLocation());
 
         ImageView posterImageView = convertView.findViewById(R.id.poster_imageview);
         assert posterImageView != null;

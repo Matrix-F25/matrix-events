@@ -132,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Enable Geolocation Tracking"
+                android:text="Require Geolocation Tracking"
                 app:thumbTint="#388E3C"
                 app:trackTint="#C8E6C9" />
 
