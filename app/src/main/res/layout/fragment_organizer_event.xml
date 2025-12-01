@@ -64,15 +64,22 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
-            <Button
+            <!-- Updated QR Code Button -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/org_event_qr_code_button"
-                android:layout_width="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="View QR Code"
-                app:layout_constraintBottom_toTopOf="@+id/org_event_poster_image"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/org_event_current_accepted_static"/>
+                android:textColor="#388E3C"
+                app:icon="@drawable/ic_qr_code"
+                app:iconTint="#388E3C"
+                app:iconGravity="textStart"
+                app:strokeColor="#388E3C"
+                app:cornerRadius="8dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
 
             <ImageView
                 android:id="@+id/org_event_poster_image"
