@@ -57,11 +57,11 @@
             android:background="#E0E0E0"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Push Notification Settings Header -->
+        <!-- Notification Settings Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/push_notification_settings_page_header"
+            android:text="@string/notification_settings_page_header"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
@@ -76,19 +76,19 @@
             android:layout_marginBottom="16dp"
             app:dividerColor="#E0E0E0"/>
 
-        <!-- Email Notifications Header -->
+        <!-- Push Notifications Header -->
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/email_notifications_header"
+            android:text="@string/push_notifications_header"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#388E3C"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Email Admin Switch -->
+        <!-- Push Admin Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/email_admin_switch"
+            android:id="@+id/push_admin_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/admin_switch"
@@ -97,9 +97,9 @@
             app:trackTint="#C8E6C9"
             tools:ignore="RtlSymmetry" />
 
-        <!-- Email Organizer Switch -->
+        <!-- Push Organizer Switch -->
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/email_organizer_switch"
+            android:id="@+id/push_organizer_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/organizer_switch"
@@ -108,38 +108,6 @@
             app:trackTint="#C8E6C9"
             tools:ignore="RtlSymmetry" />
 
-        <!-- Phone Notifications Header -->
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/phone_notifications_header"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#388E3C"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Phone Admin Switch -->
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/phone_admin_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/admin_switch"
-            android:paddingStart="20dp"
-            app:thumbTint="#388E3C"
-            app:trackTint="#C8E6C9"
-            tools:ignore="RtlSymmetry" />
-
-        <!-- Phone Organizer Switch -->
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/phone_organizer_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/organizer_switch"
-            android:paddingStart="20dp"
-            app:thumbTint="#388E3C"
-            app:trackTint="#C8E6C9"
-            tools:ignore="RtlSymmetry" />
 
         <!-- Divider -->
         <com.google.android.material.divider.MaterialDivider

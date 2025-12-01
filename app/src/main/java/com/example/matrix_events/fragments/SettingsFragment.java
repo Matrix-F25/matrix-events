@@ -27,8 +27,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
     // Declarations
     private String deviceId;
     private boolean isUpdatingUI = false; // Listener Guard Flag
-    private MaterialSwitch inAppAdminSwitch;
-    private MaterialSwitch inAppOrganizerSwitch;
     private MaterialSwitch pushAdminSwitch;
     private MaterialSwitch pushOrganizerSwitch;
     private MaterialButton logoutButton;
@@ -52,8 +50,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
         deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Initialize all switches and buttons
-        inAppAdminSwitch = view.findViewById(R.id.in_app_admin_switch);
-        inAppOrganizerSwitch = view.findViewById(R.id.in_app_organizer_switch);
         pushAdminSwitch = view.findViewById(R.id.push_admin_switch);
         pushOrganizerSwitch = view.findViewById(R.id.push_organizer_switch);
         logoutButton = view.findViewById(R.id.profile_logout_button);
@@ -77,18 +73,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
 
     // Method to Set Up All Switch Listeners
     private void setupSwitchListeners() {
-        inAppAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isUpdatingUI) return; // Listener Guard
-            currentProfile.setInAppAdminNotifications(isChecked);
-            profileManager.updateProfile(currentProfile);
-        });
-
-        inAppOrganizerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isUpdatingUI) return; // Listener Guard
-            currentProfile.setInAppOrganizerNotifications(isChecked);
-            profileManager.updateProfile(currentProfile);
-        });
-
         pushAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isUpdatingUI) return; // Listener Guard
             currentProfile.setPushAdminNotifications(isChecked);
@@ -148,20 +132,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
                 .show();
     }
 
-    /*
-    private void logoutUser() {
-        // Optional: clear your locally cached profile
-        ProfileManager.getInstance().setCurrentProfile(null);
-
-        // Optional: clear shared preferences if you store login info
-        requireActivity()
-            .getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
-            .edit()
-            .clear()
-            .apply();
-    }
-    */
-
     // Delete Profile Confirmation Dialog
     private void showDeleteConfirmationDialog() {
         new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
@@ -213,8 +183,6 @@ public class SettingsFragment extends Fragment implements com.example.matrix_eve
         currentProfile = profileManager.getProfileByDeviceId(deviceId);
 
         if (currentProfile != null) {
-            inAppAdminSwitch.setChecked(currentProfile.isInAppAdminNotifications());
-            inAppOrganizerSwitch.setChecked(currentProfile.isInAppOrganizerNotifications());
             pushAdminSwitch.setChecked(currentProfile.isPushAdminNotifications());
             pushOrganizerSwitch.setChecked(currentProfile.isPushOrganizerNotifications());
 

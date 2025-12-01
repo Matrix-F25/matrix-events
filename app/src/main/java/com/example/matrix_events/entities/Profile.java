@@ -65,8 +65,6 @@ public class Profile extends DBObject implements Serializable {
     }
     public String getFCMToken() { return FCMToken; }
     public void setFCMToken(String FCMToken) { this.FCMToken = FCMToken; }
-    public String getProfilePictureUrl() { return profilePictureUrl; }
-    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
     public boolean isNotificationsEnabled() {
         return notificationsEnabled;
     }

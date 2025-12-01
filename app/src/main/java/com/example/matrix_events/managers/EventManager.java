@@ -231,7 +231,7 @@ public class EventManager extends Model implements DBListener<Event> {
         for (String userId : usersToNotify) {
             Profile receiver = ProfileManager.getInstance().getProfileByDeviceId(userId);
             if (receiver != null) {
-                Notification notification = new Notification(sender, receiver, message, currentTime);
+                Notification notification = new Notification(sender, receiver, message, Notification.NotificationType.ORGANIZER, currentTime);
                 NotificationManager.getInstance().createNotification(notification);
             }
         }
