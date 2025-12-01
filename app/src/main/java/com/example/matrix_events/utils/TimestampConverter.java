@@ -12,7 +12,7 @@ public class TimestampConverter {
         }
 
         Date date = firebaseTimestamp.toDate();
-        String pattern = "MMM dd, yyyy HH:mm:ss"; // Example: Oct 25, 2025 14:30:00
+        String pattern = "MMM dd, yyyy 'at' h:mm a"; // Example: Oct 25, at 2025 2:30 PM
         SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.getDefault());
         return sdf.format(date);
     }
