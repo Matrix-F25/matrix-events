@@ -1,11 +1,10 @@
-package com.example.matrix_events.user_stories;
+package com.example.matrix_events.user_stories_ui;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -14,12 +13,15 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.anything;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.GrantPermissionRule;
 import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiSelector;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.activities.MainActivity;
@@ -29,6 +31,7 @@ import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
 import com.google.firebase.Timestamp;
 
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,13 +47,31 @@ public class USTest {
     @Rule
     public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
 
+    // Grant permissions to prevent system dialogs from blocking UI interactions or crashing the runner
+    @Rule
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.CAMERA
+    );
+
+    @Before
+    public void setUp() {
+        // 1. Ensure Device Screen is On
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        try {
+            device.wakeUp();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Helper to navigate past the MainActivity if needed.
      */
     private void ensureLoggedIn() {
         try {
             onView(withId(R.id.login_button)).perform(click());
-            Thread.sleep(1000);
+            Thread.sleep(2000); // Increased wait to allow Activity transition
             try {
                 onView(withId(R.id.navigation_bar_fragment)).check(matches(isDisplayed()));
             } catch (Exception e) {
@@ -58,7 +79,7 @@ public class USTest {
                 onView(withId(R.id.editTextName)).perform(typeText("Test User"), closeSoftKeyboard());
                 onView(withId(R.id.editTextEmailAddress)).perform(typeText("test@test.com"), closeSoftKeyboard());
                 onView(withId(R.id.create_account_button)).perform(click());
-                Thread.sleep(500);
+                Thread.sleep(1000);
                 onView(withId(R.id.login_button)).perform(click());
             }
         } catch (Exception e) {
@@ -71,35 +92,50 @@ public class USTest {
      * Necessary for testing the Sign Up flow if a user was created in a previous test.
      */
     private void ensureSignedOut() {
-        // 1. Check if we are already logged in (Nav bar visible)
+        try { Thread.sleep(2000); } catch (InterruptedException e) {}
+
+        boolean isLoggedIn = false;
+
+        // 1. Check if we are currently logged in by looking for a Navigation Item.
         try {
-            onView(withId(R.id.navigation_bar_fragment)).check(matches(isDisplayed()));
-            // We are logged in, delete profile to sign out
-            deleteProfileLogic();
-            return;
+            onView(withId(R.id.nav_my_events)).check(matches(isDisplayed()));
+            isLoggedIn = true;
         } catch (Exception e) {
-            // Not directly logged in, might be on MainActivity
+            // Not directly logged in
         }
 
-        // 2. Check if we are on MainActivity and need to cleanup an existing account
+        if (isLoggedIn) {
+            deleteProfileLogic();
+            return;
+        }
+
+        // 2. Check if we are on MainActivity. Try logging in to see if an account persists.
         try {
             onView(withId(R.id.login_button)).check(matches(isDisplayed()));
-            // Try to Login to see if an account exists (MainActivity logic: Login success = account exists)
+
+            // Attempt login to verify account existence
             onView(withId(R.id.login_button)).perform(click());
-            Thread.sleep(1000);
+
+            // Wait for potential transition
+            Thread.sleep(2000);
+
             try {
-                // If nav bar appears, login succeeded -> Account exists -> Delete it
-                onView(withId(R.id.navigation_bar_fragment)).check(matches(isDisplayed()));
+                // If nav item appears, login succeeded -> Account exists -> Delete it
+                onView(withId(R.id.nav_my_events)).check(matches(isDisplayed()));
                 deleteProfileLogic();
             } catch (Exception ex) {
-                // Login failed (Toast shown), which means no account exists. We are successfully signed out.
-                // FORCE CLEAR CACHE to ensures MainActivity sees us as new user
+                // Login failed (Toast shown), which means no account exists.
+                // We are successfully signed out.
+                // FORCE CLEAR CACHE to ensures MainActivity sees us as new user next time
                 InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
                     ProfileManager.getInstance().getProfiles().clear();
                 });
             }
         } catch (Exception e) {
-            // Unknown state
+            // Unknown state, try clearing cache as failsafe
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                ProfileManager.getInstance().getProfiles().clear();
+            });
         }
     }
 
@@ -109,7 +145,7 @@ public class USTest {
     private void deleteProfileLogic() {
         onView(withId(R.id.nav_profile)).perform(click());
         onView(withId(R.id.profile_settings_button)).perform(click());
-        onView(withId(R.id.profile_delete_button)).perform(click());
+        onView(withId(R.id.profile_delete_button)).perform(scrollTo(), click());
         // Confirm delete (standard dialog button text)
         onView(withText("Delete")).perform(click());
         try {
@@ -131,7 +167,13 @@ public class USTest {
             // Clear existing to prevent stale/duplicate data issues
             EventManager.getInstance().getEvents().clear();
 
-            Profile organizer = new Profile("Test Org", "org@test.com", "555-1234", "org_device_id");
+            // Get actual device ID so this event shows up in "Organizer My Events"
+            String deviceId = android.provider.Settings.Secure.getString(
+                    InstrumentationRegistry.getInstrumentation().getTargetContext().getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID
+            );
+
+            Profile organizer = new Profile("Test Org", "org@test.com", "555-1234", deviceId);
 
             long now = new Date().getTime();
             long hour = 3600 * 1000;
@@ -166,6 +208,38 @@ public class USTest {
         // Small wait to ensure UI Adapter handles the notifyDataSetChanged before Espresso interacts
         try {
             Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Forces the current user profile to be an ADMIN.
+     * Must be called before accessing Admin functionalities.
+     */
+    private void makeCurrentUserAdmin() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            String deviceId = android.provider.Settings.Secure.getString(
+                    InstrumentationRegistry.getInstrumentation().getTargetContext().getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID
+            );
+
+            Profile profile = ProfileManager.getInstance().getProfileByDeviceId(deviceId);
+
+            // If profile doesn't exist yet (rare in test flow), create it
+            if (profile == null) {
+                profile = new Profile("Admin Tester", "admin@test.com", "000", deviceId);
+                ProfileManager.getInstance().createProfile(profile);
+            }
+
+            // Force admin status
+            profile.setAdmin(true);
+            ProfileManager.getInstance().updateProfile(profile);
+        });
+
+        // Allow time for the update to propagate locally
+        try {
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -258,41 +332,64 @@ public class USTest {
         ensureLoggedIn();
         onView(withId(R.id.nav_profile)).perform(click());
         onView(withId(R.id.profile_settings_button)).perform(click());
+        onView(withId(R.id.profile_delete_button)).perform(scrollTo()); // Scroll if needed
         onView(withId(R.id.profile_delete_button)).check(matches(isDisplayed()));
         // Note: We don't click delete here to prevent breaking subsequent tests in the suite
     }
 
     @Test
     public void test_US_01_04_01_NotificationWin() throws Exception {
-        // As an entrant I want to receive notification when I am chosen
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        device.openNotification();
-        device.wait(androidx.test.uiautomator.Until.hasObject(androidx.test.uiautomator.By.textContains("Matrix Events")), 1000);
-        device.pressBack();
+        try {
+            // As an entrant I want to receive notification when I am chosen
+            device.openNotification();
+            device.wait(androidx.test.uiautomator.Until.hasObject(androidx.test.uiautomator.By.textContains("Matrix Events")), 1000);
+        } finally {
+            // CRITICAL: Always close notification shade to restore focus for subsequent tests
+            device.pressBack();
+        }
     }
 
     @Test
     public void test_US_01_04_02_NotificationLose() throws Exception {
-        // As an entrant I want to receive notification of when I am not chosen
-        // Similar check to above, relying on system tray
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        device.openNotification();
-        device.pressBack();
+        try {
+            // As an entrant I want to receive notification of when I am not chosen
+            device.openNotification();
+        } finally {
+            // CRITICAL: Always close notification shade to restore focus for subsequent tests
+            device.pressBack();
+        }
     }
 
     @Test
-    public void test_US_01_04_03_OptOutNotifications() throws InterruptedException {
+    public void test_US_01_04_03_OptOutNotifications() {
         // As an entrant I want to opt out of receiving notifications
         ensureLoggedIn();
         onView(withId(R.id.nav_profile)).perform(click());
         onView(withId(R.id.profile_settings_button)).perform(click());
+        // Feature not yet implemented.
     }
 
     @Test
     public void test_US_01_05_01_SecondChancePool() throws InterruptedException {
+        // Ensure the app is open and valid by forcing a relaunch/bring to front
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.pressBack(); // Ensure shade is closed
+        device.pressBack(); // Safety double press
+
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+        if (intent != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(intent);
+        }
+        device.wait(androidx.test.uiautomator.Until.hasObject(androidx.test.uiautomator.By.pkg(context.getPackageName())), 3000);
+
         // As an entrant I want another chance to be chosen (Second Chance)
         // Verify user can see "Pending" or "Waitlist" status in My Events
         ensureLoggedIn();
+        seedEventData(); // Ensure data exists
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_waitlisted_button)).perform(click());
         onView(withId(R.id.entrant_listview)).check(matches(isDisplayed()));
@@ -388,8 +485,15 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onView(withId(R.id.organizer_create_event_button)).perform(click());
+
+        // 1. Open Date Picker
         onView(withId(R.id.reg_start_date_btn)).perform(click());
-        // Dialog interactions omitted for brevity, checking button existence
+        // 2. Confirm Date Picker (OK is standard id button1)
+        onView(withText("OK")).perform(click());
+        // 3. Confirm Time Picker (Auto-opened by logic)
+        onView(withText("OK")).perform(click());
+
+        // 4. Verify End Date button is now accessible and visible
         onView(withId(R.id.reg_end_date_btn)).check(matches(isDisplayed()));
     }
 
@@ -403,7 +507,8 @@ public class USTest {
         // Click an event
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
         // Click Waitlist button
-        onView(withId(R.id.org_event_waitlist_button)).perform(click());
+        // SCROLL TO BUTTON to prevent visibility errors on small screens
+        onView(withId(R.id.org_event_waitlist_button)).perform(scrollTo(), click());
         onView(withId(R.id.ent_list_listview)).check(matches(isDisplayed()));
     }
 
@@ -457,7 +562,8 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_edit_button)).perform(click());
+        // SCROLL TO BUTTON to ensure it is visible before clicking
+        onView(withId(R.id.org_event_edit_button)).perform(scrollTo(), click());
         onView(withId(R.id.upload_poster_btn)).check(matches(isDisplayed()));
     }
 
@@ -469,7 +575,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_waitlist_button)).perform(click());
+        onView(withId(R.id.org_event_waitlist_button)).perform(scrollTo(), click());
         onView(withId(R.id.ent_list_message_button)).perform(click());
     }
 
@@ -493,7 +599,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_declined_list_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.org_event_declined_list_button)).perform(scrollTo()).check(matches(isDisplayed()));
     }
 
     @Test
@@ -503,7 +609,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_pending_list_button)).perform(click()); // Pending = Chosen/Invited
+        onView(withId(R.id.org_event_pending_list_button)).perform(scrollTo(), click()); // Pending = Chosen/Invited
         onView(withId(R.id.ent_list_listview)).check(matches(isDisplayed()));
     }
 
@@ -514,7 +620,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_declined_list_button)).perform(click());
+        onView(withId(R.id.org_event_declined_list_button)).perform(scrollTo(), click());
         onView(withId(R.id.ent_list_listview)).check(matches(isDisplayed()));
     }
 
@@ -525,7 +631,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_accepted_list_button)).perform(click()); // Accepted = Enrolled
+        onView(withId(R.id.org_event_accepted_list_button)).perform(scrollTo(), click()); // Accepted = Enrolled
         onView(withId(R.id.ent_list_listview)).check(matches(isDisplayed()));
     }
 
@@ -538,7 +644,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_pending_list_button)).perform(click());
+        onView(withId(R.id.org_event_pending_list_button)).perform(scrollTo(), click());
     }
 
     @Test
@@ -549,7 +655,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_accepted_list_button)).perform(click());
+        onView(withId(R.id.org_event_accepted_list_button)).perform(scrollTo(), click());
         onView(withId(R.id.ent_list_download_button)).check(matches(isDisplayed()));
     }
 
@@ -561,7 +667,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_waitlist_button)).perform(click());
+        onView(withId(R.id.org_event_waitlist_button)).perform(scrollTo(), click());
         onView(withId(R.id.ent_list_message_button)).check(matches(isDisplayed()));
     }
 
@@ -573,7 +679,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_pending_list_button)).perform(click());
+        onView(withId(R.id.org_event_pending_list_button)).perform(scrollTo(), click());
         onView(withId(R.id.ent_list_message_button)).check(matches(isDisplayed()));
     }
 
@@ -585,7 +691,7 @@ public class USTest {
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.organizer_listview)).atPosition(0).perform(click());
-        onView(withId(R.id.org_event_declined_list_button)).perform(click());
+        onView(withId(R.id.org_event_declined_list_button)).perform(scrollTo(), click());
         onView(withId(R.id.ent_list_message_button)).check(matches(isDisplayed()));
     }
 
@@ -597,6 +703,7 @@ public class USTest {
     public void test_US_03_01_01_AdminRemoveEvents() throws InterruptedException {
         // As an administrator, I want to be able to remove events.
         ensureLoggedIn();
+        makeCurrentUserAdmin(); // Ensure Admin UI is visible
         seedEventData();
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
@@ -611,6 +718,7 @@ public class USTest {
     public void test_US_03_02_01_AdminRemoveProfiles() throws InterruptedException {
         // As an administrator, I want to be able to remove profiles.
         ensureLoggedIn();
+        makeCurrentUserAdmin();
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onView(withId(R.id.organizer_switch_to_admin_button)).perform(click());
@@ -622,6 +730,7 @@ public class USTest {
     public void test_US_03_03_01_AdminRemoveImages() throws InterruptedException {
         // As an administrator, I want to be able to remove images.
         ensureLoggedIn();
+        makeCurrentUserAdmin();
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onView(withId(R.id.organizer_switch_to_admin_button)).perform(click());
@@ -633,6 +742,7 @@ public class USTest {
     public void test_US_03_04_01_AdminBrowseEvents() throws InterruptedException {
         // As an administrator, I want to be able to browse events.
         ensureLoggedIn();
+        makeCurrentUserAdmin();
         seedEventData();
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
@@ -645,6 +755,7 @@ public class USTest {
     public void test_US_03_05_01_AdminBrowseProfiles() throws InterruptedException {
         // As an administrator, I want to be able to browse profiles.
         ensureLoggedIn();
+        makeCurrentUserAdmin();
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onView(withId(R.id.organizer_switch_to_admin_button)).perform(click());
@@ -656,6 +767,7 @@ public class USTest {
     public void test_US_03_06_01_AdminBrowseImages() throws InterruptedException {
         // As an administrator, I want to be able to browse images.
         ensureLoggedIn();
+        makeCurrentUserAdmin();
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onView(withId(R.id.organizer_switch_to_admin_button)).perform(click());
@@ -668,6 +780,7 @@ public class USTest {
         // As an administrator I want to remove organizers that violate app policy.
         // Implementation uses the same screen as removing profiles (Profile Details -> Delete)
         ensureLoggedIn();
+        makeCurrentUserAdmin();
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onView(withId(R.id.organizer_switch_to_admin_button)).perform(click());
@@ -679,6 +792,7 @@ public class USTest {
     public void test_US_03_08_01_AdminReviewLogs() throws InterruptedException {
         // As an administrator, I want to review logs of all notifications.
         ensureLoggedIn();
+        makeCurrentUserAdmin();
         onView(withId(R.id.nav_my_events)).perform(click());
         onView(withId(R.id.entrant_switch_to_org_button)).perform(click());
         onView(withId(R.id.organizer_switch_to_admin_button)).perform(click());
