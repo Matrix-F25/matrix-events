@@ -3,6 +3,7 @@ package com.example.matrix_events.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +13,16 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.fragments.AdminNavigationBarFragment;
+import com.example.matrix_events.managers.EventManager;
+import com.example.matrix_events.managers.NotificationManager;
+import com.example.matrix_events.managers.PosterManager;
+import com.example.matrix_events.managers.ProfileManager;
+import com.example.matrix_events.mvc.Model;
+import com.example.matrix_events.mvc.View;
 
-public class AdminActivity extends AppCompatActivity {
+public class AdminActivity extends AppCompatActivity implements View {
+
+    private TextView statsTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,42 @@ public class AdminActivity extends AppCompatActivity {
                     .setReorderingAllowed(true)
                     .replace(R.id.admin_navigation_bar_fragment, new AdminNavigationBarFragment())
                     .commit();
+        }
+
+        // Initialize stats textview
+        statsTextView = findViewById(R.id.admin_stats_textview);
+
+        // Register as observer
+        ProfileManager.getInstance().addView(this);
+        EventManager.getInstance().addView(this);
+        PosterManager.getInstance().addView(this);
+        NotificationManager.getInstance().addView(this);
+
+        update();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ProfileManager.getInstance().removeView(this);
+        EventManager.getInstance().removeView(this);
+        PosterManager.getInstance().removeView(this);
+        NotificationManager.getInstance().removeView(this);
+    }
+
+    @Override
+    public void update() {
+        if (statsTextView != null) {
+            int profiles = ProfileManager.getInstance().getProfiles().size();
+            int events = EventManager.getInstance().getEvents().size();
+            int posters = PosterManager.getInstance().getPosters().size();
+            int notifications = NotificationManager.getInstance().getNotifications().size();
+
+            String stats = "Profiles: " + profiles + "\n" +
+                           "Events: " + events + "\n" +
+                           "Posters: " + posters + "\n" +
+                           "Notifications: " + notifications;
+            statsTextView.setText(stats);
         }
     }
 }
