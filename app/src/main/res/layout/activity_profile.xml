@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Everything is in the Constraint Layout -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,7 +9,6 @@
     android:background="@android:color/white"
     tools:context=".activities.ProfileActivity">
 
-    <!-- Profile Page Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +23,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.022" />
 
-    <!-- Settings Button -->
     <ImageButton
         android:id="@+id/profile_settings_button"
         android:layout_width="64dp"
@@ -43,7 +40,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"/>
 
-    <!-- Navigation Bar -->
     <FrameLayout
         android:id="@+id/navigation_bar_fragment"
         android:name="com.example.matrix_events.fragments.NavigationBarFragment"
@@ -53,7 +49,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Profile Container -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -66,36 +61,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0.7">
 
-        <!-- Profile Type Container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="24dp">
 
-            <!-- Profile Type (Entrant, Organizer, Admin) -->
-            <TextView
-                android:id="@+id/profile_page_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PROFILE TYPE"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:textColor="#388E3C"
-                android:letterSpacing="0.1"/>
-
-            <!-- Underline Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginHorizontal="40dp"
-                android:background="#388E3C"
-                android:layout_marginBottom="30dp"/>
+            <ImageView
+                android:id="@+id/profile_image_view"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:src="@mipmap/ic_matrix_events_app_icon_foreground"
+                android:scaleType="fitCenter"
+                android:contentDescription="Profile Picture" />
 
         </LinearLayout>
 
-        <!-- Name Header -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,7 +87,6 @@
             android:textColor="#388E3C"
             android:layout_marginBottom="4dp"/>
 
-        <!-- Name Input Text Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,7 +103,6 @@
                 android:inputType="textPersonName"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Email Header -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -132,7 +112,6 @@
             android:textColor="#388E3C"
             android:layout_marginBottom="4dp"/>
 
-        <!-- Email Input Text Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -149,7 +128,6 @@
                 android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Phone Number Header -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -159,7 +137,6 @@
             android:textColor="#388E3C"
             android:layout_marginBottom="4dp"/>
 
-        <!-- Phone Number Input Text Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -176,7 +153,6 @@
                 android:inputType="phone" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Update Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/profile_update_button"
             android:layout_width="match_parent"
@@ -189,7 +165,6 @@
 
     </LinearLayout>
 
-    <!-- Fragment Container -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
