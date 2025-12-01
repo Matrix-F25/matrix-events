@@ -1,10 +1,14 @@
 package com.example.matrix_events.fragments;
 
+import android.content.Context;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,6 +34,7 @@ import com.google.firebase.firestore.GeoPoint;
 
 public class EventDetailFragment extends Fragment implements com.example.matrix_events.mvc.View {
 
+    private static final String TAG = "EventDetailFragment";
     View view = null;
     private Event event = null;
     private Boolean isAdmin;
@@ -91,6 +96,17 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
             getParentFragmentManager().popBackStack();
         });
 
+        Button qrCodeButton = view.findViewById(R.id.event_qr_code_button);
+        if (qrCodeButton != null) {
+            qrCodeButton.setOnClickListener(v -> {
+                EventQRCodeFragment fragment = EventQRCodeFragment.newInstance(event);
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.main, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            });
+        }
+
         update();
 
         // observe event manager
@@ -105,6 +121,11 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
 
     @Override
     public void update() {
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skipping update");
+            return;
+        }
+
         event = EventManager.getInstance().getEventByDBID(event.getId());
         if (event != null) {
             render();
@@ -156,12 +177,23 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
     }
 
     public void render() {
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skipping render");
+            return;
+        }
+
+        // Get context safely
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+
         // Display poster image if available
         ImageView posterImage = view.findViewById(R.id.event_poster_image);
 
         if (event.getPoster() != null && event.getPoster().getImageUrl() != null) {
             String posterUrl = event.getPoster().getImageUrl();
-            Glide.with(requireContext())
+            Glide.with(context)
                     .load(posterUrl)
                     .placeholder(R.drawable.placeholder)        // optional
                     .error(R.drawable.placeholder)              // optional

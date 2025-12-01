@@ -89,6 +89,16 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
                     .addToBackStack(null)
                     .commit();
         });
+        Button qrCodeButton = view.findViewById(R.id.org_event_qr_code_button);
+        if (qrCodeButton != null) {
+            qrCodeButton.setOnClickListener(v -> {
+                EventQRCodeFragment fragment = EventQRCodeFragment.newInstance(event);
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            });
+        }
 
         update();
 
