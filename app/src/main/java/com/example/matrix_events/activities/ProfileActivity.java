@@ -28,26 +28,58 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
+/**
+ * Activity responsible for displaying and editing the user's profile information.
+ * <p>
+ * This class acts as the <b>Controller</b> in the MVC architecture for the Profile screen.
+ * It interacts with the {@link ProfileManager} (Model) to fetch and update user data,
+ * and updates the UI (View) to reflect the current state of the {@link Profile}.
+ * </p>
+ * <p>
+ * <b>Key Features:</b>
+ * <ul>
+ * <li>View and Edit Name, Email, and Phone Number.</li>
+ * <li>Upload and update Profile Picture using the device's gallery.</li>
+ * <li>Navigate to the Settings screen.</li>
+ * <li>Automatic data synchronization via the {@link View} interface.</li>
+ * </ul>
+ * </p>
+ */
 public class ProfileActivity extends AppCompatActivity implements View {
-    // Declarations
+
+    // UI Components
     private ShapeableImageView profilePictureView;
-    private ActivityResultLauncher<String> pickImageLauncher;
-    private Uri selectedImageUri;
     private TextInputEditText profileName;
     private TextInputEditText profileEmail;
     private TextInputEditText profilePhoneNumber;
 
-    // Declaration of ProfileManager and Current Profile
+    // Image Picking Logic
+    private ActivityResultLauncher<String> pickImageLauncher;
+    private Uri selectedImageUri;
+
+    // Data Management
     private ProfileManager profileManager;
     private Profile currentProfile;
     private String deviceId;
 
+    /**
+     * Called when the activity is first created.
+     * <p>
+     * Initializes the UI layout, sets up the Navigation Bar, registers the Image Picker,
+     * and subscribes to the {@link ProfileManager} for data updates.
+     * </p>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     * shut down then this Bundle contains the data it most recently
+     * supplied in {@link #onSaveInstanceState}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
 
+        // Handle Window Insets for Edge-to-Edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -60,10 +92,10 @@ public class ProfileActivity extends AppCompatActivity implements View {
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_profile))
                 .commit();
 
-        // Get Device ID (unique per device)
+        // Get Device ID (unique per device) used to identify the user
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        // Initialize View Attributes
+        // Initialize UI Attributes
         profilePictureView = findViewById(R.id.profile_picture_imageView);
         MaterialButton profilePictureAddButton = findViewById(R.id.profile_picture_add_button);
         profileName = findViewById(R.id.profile_name);
@@ -72,10 +104,10 @@ public class ProfileActivity extends AppCompatActivity implements View {
         MaterialButton updateButton = findViewById(R.id.profile_update_button);
         ImageButton settingsButton = findViewById(R.id.profile_settings_button);
 
-        // Grab Instance of Profile Manager
+        // Grab Instance of Profile Manager (Singleton)
         profileManager = ProfileManager.getInstance();
 
-        // Observe Profile Manager
+        // Register as a View to observe model changes
         profileManager.addView(this);
 
         // Set Profile Picture (Default if none)
@@ -87,13 +119,13 @@ public class ProfileActivity extends AppCompatActivity implements View {
                 uri -> {
                     if (uri != null) {
                         selectedImageUri = uri;
-                        // Optionally show preview immediately
+                        // Show preview immediately using Glide
                         Glide.with(this)
                                 .load(uri)
-                                .circleCrop() // not necessary if ShapeableImageView handles shape
+                                .circleCrop()
                                 .into(profilePictureView);
 
-                        // Upload to Firebase Storage and update profile
+                        // Automatically upload to Firebase Storage
                         uploadSelectedProfileImage();
                     }
                 }
@@ -107,9 +139,17 @@ public class ProfileActivity extends AppCompatActivity implements View {
         updateButton.setOnClickListener(v -> updateProfile());
         settingsButton.setOnClickListener(v -> openSettings());
 
+        // Initial data load
         update();
     }
 
+    /**
+     * Loads the user's profile picture into the ImageView.
+     * <p>
+     * If the profile has a valid URL, it uses Glide to load the image asynchronously.
+     * If no URL exists, it sets a default placeholder drawable.
+     * </p>
+     */
     private void loadProfilePictureIfAvailable() {
         Profile p = profileManager.getProfileByDeviceId(deviceId);
         if (p != null && p.getProfilePictureUrl() != null && !p.getProfilePictureUrl().isEmpty()) {
@@ -120,6 +160,13 @@ public class ProfileActivity extends AppCompatActivity implements View {
         }
     }
 
+    /**
+     * Uploads the selected image URI to Firebase Storage.
+     * <p>
+     * This method is triggered immediately after the user selects an image from their gallery.
+     * It uses {@link ProfileManager#uploadProfilePicture} to handle the upload and database update.
+     * </p>
+     */
     private void uploadSelectedProfileImage() {
         if (selectedImageUri == null) return;
 
@@ -157,7 +204,16 @@ public class ProfileActivity extends AppCompatActivity implements View {
     }
 
 
-    // Update User's Profile
+    /**
+     * Collects data from input fields and updates the user's profile in the database.
+     * <p>
+     * Validation Logic:
+     * <ul>
+     * <li>Name and Email are mandatory (though current validation is basic).</li>
+     * <li>If Phone Number is empty, it is saved as {@code null} in the database.</li>
+     * </ul>
+     * </p>
+     */
     private void updateProfile() {
         if (currentProfile == null) {
             Toast.makeText(this, "No profile to update.", Toast.LENGTH_LONG).show();
@@ -181,7 +237,13 @@ public class ProfileActivity extends AppCompatActivity implements View {
         Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
     }
 
-    // Open Settings Fragment
+    /**
+     * Navigates to the Settings screen.
+     * <p>
+     * Replaces the current fragment container with the {@link SettingsFragment}.
+     * This transaction is added to the back stack so the user can navigate back.
+     * </p>
+     */
     private void openSettings() {
         SettingsFragment settingsFragment = new SettingsFragment();
 
@@ -192,14 +254,26 @@ public class ProfileActivity extends AppCompatActivity implements View {
                 .commit();
     }
 
-    // MV Implementation methods
+    /**
+     * Cleanup method called when the Activity is destroyed.
+     * <p>
+     * Removes this Activity from the {@link ProfileManager}'s list of observers
+     * to prevent memory leaks.
+     * </p>
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ProfileManager.getInstance().removeView(this);
     }
 
-    // Load User's Profile and Populate TextInput Fields
+    /**
+     * MVC Callback: Updates the UI when the Model data changes.
+     * <p>
+     * This method fetches the latest profile data based on the device ID and populates
+     * the Name, Email, and Phone fields. If no profile is found, a warning Toast is shown.
+     * </p>
+     */
     @Override
     public void update() {
         currentProfile = profileManager.getProfileByDeviceId(deviceId);
