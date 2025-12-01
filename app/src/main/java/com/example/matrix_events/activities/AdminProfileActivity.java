@@ -19,18 +19,45 @@ import com.example.matrix_events.fragments.AdminNavigationBarFragment;
 import com.example.matrix_events.fragments.AdminProfileDetailsFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
-//import com.example.matrix_events.managers.AdminProfileDetailsFragment;
 import com.example.matrix_events.mvc.View;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity responsible for the Administrator's view of user profiles.
+ * <p>
+ * This activity provides a dashboard for Admins to:
+ * <ul>
+ * <li><b>Browse:</b> View a list of all registered users.</li>
+ * <li><b>Filter:</b> Toggle between viewing "All Profiles" and only "Organizers" (users who have created events).</li>
+ * <li><b>Manage:</b> Delete user profiles (which cascades to remove them from events or cancel events they organized).</li>
+ * </ul>
+ * It implements {@link View} to observe changes in the {@link ProfileManager} and uses the
+ * {@link ProfileArrayAdapter.Listener} interface to handle delete actions triggered from the list rows.
+ * </p>
+ */
 public class AdminProfileActivity extends AppCompatActivity implements View, ProfileArrayAdapter.Listener {
     private ArrayList<Profile> profiles;
     private ProfileArrayAdapter profileArrayAdapter;
     private TabLayout tabLayout;
 
+    /**
+     * Called when the activity is starting.
+     * <p>
+     * Initializes the UI, sets up the Admin Navigation Bar, and configures the ListView with
+     * the {@link ProfileArrayAdapter}. It also sets up listeners for:
+     * <ul>
+     * <li><b>List Item Clicks:</b> Opens the {@link AdminProfileDetailsFragment} for the selected user.</li>
+     * <li><b>Tab Selection:</b> Triggers {@link #update()} to filter the list based on the selected tab.</li>
+     * </ul>
+     * Finally, it registers this activity as an observer of the {@link ProfileManager}.
+     * </p>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     * shut down then this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +75,7 @@ public class AdminProfileActivity extends AppCompatActivity implements View, Pro
 
         profiles = new ArrayList<>();
         ListView adminProfileListView = findViewById(R.id.profile_listview);
+        // Pass 'this' as the listener for delete actions, and 'true' to enable the delete button
         profileArrayAdapter = new ProfileArrayAdapter(this, profiles, true, this);
         adminProfileListView.setAdapter(profileArrayAdapter);
 
@@ -68,14 +96,10 @@ public class AdminProfileActivity extends AppCompatActivity implements View, Pro
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
+            public void onTabUnselected(TabLayout.Tab tab) { }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
+            public void onTabReselected(TabLayout.Tab tab) { }
         });
 
         update();
@@ -83,12 +107,29 @@ public class AdminProfileActivity extends AppCompatActivity implements View, Pro
         ProfileManager.getInstance().addView(this);
     }
 
+    /**
+     * Cleanup method called when the activity is destroyed.
+     * <p>
+     * Unregisters this activity from the {@link ProfileManager} to prevent memory leaks.
+     * </p>
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         ProfileManager.getInstance().removeView(this);
     }
 
+    /**
+     * MVC Callback: Updates the list when the Model data changes or the filter tab changes.
+     * <p>
+     * This method fetches the master list of profiles and filters it based on the currently selected tab:
+     * <ul>
+     * <li><b>Tab 0 (All Profiles):</b> Displays every user in the system.</li>
+     * <li><b>Tab 1 (Organizers):</b> Cross-references {@link EventManager} to find users who are listed
+     * as the organizer for at least one event. Only these users are displayed.</li>
+     * </ul>
+     * </p>
+     */
     @Override
     public void update() {
 
@@ -108,9 +149,10 @@ public class AdminProfileActivity extends AppCompatActivity implements View, Pro
 
                 boolean isOrganizer = false;
 
-                // go through all events
+                // go through all events to check for organizer status
                 for (Event event : allEvents) {
-                    if (event.getOrganizer().getDeviceId().equals(profile.getDeviceId())) { // if the event organizer's device id matches the profile's device id, then the profile is an organizer
+                    // if the event organizer's device id matches the profile's device id, then the profile is an organizer
+                    if (event.getOrganizer().getDeviceId().equals(profile.getDeviceId())) {
                         isOrganizer = true;
                         break;
                     }
@@ -126,6 +168,22 @@ public class AdminProfileActivity extends AppCompatActivity implements View, Pro
             profileArrayAdapter.notifyDataSetChanged();
         }
     }
+
+    /**
+     * Handles the deletion of a user profile triggered from the list adapter.
+     * <p>
+     * This method displays an {@link AlertDialog} to confirm the destructive action.
+     * If confirmed, it performs a two-step deletion process:
+     * <ol>
+     * <li><b>Clean Up Events:</b> Calls {@link EventManager#removeFromAllEvents(String)} to remove the user
+     * from waitlists/attendee lists, or cancel events they organized.</li>
+     * <li><b>Delete Profile:</b> Calls {@link ProfileManager#deleteProfile(Profile)} to remove the user record.</li>
+     * </ol>
+     * </p>
+     *
+     * @param deviceID The unique device ID of the profile to be deleted.
+     */
+    @Override
     public void cancelProfile(String deviceID) {
 
         Profile profileToDelete = ProfileManager.getInstance().getProfileByDeviceId(deviceID);
