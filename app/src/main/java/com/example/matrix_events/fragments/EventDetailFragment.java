@@ -138,7 +138,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
 //            return;
 //        }
 
-        if (event.isGeolocationTrackingRequired()) {
+        if (Boolean.TRUE.equals(event.isGeolocationTrackingRequired())) {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // Request permission
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);

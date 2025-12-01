@@ -8,61 +8,103 @@
     android:background="@android:color/white"
     tools:context=".activities.EventSearchActivity">
 
-    <!-- Event Search Page Title -->
+    <!-- Title -->
     <TextView
         android:id="@+id/event_search_title_static"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/event_search_page_title"
+        android:textColor="@android:color/black"
         android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Search Bar -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_input_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
         app:boxStrokeColor="#388E3C"
-        app:hintTextColor="#388E3C"
-        app:endIconTint="#388E3C"
         app:endIconMode="clear_text"
+        app:endIconTint="#388E3C"
+        app:hintTextColor="#388E3C"
         app:startIconDrawable="@drawable/ic_search"
         app:startIconTint="#388E3C"
-        app:layout_constraintTop_toBottomOf="@id/event_search_title_static"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/event_search_title_static">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/search_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/search_events_hint"
-            android:inputType="text"
             android:imeOptions="actionSearch"
+            android:inputType="text"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Filter Dropdown -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/filter_dropdown_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeColor="#388E3C"
+        app:hintTextColor="#388E3C"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_input_layout">
+
+        <AutoCompleteTextView
+            android:id="@+id/filter_autocomplete_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:text="@string/registration_open"
+            android:textSize="14sp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@android:color/black"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- ListView -->
     <ListView
         android:id="@+id/event_search_listview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:paddingBottom="80dp"
+        android:layout_marginTop="16dp"
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
-        android:dividerHeight="8dp"
-        app:layout_constraintTop_toBottomOf="@id/search_input_layout"
+        android:dividerHeight="16dp"
+        android:paddingBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/filter_dropdown_layout" />
 
     <FrameLayout
         android:id="@+id/navigation_bar_fragment"

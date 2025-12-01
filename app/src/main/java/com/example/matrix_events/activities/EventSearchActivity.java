@@ -1,10 +1,11 @@
 package com.example.matrix_events.activities;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
@@ -16,56 +17,102 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.EventArrayAdapter;
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.entities.Profile;
-import com.example.matrix_events.entities.ReoccurringType;
 import com.example.matrix_events.fragments.EventDetailFragment;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.mvc.View;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
+/**
+ * Activity responsible for searching and filtering the list of events.
+ * <p>
+ * This class allows users to browse all available events and filter them using two criteria:
+ * <ul>
+ * <li><b>Text Search:</b> Filters by Event Name and Location.</li>
+ * <li><b>Status Dropdown:</b> Filters by time (Upcoming/Past) and availability (Registration Open).</li>
+ * </ul>
+ * The filtering logic uses an "AND" condition, meaning an event must match BOTH the text
+ * and the selected status to appear in the list.
+ * </p>
+ */
 public class EventSearchActivity extends AppCompatActivity implements View {
+
+    // Data structures
     ArrayList<Event> allEvents;
     ArrayList<Event> events;
     EventArrayAdapter eventArrayAdapter;
+
+    // State variables
     private String currentSearchQuery = "";
 
+    // Filter Constants
+    private static final String FILTER_ALL = "All Events";
+    private static final String FILTER_UPCOMING = "Upcoming";
+    private static final String FILTER_REG_OPEN = "Registration Open";
+    private static final String FILTER_CLOSED = "Past / Closed";
+
+    // Set default filter status to "Registration Open" to match XML
+    private String currentFilterStatus = FILTER_REG_OPEN;
+
+    private AutoCompleteTextView filterDropdown;
+
+    /**
+     * Called when the activity is starting.
+     * <p>
+     * Initializes the UI layout, sets up the list adapter, configures the search bar listener,
+     * initializes the filter dropdown, and registers as a View for the EventManager.
+     * </p>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     * shut down then this Bundle contains the data it most recently
+     * supplied in {@link #onSaveInstanceState}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_search);
+
+        // Handle Window Insets for Edge-to-Edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Initialize Navigation Bar
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_event_search))
                 .commit();
 
+        // Initialize Lists and Adapter
         allEvents = new ArrayList<>();
         events = new ArrayList<>();
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
         ListView eventListView = findViewById(R.id.event_search_listview);
         eventListView.setAdapter(eventArrayAdapter);
-        TextInputEditText searchInput = findViewById(R.id.search_input);
 
-        // Updates Results, when User Types
+        // Initialize Inputs
+        TextInputEditText searchInput = findViewById(R.id.search_input);
+        filterDropdown = findViewById(R.id.filter_autocomplete_textview);
+
+        // Setup Filter Dropdown
+        setupFilterDropdown();
+
+        // Setup Search Listener (Updates Results when User Types)
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void afterTextChanged(Editable s) {}
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 currentSearchQuery = s.toString();
-                filterEvents(currentSearchQuery);
+                filterEvents();
             }
         });
 
+        // Setup Item Click Listener (Open Event Details)
         eventListView.setOnItemClickListener(((parent, view, position, id) -> {
             Log.d("DEBUG", "event clicked");
             Event selectedEvent = events.get(position);
@@ -76,97 +123,112 @@ public class EventSearchActivity extends AppCompatActivity implements View {
                     .commit();
         }));
 
-        /*
-        // -----------------------------
-        // --- TESTING PURPOSES ONLY ---
-        // -----------------------------
-        Profile organizer = new Profile(
-                "Alice Johnson",
-                "alice.johnson@example.com",
-                "+1-780-555-0123",
-                Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
-        );
-        String location = "Yo Mamas House";
-        // Start from current time
-        Calendar calendar = Calendar.getInstance();
-        // Registration starts in 2 minutes
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp registrationStart = new Timestamp(calendar.getTime());
-        // Registration ends 2 minutes after it starts
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp registrationEnd = new Timestamp(calendar.getTime());
-        // Event starts 2 minutes after registration closes
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp eventStart = new Timestamp(calendar.getTime());
-        // Event ends 2 minutes after it starts
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp eventEnd = new Timestamp(calendar.getTime());
-        // Reoccurring end is 2 minutes after event ends
-        calendar.add(Calendar.MINUTE, 1);
-        Timestamp reoccurringEnd = new Timestamp(calendar.getTime());
-        // Create event (chronologically valid)
-        Event sampleEvent = new Event(
-                "Campus Hackathon 2025",             // name
-                "A short test hackathon for debugging",  // description
-                organizer,                           // organizer
-                location,                            // location
-                eventStart,                          // event start
-                eventEnd,                            // event end
-                1,                                   // event capacity
-                50,                                  // waitlist capacity
-                registrationStart,                   // registration start
-                registrationEnd,                     // registration end
-                true,                                // is reoccurring
-                reoccurringEnd,                      // reoccurring end
-                ReoccurringType.Weekly,              // reoccurring type
-                true,                                // geolocation tracking
-                null                               // poster
-        );
-        // Add to manager
-        EventManager.getInstance().createEvent(sampleEvent);
-        // -----------------------------
-        // -----------------------------
-        
-         */
-
+        // Initial Data Load
         update();
 
-        // observe event manager
+        // Observe Event Manager
         EventManager.getInstance().addView(this);
     }
 
-    private void filterEvents(String query) {
+    /**
+     * Configures the exposed dropdown menu for filtering events.
+     * <p>
+     * Creates an adapter with the filter options (All, Upcoming, Registration Open, Past)
+     * and sets a listener to trigger filtering whenever the selection changes.
+     * </p>
+     */
+    private void setupFilterDropdown() {
+        String[] filters = new String[]{FILTER_ALL, FILTER_UPCOMING, FILTER_REG_OPEN, FILTER_CLOSED};
+        ArrayAdapter<String> filterAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, filters);
+        filterDropdown.setAdapter(filterAdapter);
+
+        // Set default selection text to "Registration Open"
+        // The 'false' parameter prevents the dropdown list from popping open immediately
+        filterDropdown.setText(FILTER_REG_OPEN, false);
+
+        filterDropdown.setOnItemClickListener((parent, view, position, id) -> {
+            currentFilterStatus = parent.getItemAtPosition(position).toString();
+            filterEvents();
+        });
+    }
+
+    /**
+     * Core filtering logic that updates the visible event list.
+     * <p>
+     * This method iterates through the master list ({@code allEvents}) and checks each event
+     * against two criteria:
+     * <ol>
+     * <li><b>Text Search:</b> Does the Name or Location match the query string?</li>
+     * <li><b>Status Filter:</b> Does the event match the selected dropdown state (e.g., Upcoming)?</li>
+     * </ol>
+     * Only events satisfying BOTH criteria are added to the display list ({@code events}).
+     * </p>
+     */
+    private void filterEvents() {
         events.clear();
-        if (query == null || query.trim().isEmpty()) {
-            events.addAll(allEvents);
-        } else {
-            String lower = query.toLowerCase();
-            for (Event e : allEvents) {
-                if (e.getName().toLowerCase().contains(lower) ||
-                    e.getLocation().toLowerCase().contains(lower)) {
-                    events.add(e);
-                }
+        String lowerQuery = currentSearchQuery.toLowerCase().trim();
+
+        for (Event e : allEvents) {
+            boolean matchesSearch = false;
+            boolean matchesFilter = false;
+
+            // 1. Check Search Text (Name or Location)
+            if (lowerQuery.isEmpty() ||
+                    e.getName().toLowerCase().contains(lowerQuery) ||
+                    e.getLocation().toLowerCase().contains(lowerQuery)) {
+                matchesSearch = true;
+            }
+
+            // 2. Check Dropdown Filter
+            switch (currentFilterStatus) {
+                case FILTER_UPCOMING:
+                    matchesFilter = e.isBeforeEventStart();
+                    break;
+                case FILTER_REG_OPEN:
+                    matchesFilter = e.isRegistrationOpen();
+                    break;
+                case FILTER_CLOSED:
+                    matchesFilter = e.isEventComplete();
+                    break;
+                default:
+                    matchesFilter = true;
+                    break;
+            }
+
+            // 3. If BOTH match, add to list
+            if (matchesSearch && matchesFilter) {
+                events.add(e);
             }
         }
         eventArrayAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Cleanup method called when the activity is destroyed.
+     * <p>
+     * Removes this activity from the {@link EventManager}'s observer list to prevent memory leaks.
+     * </p>
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventManager.getInstance().removeView(this);
     }
 
+    /**
+     * MVC Callback: Updates the list when the Model data changes.
+     * <p>
+     * Fetches the complete list of events from the {@link EventManager} and re-applies
+     * the current filters. Using {@code getEvents()} (all events) instead of filtered getters
+     * allows the local filtering logic to handle states like "Past / Closed".
+     * </p>
+     */
     @Override
     public void update() {
         allEvents.clear();
-        allEvents.addAll(EventManager.getInstance().getEventsRegistrationNotClosed());
-        if (currentSearchQuery.isEmpty()) {
-            events.clear();
-            events.addAll(allEvents);
-        } else {
-            filterEvents(currentSearchQuery);
-        }
-        eventArrayAdapter.notifyDataSetChanged();
+        // Load ALL events from the Manager so we can filter them locally.
+        allEvents.addAll(EventManager.getInstance().getEvents());
+
+        filterEvents();
     }
 }
