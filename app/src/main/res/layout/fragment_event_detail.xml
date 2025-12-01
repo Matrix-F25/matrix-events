@@ -342,6 +342,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/list_status_textview" />
 
+            <Button
+                android:id="@+id/event_qr_code_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View QR Code"
+                android:drawableLeft="@android:drawable/ic_menu_share"
+                android:drawablePadding="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/message_textview" />
+
             <ImageView
                 android:id="@+id/event_poster_image"
                 android:layout_width="0dp"
@@ -352,7 +363,7 @@
                 android:background="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/message_textview" />
+                app:layout_constraintTop_toBottomOf="@+id/event_qr_code_button" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

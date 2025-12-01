@@ -36,6 +36,7 @@ public class Event extends DBObject implements Serializable {
     private ReoccurringType reoccurringType;                // can be null if not reoccurring
     private Boolean geolocationTrackingEnabled = true;
     private Poster poster;                                  // can be null if no poster
+    private String qrCodeHash;
     private List<String> waitList = new ArrayList<>();      // holds profile deviceId
     private List<String> pendingList = new ArrayList<>();
     private List<String> acceptedList = new ArrayList<>();
@@ -554,6 +555,18 @@ public class Event extends DBObject implements Serializable {
      * @param poster The new Poster object.
      */
     public void setPoster(Poster poster) { this.poster = poster; }
+
+    /**
+     * Sets the event poster.
+     * @return The qrHashCode.
+     */
+    public String getQrCodeHash() {return qrCodeHash; }
+
+    /**
+     * Sets the event poster.
+     * @param qrCodeHash The new qrCodeHash.
+     */
+    public void setQrCodeHash(String qrCodeHash) {this.qrCodeHash = qrCodeHash; }
 
     /**
      * Gets the list of device IDs on the waitlist.
