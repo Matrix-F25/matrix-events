@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.NotificationArrayAdapter;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationActivity extends AppCompatActivity implements View {
-
+    private static final String TAG = "NotificationActivity";
     private ArrayList<Notification> notifications;
     private NotificationArrayAdapter notificationArrayAdapter;
     private String deviceId;
@@ -55,13 +56,13 @@ public class NotificationActivity extends AppCompatActivity implements View {
         notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);
         notificationListView.setAdapter(notificationArrayAdapter);
 
+        // observe notification manager
+        NotificationManager.getInstance().addView(this);
+
         // Check for incoming Notification ID
         handleIntent(getIntent());
 
-        // observe notification manager
-        NotificationManager.getInstance().addView(this);
         update();
-
     }
 
     // Handle Incoming Intent from Cold Start and when App is Running
@@ -78,38 +79,43 @@ public class NotificationActivity extends AppCompatActivity implements View {
 
     // Process the Intent and Store ID
     private void handleIntent(Intent intent) {
+        if (intent == null) return;
+
         String idFromIntent = intent.getStringExtra("notificationId");
         String typeFromIntent = intent.getStringExtra("type");
 
         if (idFromIntent != null) {
             pendingNotificationId = idFromIntent;
-            pendingType = typeFromIntent; // NEW
-            Log.d("NotificationActivity", "Push notification received with ID: " + pendingNotificationId + ", type=" + pendingType);
+            pendingType = typeFromIntent;
+            Log.d(TAG, "Push notification received with ID: " + pendingNotificationId + ", type=" + pendingType);
         }
     }
 
     // Execute Navigation Only after Data is Loaded
     private void checkPendingNavigation() {
         if (pendingNotificationId != null) {
-            Log.d("NotificationActivity", "Attempting navigation for ID: " + pendingNotificationId);
+            Log.d(TAG, "Attempting navigation for ID: " + pendingNotificationId);
 
             Notification target = NotificationManager.getInstance().getNotificationByDBID(pendingNotificationId);
 
             if (target != null) {
-                Log.d("NotificationActivity", "Target notification found. Navigating to SeeMore.");
+                Log.i(TAG, "Target notification found. Navigating to SeeMore.");
 
                 String adapterType = (pendingType != null) ? pendingType : "entrant";
 
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_fragment_container,
-                                NotificationSeeMoreFragment.newInstance(target, adapterType))
-                        .addToBackStack("notification_detail")
-                        .commit();
+                // Ensure 'Notification' implements Serializable or Parcelable!
+                NotificationSeeMoreFragment fragment = NotificationSeeMoreFragment.newInstance(target, adapterType);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                // IMPORTANT: Replace the container that currently holds the ListView
+                transaction.replace(R.id.content_fragment_container, fragment);
+                transaction.addToBackStack("notification_detail");
+                transaction.commit();
 
                 pendingNotificationId = null;
                 pendingType = null;
             } else {
-                Log.w("NotificationActivity", "Target notification NOT found in loaded data.");
+                Log.w(TAG, "Target notification NOT found in loaded data.");
             }
         }
     }
@@ -124,16 +130,22 @@ public class NotificationActivity extends AppCompatActivity implements View {
     public void update() {
         notifications.clear();
         List<Notification> allRecvNotifications = NotificationManager.getInstance().getReceivedNotificationsByDeviceID(deviceId);
-        for (Notification notification : allRecvNotifications) {
-            if (!notification.getReadFlag()) {
-                notifications.add(notification);
+        // NULL CHECK: Prevent crash if Manager returns null
+        if (allRecvNotifications != null) {
+            for (Notification notification : allRecvNotifications) {
+                if (!notification.getReadFlag()) {
+                    notifications.add(notification);
+                }
             }
+        } else {
+            Log.w(TAG, "NotificationManager returned null list.");
         }
 
         if (notificationArrayAdapter != null) {
             notificationArrayAdapter.notifyDataSetChanged();
         }
-        // Mark data as loaded and check for pending navigation
+
+        // Mark data as loaded so onNewIntent knows it can proceed
         isDataLoaded = true;
         checkPendingNavigation();
     }

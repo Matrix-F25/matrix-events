@@ -1,5 +1,7 @@
 package com.example.matrix_events.database;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -12,13 +14,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FCMService";
+
+    // Shared Preferences keys (Make sure these match where you save user settings!)
+    private static final String PREFS_NAME = "MatrixEventsPrefs";
+    private static final String KEY_ALLOW_ADMIN = "allow_admin_push";
+    private static final String KEY_ALLOW_ORGANIZER = "allow_organizer_push";
 
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        Log.d(TAG, "New FCM token: " + token); // Used to display debug messages in Logcat window
+        Log.d(TAG, "New FCM token: " + token);
 
         String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -47,74 +56,63 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        Log.d(TAG, "FCM message received");
+        Log.d(TAG, "FCM message received from: " + remoteMessage.getFrom());
 
-        // Support both notification and data payload
-        final String title = remoteMessage.getData().containsKey("title")
-                ? remoteMessage.getData().get("title")
-                : (remoteMessage.getNotification() != null ? remoteMessage.getNotification().getTitle() : "Matrix Events");
+        Map<String, String> data = remoteMessage.getData();
+        if (data.size() > 0) {
+            handleDataMessage(data);
+        } else if (remoteMessage.getNotification() != null) {
+            // Fallback: If only a notification payload is sent (not recommended for your requirements),
+            // we treat it as a generic message.
+            String title = remoteMessage.getNotification().getTitle();
+            String body = remoteMessage.getNotification().getBody();
+            // We can't determine type/id easily here, so we default.
+            showNotification(title, body, "0", "generic");
+        }
+    }
 
-        final String message = remoteMessage.getData().containsKey("message")
-                ? remoteMessage.getData().get("message")
-                : (remoteMessage.getNotification() != null ? remoteMessage.getNotification().getBody() : "(no message)");
+    private void handleDataMessage(Map<String, String> data) {
+        String title = data.get("title");
+        String message = data.get("message");
+        String type = data.get("type"); // e.g., "admin", "organizer"
+        String notificationId = data.get("notificationId");
 
-        final String type = remoteMessage.getData().get("type");
-
-        final String notificationId =
-                remoteMessage.getData().get("notificationId") != null ?
-                        remoteMessage.getData().get("notificationId") :
-                        String.valueOf(System.currentTimeMillis());
-
-        if (type == null) {
-            Log.w(TAG, "Push message missing 'type' field. Ignored.");
-            return;
+        if (notificationId == null) {
+            notificationId = String.valueOf(System.currentTimeMillis());
         }
 
-        String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        // 1. CHECK PREFERENCES LOCALLY (Synchronous & Fast)
+        // We avoid Firestore here to prevent the service from being killed before it finishes.
+        if (shouldShowNotification(type)) {
+            showNotification(title, message, notificationId, type);
+        } else {
+            Log.d(TAG, "Notification suppressed due to user preference: " + type);
+        }
+    }
 
+    private boolean shouldShowNotification(String type) {
+        if (type == null) return true; // Default to showing if no type specified
 
-        // Fetch profile directly from Firestore
-        FirebaseFirestore.getInstance()
-                .collection("profiles")
-                .whereEqualTo("deviceId", deviceId)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (querySnapshot.isEmpty()) {
-                        Log.w(TAG, "No profile found for this deviceId - cannot apply preferences.");
-                        return;
-                    }
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-                    var doc = querySnapshot.getDocuments().get(0);
-                    Profile profile = doc.toObject(Profile.class);
+        if (type.equalsIgnoreCase("admin")) {
+            // Default to true if not set
+            return prefs.getBoolean(KEY_ALLOW_ADMIN, true);
+        } else if (type.equalsIgnoreCase("organizer")) {
+            return prefs.getBoolean(KEY_ALLOW_ORGANIZER, true);
+        }
 
-                    if (profile == null) {
-                        Log.w(TAG, "Profile object is null.");
-                        return;
-                    }
+        return true; // Unknown types show by default
+    }
 
-                    boolean allow = false;
-                    if (type.equalsIgnoreCase("admin")) {
-                        allow = profile.isPushAdminNotifications();
-                    } else if (type.equalsIgnoreCase("organizer")) {
-                        allow = profile.isPushOrganizerNotifications();
-                    }
-
-                    if (!allow) {
-                        Log.d(TAG, "User disabled push notifications for type=" + type);
-                        return;
-                    }
-
-                    // Finally show native push notification
-                    NotificationUtils.showPushNotification(
-                            getApplicationContext(),
-                            title,
-                            message,
-                            notificationId,
-                            type
-                    );
-                })
-                .addOnFailureListener(e ->
-                        Log.e(TAG, "Failed to fetch profile for preferences", e)
-                );
+    private void showNotification(String title, String message, String notificationId, String type) {
+        // Pass to your Utility class to handle the actual PendingIntent creation
+        NotificationUtils.showPushNotification(
+                getApplicationContext(),
+                title,
+                message,
+                notificationId,
+                type
+        );
     }
 }
