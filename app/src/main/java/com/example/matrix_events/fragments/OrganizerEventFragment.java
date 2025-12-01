@@ -53,7 +53,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         waitlistButton.setOnClickListener(v -> {
             EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.WAITING_LIST);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
@@ -61,7 +61,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         pendingListButton.setOnClickListener(v -> {
             EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.PENDING_LIST);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
@@ -69,7 +69,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         acceptedListButton.setOnClickListener(v -> {
             EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.ACCEPTED_LIST);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
@@ -77,7 +77,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         declinedListButton.setOnClickListener(v -> {
             EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.DECLINED_LIST);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
@@ -85,10 +85,20 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         editButton.setOnClickListener(v -> {
             EventEditFragment fragment = EventEditFragment.newInstance(event);
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit();
         });
+        Button qrCodeButton = view.findViewById(R.id.org_event_qr_code_button);
+        if (qrCodeButton != null) {
+            qrCodeButton.setOnClickListener(v -> {
+                EventQRCodeFragment fragment = EventQRCodeFragment.newInstance(event);
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            });
+        }
 
         update();
 
@@ -150,7 +160,7 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
 
         // Event Location
         TextView eventLocation = view.findViewById(R.id.org_event_location_textview);
-        eventLocation.setText(event.getLocation().getName());
+        eventLocation.setText(event.getLocation());
 
         // Event Start Date/Time
         TextView eventStartDateTextview = view.findViewById(R.id.org_event_start_date_textview);

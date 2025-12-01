@@ -23,7 +23,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.matrix_events.R;
-import com.example.matrix_events.entities.Geolocation;
 import com.example.matrix_events.entities.Poster;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.PosterManager;
@@ -31,6 +30,7 @@ import com.example.matrix_events.managers.ProfileManager;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.entities.ReoccurringType;
+import com.example.matrix_events.utils.QRCodeGenerator;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.firebase.Timestamp;
 
@@ -207,14 +207,13 @@ public class EventCreateFragment extends Fragment {
 
             String deviceId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             Profile organizer = ProfileManager.getInstance().getProfileByDeviceId(deviceId);
-            Geolocation location = new Geolocation(locationName, -123.3656, 48.4284);
 
             // create the base event first (without poster)
             Event newEvent = new Event(
                     name,
                     description,
                     organizer,
-                    location,
+                    locationName,
                     eventStart,
                     eventEnd,
                     capacity,
@@ -227,6 +226,9 @@ public class EventCreateFragment extends Fragment {
                     geolocationTrackingEnabled,
                     null
             );
+
+            String tempQRHash = QRCodeGenerator.generateQRHash(name + System.currentTimeMillis());
+            newEvent.setQrCodeHash(tempQRHash);
 
             // create event with poster if uploaded
             if (posterUri != null) {

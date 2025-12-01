@@ -6,10 +6,10 @@
     android:id="@+id/admin_navigation_bar_fragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/windowBackground"
+    android:background="@android:color/white"
     android:elevation="8dp"
-    app:itemIconTint="@color/black"
-    app:itemTextColor="@color/black"
+    app:itemIconTint="@color/nav_item_color"
+    app:itemTextColor="@color/nav_item_color"
     app:labelVisibilityMode="labeled"
     app:menu="@menu/admin_bottom_nav_menu"
     tools:menu="@menu/admin_bottom_nav_menu" />

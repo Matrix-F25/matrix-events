@@ -1,134 +1,255 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:clickable="true"
-    android:padding="16dp">
+    android:background="@android:color/white">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/create_event_top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:padding="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Event Details -->
-        <EditText
-            android:id="@+id/event_name_input"
-            android:hint="Event Name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/back_btn"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:textColor="@android:color/black"
+            app:icon="@drawable/abc_ic_ab_back_material"
+            app:iconTint="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <EditText
-            android:id="@+id/event_description_input"
-            android:hint="Description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Event"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <EditText
-            android:id="@+id/event_capacity_input"
-            android:hint="Event Capacity"
-            android:inputType="number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Waitlist Capacity (optional) -->
-        <EditText
-            android:id="@+id/waitlist_capacity_input"
-            android:hint="Waitlist Capacity (optional)"
-            android:inputType="number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/create_event_top_bar"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Geolocation -->
-        <EditText
-            android:id="@+id/event_location_input"
-            android:hint="Location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- Switches -->
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/is_reoccurring_switch"
-            android:text="Is Reoccurring"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- Reoccurring Details -->
         <LinearLayout
-            android:id="@+id/reoccurring_section"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:paddingBottom="32dp">
 
-            <Spinner
-                android:id="@+id/reoccurring_type_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event Details"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#388E3C"
+                android:layout_marginBottom="8dp"/>
 
-            <Button
-                android:id="@+id/reoccurring_end_date_btn"
-                android:text="Select Reoccurring End Date"
+            <EditText
+                android:id="@+id/event_name_input"
+                android:hint="Event Name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/event_description_input"
+                android:hint="Description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <EditText
+                    android:id="@+id/event_capacity_input"
+                    android:hint="Capacity"
+                    android:inputType="number"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"/>
+
+                <EditText
+                    android:id="@+id/waitlist_capacity_input"
+                    android:hint="Waitlist Cap (Optional)"
+                    android:inputType="number"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/event_location_input"
+                android:hint="Location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Settings"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#388E3C"
+                android:layout_marginBottom="8dp"/>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/geolocation_tracking_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Require Geolocation Tracking"
+                app:thumbTint="#388E3C"
+                app:trackTint="#C8E6C9" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/is_reoccurring_switch"
+                android:text="Is Reoccurring"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:thumbTint="#388E3C"
+                app:trackTint="#C8E6C9"/>
+
+            <LinearLayout
+                android:id="@+id/reoccurring_section"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:padding="12dp"
+                android:background="#F1F8E9">
+
+                <Spinner
+                    android:id="@+id/reoccurring_type_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/reoccurring_end_date_btn"
+                    android:text="Select Reoccurring End Date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="#388E3C"
+                    app:strokeColor="#388E3C"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dates &amp; Times"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#388E3C"
+                android:layout_marginBottom="8dp"/>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:useDefaultMargins="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/reg_start_date_btn"
+                    android:text="Reg Start"
+                    android:layout_columnWeight="1"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="#388E3C"
+                    app:strokeColor="#388E3C"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/reg_end_date_btn"
+                    android:text="Reg End"
+                    android:layout_columnWeight="1"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="#388E3C"
+                    app:strokeColor="#388E3C"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/event_start_date_btn"
+                    android:text="Event Start"
+                    android:layout_columnWeight="1"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="#388E3C"
+                    app:strokeColor="#388E3C"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/event_end_date_btn"
+                    android:text="Event End"
+                    android:layout_columnWeight="1"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="#388E3C"
+                    app:strokeColor="#388E3C"/>
+            </GridLayout>
+
+            <!-- Poster Upload -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/upload_poster_btn"
+                android:text="Upload Poster"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textColor="#388E3C"
+                app:strokeColor="#388E3C"
+                app:icon="@drawable/ic_poster"
+                app:iconTint="#388E3C"
+                android:gravity="center"/>
+
+            <!-- Create Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/create_event_btn"
+                android:text="Create Event"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                app:cornerRadius="8dp"
+                app:backgroundTint="#388E3C"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
         </LinearLayout>
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/geolocation_tracking_switch"
-            android:text="Enable Geolocation Tracking"
-            android:checked="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- Date/Time Buttons -->
-        <Button
-            android:id="@+id/reg_start_date_btn"
-            android:text="Select Registration Start"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/reg_end_date_btn"
-            android:text="Select Registration End"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/event_start_date_btn"
-            android:text="Select Event Start"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/event_end_date_btn"
-            android:text="Select Event End"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- Poster Upload -->
-        <Button
-            android:id="@+id/upload_poster_btn"
-            android:text="Upload Poster"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" />
-
-        <!-- Create Button -->
-        <Button
-            android:id="@+id/create_event_btn"
-            android:text="Create Event"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp" />
-
-        <!-- Back Button -->
-        <Button
-            android:id="@+id/back_btn"
-            android:text="Back"
-            android:layout_width="100sp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="100dp"/>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

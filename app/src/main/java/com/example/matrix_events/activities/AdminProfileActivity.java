@@ -2,30 +2,33 @@ package com.example.matrix_events.activities;
 
 import android.os.Bundle;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
-import com.example.matrix_events.adapters.AdminProfileArrayAdapter;
+import com.example.matrix_events.adapters.ProfileArrayAdapter;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.AdminNavigationBarFragment;
+import com.example.matrix_events.fragments.AdminProfileDetailsFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.ProfileManager;
+//import com.example.matrix_events.managers.AdminProfileDetailsFragment;
 import com.example.matrix_events.mvc.View;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminProfileActivity extends AppCompatActivity implements View {
-
+public class AdminProfileActivity extends AppCompatActivity implements View, ProfileArrayAdapter.Listener {
     private ArrayList<Profile> profiles;
-    private AdminProfileArrayAdapter profileArrayAdapter;
+    private ProfileArrayAdapter profileArrayAdapter;
     private TabLayout tabLayout;
 
     @Override
@@ -44,9 +47,18 @@ public class AdminProfileActivity extends AppCompatActivity implements View {
                 .commit();
 
         profiles = new ArrayList<>();
-        ListView adminProfileList = findViewById(R.id.profile_listview);
-        profileArrayAdapter = new AdminProfileArrayAdapter(this, profiles);
-        adminProfileList.setAdapter(profileArrayAdapter);
+        ListView adminProfileListView = findViewById(R.id.profile_listview);
+        profileArrayAdapter = new ProfileArrayAdapter(this, profiles, true, this);
+        adminProfileListView.setAdapter(profileArrayAdapter);
+
+        adminProfileListView.setOnItemClickListener((parent, view, position, id) -> {
+            Profile selectedProfile = profiles.get(position);
+            AdminProfileDetailsFragment fragment = AdminProfileDetailsFragment.newInstance(selectedProfile);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         tabLayout = findViewById(R.id.profile_tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -89,8 +101,9 @@ public class AdminProfileActivity extends AppCompatActivity implements View {
         if (selectedTab == 0) {
             profiles.addAll(allProfiles);
 
-        } else {
-            // go through all profiles
+            // the organizers tab
+        } else if (selectedTab == 1) {
+
             for (Profile profile : allProfiles) {
 
                 boolean isOrganizer = false;
@@ -102,19 +115,9 @@ public class AdminProfileActivity extends AppCompatActivity implements View {
                         break;
                     }
                 }
-                // the entrants tab
-                if (selectedTab == 1) {
-                    // add to the entrants tab if the profile is NOT an organizer
-                    if (!isOrganizer) {
-                        profiles.add(profile);
-                    }
 
-                    // the organizers tab
-                } else if (selectedTab == 2) {
-                    // add to the organizers tab if the profile is an organizer
-                    if (isOrganizer) {
-                        profiles.add(profile);
-                    }
+                if (isOrganizer) {
+                    profiles.add(profile);
                 }
             }
         }
@@ -122,6 +125,22 @@ public class AdminProfileActivity extends AppCompatActivity implements View {
         if (profileArrayAdapter != null) {
             profileArrayAdapter.notifyDataSetChanged();
         }
+    }
+    public void cancelProfile(String deviceID) {
 
+        Profile profileToDelete = ProfileManager.getInstance().getProfileByDeviceId(deviceID);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Profile")
+                .setMessage("Are you sure you want to delete " + profileToDelete.getName() + "? This will also cancel and delete any events they organized.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+
+                    EventManager.getInstance().removeFromAllEvents(deviceID); // first, remove the user from all events
+                    ProfileManager.getInstance().deleteProfile(profileToDelete); // then, delete the profile
+
+                    Toast.makeText(this, "Profile deleted.", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }

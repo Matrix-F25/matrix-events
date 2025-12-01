@@ -1,5 +1,6 @@
 package com.example.matrix_events.fragments;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,8 +17,8 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.matrix_events.R;
+import com.example.matrix_events.activities.OrganizerMyEventsActivity;
 import com.example.matrix_events.entities.Event;
-import com.example.matrix_events.entities.Geolocation;
 import com.example.matrix_events.entities.Poster;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.PosterManager;
@@ -152,7 +153,7 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
 
         // Initialize Geolocation Switch
         if (geolocationTrackingSwitch != null) {
-            geolocationTrackingSwitch.setChecked(Boolean.TRUE.equals(event.isGeolocationTrackingEnabled()));
+            geolocationTrackingSwitch.setChecked(Boolean.TRUE.equals(event.isGeolocationTrackingRequired()));
         }
 
         // Initialize Event Name
@@ -164,7 +165,7 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
             eventDescriptionInput.setText(event.getDescription());
         }
         if (eventLocationInput != null && event.getLocation() != null) {
-            eventLocationInput.setText(event.getLocation().getName());
+            eventLocationInput.setText(event.getLocation());
         }
 
         if (deleteEventButton != null) {
@@ -192,15 +193,12 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
         }
         if (eventLocationInput != null && event.getLocation() != null) {
             String newLocationName = eventLocationInput.getText().toString().trim();
-            Geolocation currentLocation = event.getLocation();
-            // Create new Geolocation object with new name but same coordinates
-            Geolocation newGeolocation = new Geolocation(newLocationName, currentLocation.getLongitude(), currentLocation.getLatitude());
-            event.setLocation(newGeolocation);
+            event.setLocation(newLocationName);
         }
 
         // Update geolocation tracking status
         if (geolocationTrackingSwitch != null) {
-            event.setGeolocationTrackingEnabled(geolocationTrackingSwitch.isChecked());
+            event.setRequireGeolocationTracking(geolocationTrackingSwitch.isChecked());
         }
 
         // if poster is changed
@@ -280,13 +278,20 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
     private void deleteEvent() {
         if (event != null && !isUpdating) {
             setLoading(true);
-            EventManager.getInstance().deleteEvent(event);
+
+            String eventCancelledMessage = "Urgent: The event '" + event.getName() + "' has been cancelled by the organizer.";
+            EventManager.getInstance().cancelEventAndNotifyUsers(event, eventCancelledMessage);
 
             // wait before deleting
             new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                 setLoading(false);
                 Toast.makeText(requireContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
-                getParentFragmentManager().popBackStack();
+
+                // Navigate directly back to OrganizerMyEventsActivity
+                Intent intent = new Intent(requireContext(), OrganizerMyEventsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                requireActivity().finish();
             }, 500);
         }
     }
