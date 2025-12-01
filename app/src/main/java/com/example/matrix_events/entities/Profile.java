@@ -15,11 +15,8 @@ public class Profile extends DBObject implements Serializable {
 
     // Profile Notification Preferences
     // Notifications on by Default
-    private boolean emailAdminNotifications = true;
-    private boolean emailOrganizerNotifications = true;
-    private boolean phoneAdminNotifications = true;
-    private boolean phoneOrganizerNotifications = true;
-    private boolean notificationsEnabled = true;
+    private boolean adminPushNotifications = true;
+    private boolean organizerPushNotifications = true;
     private boolean isAdmin = false;
     private String profilePictureUrl;
 
@@ -34,58 +31,56 @@ public class Profile extends DBObject implements Serializable {
     }
 
     // Getters and Setters
+
     public String getName() {
         return name;
     }
+
     public void setName(@NonNull String name) {
         this.name = name;
     }
+
     public String getEmail() {
         return email;
     }
+
     public void setEmail(@NonNull String email) {
         this.email = email;
     }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
+
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
     public String getDeviceId() {
         return deviceId;
     }
-    public String getProfilePictureUrl() { return profilePictureUrl; }
-    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
-    public boolean isNotificationsEnabled() {
-        return notificationsEnabled;
-    }
-    public void setNotificationsEnabled(boolean notificationsEnabled) {
-        this.notificationsEnabled = notificationsEnabled;
-    }
-    public boolean isEmailAdminNotifications() {
-        return emailAdminNotifications;
-    }
-    public void setEmailAdminNotifications(boolean emailAdminNotifications) {
-        this.emailAdminNotifications = emailAdminNotifications;
-    }
-    public boolean isEmailOrganizerNotifications() {
-        return emailOrganizerNotifications;
-    }
-    public void setEmailOrganizerNotifications(boolean emailOrganizerNotifications) {
-        this.emailOrganizerNotifications = emailOrganizerNotifications;
-    }
-    public boolean isPhoneAdminNotifications() {
-        return phoneAdminNotifications;
-    }
-    public void setPhoneAdminNotifications(boolean phoneAdminNotifications) {
-        this.phoneAdminNotifications = phoneAdminNotifications;
-    }
-    public boolean isPhoneOrganizerNotifications() { return phoneOrganizerNotifications; }
-    public void setPhoneOrganizerNotifications(boolean phoneOrganizerNotifications) {
-        this.phoneOrganizerNotifications = phoneOrganizerNotifications;
-    }
-    public boolean isAdmin() { return isAdmin; }
-    public void setAdmin(boolean admin) { isAdmin = admin; }
 
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+
+    public boolean isAdminPushNotifications() {
+        return adminPushNotifications;
+    }
+
+    public boolean isOrganizerPushNotifications() {
+        return organizerPushNotifications;
+    }
+
+    public void setAdminPushNotifications(boolean notificationsEnabled) {
+        this.adminPushNotifications = notificationsEnabled;
+    }
+
+    public void setOrganizerPushNotifications(boolean notificationsEnabled) {
+        this.organizerPushNotifications = notificationsEnabled;
+    }
+
+    public boolean isAdmin() { return isAdmin; }
+
+    public void setAdmin(boolean admin) { isAdmin = admin; }
 }

@@ -1,94 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/matrix_background" >
+    android:background="@color/black">
 
-    <Button
-        android:id="@+id/signup_back_button"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Back"
+    <!-- HEADER TITLE -->
+    <TextView
+        android:id="@+id/signup_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.1"
+        android:text="@string/create_account"
         android:textColor="@color/neon_green"
-        app:backgroundTint="@color/black"
-        app:cornerRadius="0dp"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:shadowColor="#8000FF00"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- INPUT FIELDS CONTAINER -->
+    <LinearLayout
+        android:id="@+id/input_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/button_container"
+        app:layout_constraintTop_toBottomOf="@+id/signup_title"
+        app:layout_constraintVertical_bias="0.4">
+
+        <!-- Name Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_name"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="@string/full_name"
+            android:textColorHint="@color/neon_green"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+            app:boxBackgroundColor="@color/black"
+            app:boxStrokeColor="@color/neon_green"
+            app:boxStrokeWidth="2dp"
+            app:hintTextColor="@color/neon_green"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:startIconDrawable="@drawable/ic_profile"
+            app:startIconTint="@color/neon_green">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:textColor="@color/neon_green"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Email Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_email"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="@string/email_address"
+            android:textColorHint="@color/neon_green"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+            app:boxBackgroundColor="@color/black"
+            app:boxStrokeColor="@color/neon_green"
+            app:boxStrokeWidth="2dp"
+            app:hintTextColor="@color/neon_green"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:startIconDrawable="@android:drawable/ic_dialog_email"
+            app:startIconTint="@color/neon_green">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextEmailAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/neon_green"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Phone Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_phone"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/phone_number_optional"
+            android:textColorHint="@color/neon_green"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+            app:boxBackgroundColor="@color/black"
+            app:boxStrokeColor="@color/neon_green"
+            app:boxStrokeWidth="2dp"
+            app:hintTextColor="@color/neon_green"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:startIconDrawable="@android:drawable/stat_sys_phone_call"
+            app:startIconTint="@color/neon_green">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:textColor="@color/neon_green"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <!-- BUTTON CONTAINER -->
+    <LinearLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="48dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/neon_green"
-        app:strokeWidth="2dp" />
-
-    <Button
-        android:id="@+id/create_account_button"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:text="Create Account"
-        android:textColor="@color/neon_green"
-        app:backgroundTint="@color/black"
-        app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPhone"
-        app:strokeWidth="2dp"
-        app:strokeColor="@color/neon_green" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <EditText
-        android:id="@+id/editTextName"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/black"
-        android:ems="10"
-        android:inputType="text"
-        android:outlineProvider="background"
-        android:hint="Name"
-        android:textColorHint="@color/neon_green"
-        android:textColor="@color/neon_green"
-        app:layout_constraintBottom_toTopOf="@id/editTextEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        <!-- Create Account (Primary) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/create_account_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/create_account"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/neon_green"
+            app:cornerRadius="8dp"
+            app:rippleColor="@android:color/black" />
 
-    <EditText
-        android:id="@+id/editTextEmailAddress"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/black"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        android:hint="Email"
-        android:textColorHint="@color/neon_green"
-        android:textColor="@color/neon_green"
-        app:layout_constraintBottom_toTopOf="@id/editTextPhone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextName" />
+        <!-- Back Button (Secondary) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/signup_back_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/back_button_text"
+            android:textColor="@color/neon_green"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@android:color/transparent"
+            app:cornerRadius="8dp"
+            app:rippleColor="@color/neon_green"
+            app:strokeColor="@color/neon_green"
+            app:strokeWidth="2dp" />
 
-    <EditText
-        android:id="@+id/editTextPhone"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/black"
-        android:ems="10"
-        android:inputType="phone"
-        android:hint="Phone Number (Optional)"
-        android:textColorHint="@color/neon_green"
-        android:textColor="@color/neon_green"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextEmailAddress" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -161,9 +161,12 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
             eventNameInput.setText(event.getName());
         }
 
+        // Initialize Event Description
         if (eventDescriptionInput != null) {
             eventDescriptionInput.setText(event.getDescription());
         }
+
+        // Initialize Event Location
         if (eventLocationInput != null && event.getLocation() != null) {
             eventLocationInput.setText(event.getLocation());
         }
@@ -175,14 +178,12 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
         uploadPosterButton.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
 
         confirmChangesButton.setOnClickListener(v -> uploadPosterThenUpdateEvent());
-
     }
 
     /**
      * Uploads the selected poster image and updates the event in Firestore.
      */
     private void uploadPosterThenUpdateEvent() {
-        // start loading state
         setLoading(true);
 
         if (eventNameInput != null) {
@@ -272,6 +273,7 @@ public class EventEditFragment extends Fragment implements com.example.matrix_ev
             }, 500);
         }
     }
+
     /**
      * Deletes the current event from Firebase and navigates back.
      */

@@ -1,11 +1,14 @@
 package com.example.matrix_events.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,12 +19,22 @@ import com.example.matrix_events.R;
 import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.utils.TimestampConverter;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.GeoPoint;
 
-public class OrganizerEventFragment extends Fragment implements com.example.matrix_events.mvc.View {
+import java.util.HashMap;
+
+public class OrganizerEventFragment extends Fragment implements com.example.matrix_events.mvc.View, OnMapReadyCallback {
 
     private static final String TAG = "OrganizerEventFragment";
     View view = null;
     private Event event = null;
+    private GoogleMap googleMap;
 
     public OrganizerEventFragment() {
         super(R.layout.fragment_organizer_event);
@@ -49,38 +62,11 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
             getParentFragmentManager().popBackStack();
         });
 
-        Button waitlistButton = view.findViewById(R.id.org_event_waitlist_button);
-        waitlistButton.setOnClickListener(v -> {
-            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.WAITING_LIST);
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-        Button pendingListButton = view.findViewById(R.id.org_event_pending_list_button);
-        pendingListButton.setOnClickListener(v -> {
-            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.PENDING_LIST);
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-        Button acceptedListButton = view.findViewById(R.id.org_event_accepted_list_button);
-        acceptedListButton.setOnClickListener(v -> {
-            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.ACCEPTED_LIST);
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-        Button declinedListButton = view.findViewById(R.id.org_event_declined_list_button);
-        declinedListButton.setOnClickListener(v -> {
-            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, EventEntrantListFragment.ListType.DECLINED_LIST);
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
+        setupNavigationButton(view.findViewById(R.id.org_event_waitlist_button), EventEntrantListFragment.ListType.WAITING_LIST);
+        setupNavigationButton(view.findViewById(R.id.org_event_pending_list_button), EventEntrantListFragment.ListType.PENDING_LIST);
+        setupNavigationButton(view.findViewById(R.id.org_event_accepted_list_button), EventEntrantListFragment.ListType.ACCEPTED_LIST);
+        setupNavigationButton(view.findViewById(R.id.org_event_declined_list_button), EventEntrantListFragment.ListType.DECLINED_LIST);
+
         Button editButton = view.findViewById(R.id.org_event_edit_button);
         editButton.setOnClickListener(v -> {
             EventEditFragment fragment = EventEditFragment.newInstance(event);
@@ -125,6 +111,44 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         }
     }
 
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        updateMapMarkers();
+    }
+
+    private void setupNavigationButton(Button button, EventEntrantListFragment.ListType type) {
+        button.setOnClickListener(v -> {
+            EventEntrantListFragment fragment = EventEntrantListFragment.newInstance(event, type);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+    }
+
+    private void updateMapMarkers() {
+        if (googleMap == null || event == null) return;
+
+        googleMap.clear();
+
+        HashMap<String, GeoPoint> locations = event.getGeolocationMap();
+        if (locations != null && !locations.isEmpty()) {
+            LatLng lastLocation = null;
+            for (GeoPoint geoPoint : locations.values()) {
+                LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+                googleMap.addMarker(new MarkerOptions().position(latLng));
+                lastLocation = latLng;
+            }
+
+            // Move camera to the last added point, or general view
+            if (lastLocation != null) {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10f));
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     public void render() {
         if (!isAdded() || getContext() == null) {
             Log.w(TAG, "Fragment not attached, skipping update");
@@ -134,6 +158,57 @@ public class OrganizerEventFragment extends Fragment implements com.example.matr
         Context context = getContext();
         if (context == null) {
             return;
+        }
+
+        // Geolocation map logic
+
+        View mapContainer = view.findViewById(R.id.org_event_map_container);
+        View mapOverlay = view.findViewById(R.id.org_event_map_touch_overlay);
+        ScrollView scrollView = view.findViewById(R.id.org_event_scrollview);
+        TextView geoOffMessage = view.findViewById(R.id.org_event_geolocation_off_message);
+
+        mapContainer.setVisibility(View.GONE);
+
+        if (Boolean.TRUE.equals(event.isGeolocationTrackingRequired())) {
+            mapContainer.setVisibility(View.VISIBLE);
+            geoOffMessage.setVisibility(View.GONE);
+
+            // Initialize map if not already done
+            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.org_event_map);
+            if (mapFragment != null) {
+                mapFragment.getMapAsync(this);
+            }
+
+            // Refresh markers
+            if (googleMap != null) {
+                updateMapMarkers();
+            }
+
+            // When touching the transparent overlay, prevent ScrollView from intercepting touch events
+            if (mapOverlay != null && scrollView != null) {
+                mapOverlay.setOnTouchListener((v, motionEvent) -> {
+                    int action = motionEvent.getAction();
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN:
+                            // Disallow ScrollView to intercept touch events.
+                            scrollView.requestDisallowInterceptTouchEvent(true);
+                            // Disable scroll on ancestor
+                            return false; // Propagate to map
+                        case MotionEvent.ACTION_UP:
+                            scrollView.requestDisallowInterceptTouchEvent(false);
+                            return true;
+                        case MotionEvent.ACTION_MOVE:
+                            scrollView.requestDisallowInterceptTouchEvent(true);
+                            return false;
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+        } else {
+            mapContainer.setVisibility(View.GONE);
+            geoOffMessage.setVisibility(View.VISIBLE);
         }
 
         // Display poster image if available

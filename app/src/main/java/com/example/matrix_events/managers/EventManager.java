@@ -8,7 +8,6 @@ import com.example.matrix_events.entities.Event;
 import com.example.matrix_events.entities.Notification;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.mvc.Model;
-import com.example.matrix_events.managers.NotificationManager;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ public class EventManager extends Model implements DBListener<Event> {
 
     // Singleton
     private static EventManager manager = new EventManager();
+
     /**
      * Gets the singleton instance of the EventManager.
      *
@@ -37,12 +37,15 @@ public class EventManager extends Model implements DBListener<Event> {
     }
 
     // Event getters
+
     /**
      * Retrieves the local cache of all events.
      *
      * @return A list of all {@link Event} objects currently held by the manager.
      */
-    public List<Event> getEvents() { return events; }
+    public List<Event> getEvents() {
+        return events;
+    }
 
     /**
      * Finds and retrieves an event by its unique Firestore document ID.
@@ -76,6 +79,13 @@ public class EventManager extends Model implements DBListener<Event> {
         return eventsNotClosed;
     }
 
+    /**
+     * Filters and returns a list of events organized by a specific user where registration is NOT closed.
+     * Use this to show an organizer their active or upcoming events.
+     *
+     * @param deviceID The device ID of the organizer.
+     * @return A filtered list of {@link Event} objects managed by the specified organizer.
+     */
     public List<Event> getOrganizerEventsRegistrationNotClosed(String deviceID) {
         List<Event> organizerEventsNotClosed = new ArrayList<>();
         for (Event event : events) {
@@ -103,6 +113,13 @@ public class EventManager extends Model implements DBListener<Event> {
         return eventsClosed;
     }
 
+    /**
+     * Filters and returns a list of events organized by a specific user where registration IS closed.
+     * Use this to show an organizer their past or in-progress events where new entrants cannot join.
+     *
+     * @param deviceID The device ID of the organizer.
+     * @return A filtered list of {@link Event} objects managed by the specified organizer.
+     */
     public List<Event> getOrganizerEventsRegistrationClosed(String deviceID) {
         List<Event> organizerEventsClosed = new ArrayList<>();
         for (Event event : events) {
@@ -185,17 +202,24 @@ public class EventManager extends Model implements DBListener<Event> {
      *
      * @param event The {@link Event} object to create.
      */
-    public void createEvent(Event event) { connector.createAsync(event); }
+    public void createEvent(Event event) {
+        connector.createAsync(event);
+    }
 
     /**
      * Asynchronously updates an existing event in the Firestore database.
      *
      * @param event The {@link Event} object with updated data. Its ID must be set.
      */
-    public void updateEvent(Event event) { connector.updateAsync(event); }
+    public void updateEvent(Event event) {
+        connector.updateAsync(event);
+    }
 
     /**
      * Asynchronously deletes an event from the Firestore database.
+     * <p>
+     * If the event has an associated poster image, the poster is also deleted from storage.
+     * </p>
      *
      * @param event The {@link Event} object to delete. Its ID must be set.
      */
@@ -208,6 +232,16 @@ public class EventManager extends Model implements DBListener<Event> {
         connector.deleteAsync(event);
     }
 
+    /**
+     * Cancels an event, notifies all associated users, and deletes the event record.
+     * <p>
+     * This method iterates through all user lists (Waitlist, Pending, Accepted, Declined),
+     * sends a cancellation notification to each user, and then permanently deletes the event.
+     * </p>
+     *
+     * @param event   The {@link Event} to be cancelled.
+     * @param message The cancellation message to send to all users.
+     */
     public void cancelEventAndNotifyUsers(Event event, String message) {
 
         List<String> usersToNotify = new ArrayList<>();
@@ -239,6 +273,19 @@ public class EventManager extends Model implements DBListener<Event> {
         deleteEvent(event);
     }
 
+    /**
+     * Removes a specific user from all events in the system.
+     * <p>
+     * This method is typically called when a user deletes their profile or is banned.
+     * <ul>
+     * <li>If the user is an <b>Organizer</b>, their events are cancelled, and participants are notified.</li>
+     * <li>If the user is a <b>Participant</b>, they are removed from all lists (Waitlist, Pending, etc.)
+     * in any event they are associated with.</li>
+     * </ul>
+     * </p>
+     *
+     * @param deviceId The unique device ID of the user to remove.
+     */
     public void removeFromAllEvents(String deviceId) {
         List<Event> allEvents = new ArrayList<>(events);
 
@@ -252,7 +299,7 @@ public class EventManager extends Model implements DBListener<Event> {
 
             // attempt to remove the user from all lists
             boolean removeFromWaitlist = event.getWaitList().remove(deviceId);
-            boolean removeFromPendingList  = event.getPendingList().remove(deviceId);
+            boolean removeFromPendingList = event.getPendingList().remove(deviceId);
             boolean removeFromAcceptedList = event.getAcceptedList().remove(deviceId);
             boolean removeFromDeclinedList = event.getDeclinedList().remove(deviceId);
 
