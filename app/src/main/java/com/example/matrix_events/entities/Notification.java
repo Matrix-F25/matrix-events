@@ -3,6 +3,9 @@ package com.example.matrix_events.entities;
 import androidx.annotation.NonNull;
 
 import com.example.matrix_events.database.DBObject;
+
+import java.io.IOException;
+import java.io.Serializable;
 import com.google.firebase.Timestamp;
 
 import java.io.IOException;
@@ -29,11 +32,8 @@ public class Notification extends DBObject implements Serializable {
     private Profile sender;
     private Profile receiver;
     private String message;
-    private NotificationType type; // Admin or Organizer
-
-    // Mark Timestamp as transient so default serialization skips it.
-    // We handle this manually in writeObject/readObject.
     private transient Timestamp timestamp;
+    private NotificationType type; // Admin or Organizer
 
     private boolean readFlag = false;
 

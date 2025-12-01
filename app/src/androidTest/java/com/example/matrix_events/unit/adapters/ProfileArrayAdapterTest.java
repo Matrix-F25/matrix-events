@@ -1,4 +1,4 @@
-package com.example.matrix_events;
+package com.example.matrix_events.unit.adapters;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.matrix_events.R;
 import com.example.matrix_events.adapters.ProfileArrayAdapter;
 import com.example.matrix_events.entities.Profile;
 

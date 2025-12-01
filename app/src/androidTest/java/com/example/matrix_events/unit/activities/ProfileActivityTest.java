@@ -1,4 +1,4 @@
-package com.example.matrix_events;
+package com.example.matrix_events.unit.activities;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
@@ -13,10 +13,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import android.content.Context;
 import android.provider.Settings;
 
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.matrix_events.R;
 import com.example.matrix_events.activities.ProfileActivity;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.managers.ProfileManager;
@@ -28,7 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * UI/Integration Tests for {@link ProfileActivity}.
@@ -91,7 +92,7 @@ public class ProfileActivityTest {
     @Test
     public void testProfileDataDisplayed() {
         // Check if the Name field contains "Espresso User"
-        onView(withId(R.id.profile_name))
+        onView(ViewMatchers.withId(R.id.profile_name))
                 .check(matches(isDisplayed()))
                 .check(matches(withText("Espresso User")));
 

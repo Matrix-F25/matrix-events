@@ -1,4 +1,4 @@
-package com.example.matrix_events;
+package com.example.matrix_events.unit.fragments;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -9,10 +9,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import android.content.Context;
 import android.provider.Settings;
 
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.matrix_events.R;
 import com.example.matrix_events.activities.ProfileActivity;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.TermsConditionsFragment;
@@ -62,7 +64,7 @@ public class TermsConditionsFragmentTest {
         Thread.sleep(2000); // Wait for Firestore
 
         // 2. Navigate: Profile -> Settings
-        onView(withId(R.id.profile_settings_button)).perform(click());
+        onView(ViewMatchers.withId(R.id.profile_settings_button)).perform(click());
         Thread.sleep(1000);
 
         // 3. Navigate: Settings -> Terms & Conditions

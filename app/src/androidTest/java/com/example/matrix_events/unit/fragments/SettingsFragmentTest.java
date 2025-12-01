@@ -1,4 +1,4 @@
-package com.example.matrix_events;
+package com.example.matrix_events.unit.fragments;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -14,10 +14,12 @@ import static org.junit.Assert.assertFalse;
 import android.content.Context;
 import android.provider.Settings;
 
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.matrix_events.R;
 import com.example.matrix_events.activities.ProfileActivity;
 import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.SettingsFragment;
@@ -84,7 +86,7 @@ public class SettingsFragmentTest {
         Thread.sleep(2000); // Wait for Firestore sync
 
         // 2. Navigate to Settings Fragment
-        onView(withId(R.id.profile_settings_button)).perform(click());
+        onView(ViewMatchers.withId(R.id.profile_settings_button)).perform(click());
 
         // INCREASED WAIT: Give the fragment transition animation plenty of time to finish
         Thread.sleep(1500);

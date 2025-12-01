@@ -83,7 +83,7 @@ public class DBConnector<T extends DBObject> {
      */
     public void updateAsync(T object) {
         Log.d(TAG, "Attempting to update document");
-        if (object == null || object.getId().isEmpty()) {
+        if (object == null || object.getId() == null || object.getId().isEmpty()) {
             Log.w(TAG, "Cannot update object with null or empty ID");
             return;
         }
@@ -104,7 +104,7 @@ public class DBConnector<T extends DBObject> {
      */
     public void deleteAsync(T object) {
         Log.d(TAG, "Attempting to delete document");
-        if (object == null || object.getId().isEmpty()) {
+        if (object == null || object.getId() == null || object.getId().isEmpty()) {
             Log.w(TAG, "Cannot delete object with null or empty ID");
             return;
         }
