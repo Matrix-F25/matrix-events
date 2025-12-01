@@ -9,33 +9,88 @@
     tools:context=".activities.AdminActivity"
     android:padding="16dp">
 
-    <!-- Top Bar Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/admin_switch_to_org_button"
-        android:layout_width="wrap_content"
+    <!-- Top Bar Container -->
+    <LinearLayout
+        android:id="@+id/admin_top_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Go to Organizer View"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:textColor="#388E3C"
-        app:strokeColor="#388E3C"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Title -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/admin_switch_to_org_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Switch to Organizer"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="#388E3C"
+            app:strokeColor="#388E3C"
+            app:icon="@drawable/ic_event"
+            app:iconTint="#388E3C"/>
+    </LinearLayout>
+
+    <!-- Dashboard Title -->
     <TextView
         android:id="@+id/admin_dashboard_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Admin Dashboard"
-        android:textSize="28sp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/admin_switch_to_org_button"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/admin_top_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Stats Card Container -->
+    <LinearLayout
+        android:id="@+id/stats_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#F1F8E9"
+        android:paddingVertical="32dp"
+        android:paddingHorizontal="24dp"
+        android:elevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/admin_dashboard_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:text="System Overview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            android:layout_marginBottom="24dp"
+            android:letterSpacing="0.05"/>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="100dp"
+            android:layout_height="2dp"
+            android:background="#388E3C"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Dynamic Stats Text -->
+        <TextView
+            android:id="@+id/admin_stats_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading..."
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.5"/>
+
+    </LinearLayout>
 
     <!-- Admin Navigation Bar -->
     <FrameLayout

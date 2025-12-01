@@ -1,10 +1,15 @@
 <resources>
 
-<!-- Strings related to Login & Sign up -->
-<string name="app_name">matrix-events</string>
-<string name="hello_blank_fragment">Hello blank fragment</string>
-<string name="login_button_text">LOGIN</string>
-<string name="signup_button_text">SIGN UP</string>
+    <!-- Strings related to Login & Sign up -->
+    <string name="app_name">matrix-events</string>
+    <string name="matrix_events">MATRIX EVENTS</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_button_text">LOGIN</string>
+    <string name="signup_button_text">SIGN UP</string>
+    <string name="create_account">CREATE ACCOUNT</string>
+    <string name="phone_number_optional">Phone Number (Optional)</string>
+    <string name="email_address">Email Address</string>
+    <string name="full_name">Full Name</string>
 
 <!-- Strings related to Login -->
 <string name="prompt_email">Email</string>
@@ -81,5 +86,6 @@
 <string name="search_events_hint">Search events…</string>
 <string name="event_availability">Event Availability</string>
 <string name="date_filter_button_text">Date</string>
+    <string name="registration_open">Registration Open</string>
 
 </resources>
