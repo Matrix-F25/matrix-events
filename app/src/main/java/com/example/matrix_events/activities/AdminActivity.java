@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.matrix_events.R;
+import com.example.matrix_events.entities.Profile;
 import com.example.matrix_events.fragments.AdminNavigationBarFragment;
 import com.example.matrix_events.managers.EventManager;
 import com.example.matrix_events.managers.NotificationManager;
@@ -75,12 +76,19 @@ public class AdminActivity extends AppCompatActivity implements View {
     @Override
     public void update() {
         if (statsTextView != null) {
-            int profiles = ProfileManager.getInstance().getProfiles().size();
+            int totalProfiles = ProfileManager.getInstance().getProfiles().size();
+            int adminProfiles = 0;
+            for (Profile profile : ProfileManager.getInstance().getProfiles()) {
+                if (profile.isAdmin()) {
+                    adminProfiles++;
+                }
+            }
             int events = EventManager.getInstance().getEvents().size();
             int posters = PosterManager.getInstance().getPosters().size();
             int notifications = NotificationManager.getInstance().getNotifications().size();
 
-            String stats = "Profiles: " + profiles + "\n" +
+            String stats = "Total Profiles: " + totalProfiles + "\n" +
+                    "Admin Accounts: " + adminProfiles + "\n" +
                            "Events: " + events + "\n" +
                            "Posters: " + posters + "\n" +
                            "Notifications: " + notifications;
