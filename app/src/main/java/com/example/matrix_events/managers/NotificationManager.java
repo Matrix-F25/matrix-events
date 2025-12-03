@@ -1,6 +1,8 @@
 package com.example.matrix_events.managers;
 
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.matrix_events.database.DBConnector;
 import com.example.matrix_events.database.DBListener;
@@ -13,10 +15,14 @@ import java.util.List;
 /**
  * Manages all notification-related data and operations within the application.
  * <p>
- * This class follows the singleton pattern to provide a centralized point of access
- * for notification data. It connects to the Firestore 'notifications' collection,
- * maintains a local cache of {@link Notification} objects, and notifies registered
- * views of any changes, adhering to the MVC pattern.
+ * This class follows the <b>Singleton Pattern</b> to provide a centralized point of access
+ * for notification data across the application. It acts as the bridge between the
+ * Firestore database and the UI.
+ * </p>
+ * <p>
+ * It extends {@link Model} to integrate with the MVC architecture, allowing Views to
+ * subscribe to updates. It implements {@link DBListener} to receive real-time updates
+ * from the Firestore 'notifications' collection.
  * </p>
  */
 public class NotificationManager extends Model implements DBListener<Notification> {
@@ -26,6 +32,7 @@ public class NotificationManager extends Model implements DBListener<Notificatio
 
     // Singleton
     private static final NotificationManager manager = new NotificationManager();
+
     /**
      * Gets the singleton instance of the NotificationManager.
      *
@@ -50,10 +57,11 @@ public class NotificationManager extends Model implements DBListener<Notificatio
      * This method is critical for the Push Notification deep linking feature.
      * </p>
      *
-     * @param id The Firestore document ID of the notification.
+     * @param id The Firestore document ID of the notification. Cannot be null.
      * @return The {@link Notification} object with the matching ID, or {@code null} if no notification is found.
      */
-    public Notification getNotificationByDBID(String id) {
+    @Nullable
+    public Notification getNotificationByDBID(@NonNull String id) {
         for (Notification notification : notifications) {
             if (notification.getId() != null && notification.getId().equals(id)) {
                 return notification;
@@ -65,14 +73,16 @@ public class NotificationManager extends Model implements DBListener<Notificatio
     /**
      * Filters and returns a list of notifications received by a specific user.
      *
-     * @param deviceID The device ID of the user whose received notifications are to be retrieved.
+     * @param deviceID The device ID of the user whose received notifications are to be retrieved. Cannot be null.
      * @return A list of {@link Notification} objects addressed to the specified user.
+     * Returns an empty list if no matches are found.
      */
-    public List<Notification> getReceivedNotificationsByDeviceID(String deviceID) {
+    @NonNull
+    public List<Notification> getReceivedNotificationsByDeviceID(@NonNull String deviceID) {
         List<Notification> recvNotifications = new ArrayList<>();
         for (Notification notification : notifications) {
-            // Note: Assuming Profile object is always present on notification.
-            if (notification.getReceiver() != null && notification.getReceiver().getDeviceId().equals(deviceID)) {
+            // Check for null receiver to prevent crashes if data is malformed
+            if (notification.getReceiver() != null && deviceID.equals(notification.getReceiver().getDeviceId())) {
                 recvNotifications.add(notification);
             }
         }
@@ -82,13 +92,16 @@ public class NotificationManager extends Model implements DBListener<Notificatio
     /**
      * Filters and returns a list of notifications sent by a specific user.
      *
-     * @param deviceID The device ID of the user whose sent notifications are to be retrieved.
+     * @param deviceID The device ID of the user whose sent notifications are to be retrieved. Cannot be null.
      * @return A list of {@link Notification} objects sent by the specified user.
+     * Returns an empty list if no matches are found.
      */
-    public List<Notification> getSentNotificationsByDeviceID(String deviceID) {
+    @NonNull
+    public List<Notification> getSentNotificationsByDeviceID(@NonNull String deviceID) {
         List<Notification> sentNotifications = new ArrayList<>();
         for (Notification notification : notifications) {
-            if (notification.getSender() != null && notification.getSender().getDeviceId().equals(deviceID)) {
+            // Check for null sender to prevent crashes if data is malformed
+            if (notification.getSender() != null && deviceID.equals(notification.getSender().getDeviceId())) {
                 sentNotifications.add(notification);
             }
         }
@@ -100,9 +113,9 @@ public class NotificationManager extends Model implements DBListener<Notificatio
     /**
      * Asynchronously creates a new notification in the Firestore database.
      *
-     * @param notification The {@link Notification} object to create.
+     * @param notification The {@link Notification} object to create. Cannot be null.
      */
-    public void createNotification(Notification notification) { connector.createAsync(notification); }
+    public void createNotification(@NonNull Notification notification) { connector.createAsync(notification); }
 
     /**
      * Asynchronously updates an existing notification in the Firestore database.
@@ -110,9 +123,9 @@ public class NotificationManager extends Model implements DBListener<Notificatio
      * This is used by Entrants to mark a notification as read (soft delete).
      * </p>
      *
-     * @param notification The {@link Notification} object with updated data. Its ID must be set.
+     * @param notification The {@link Notification} object with updated data. Its ID must be set. Cannot be null.
      */
-    public void updateNotification(Notification notification) { connector.updateAsync(notification); }
+    public void updateNotification(@NonNull Notification notification) { connector.updateAsync(notification); }
 
     /**
      * Asynchronously deletes a notification from the Firestore database.
@@ -120,21 +133,22 @@ public class NotificationManager extends Model implements DBListener<Notificatio
      * This is typically used by Admins or system processes for hard deletion.
      * </p>
      *
-     * @param notification The {@link Notification} object to delete. Its ID must be set.
+     * @param notification The {@link Notification} object to delete. Its ID must be set. Cannot be null.
      */
-    public void deleteNotification(Notification notification) { connector.deleteAsync(notification); }
+    public void deleteNotification(@NonNull Notification notification) { connector.deleteAsync(notification); }
 
     /**
      * Callback method invoked by {@link DBConnector} when the notification data changes in Firestore.
      * <p>
-     * This method patches old notifications that might be missing a type field (legacy data)
-     * and updates the local cache before notifying all registered views.
+     * This method updates the local cache with the fresh list of notifications and
+     * immediately invokes {@link #notifyViews()} to trigger a UI refresh for all
+     * observing Views.
      * </p>
      *
      * @param objects The updated list of {@link Notification} objects from Firestore.
      */
     @Override
-    public void readAllAsync_Complete(List<Notification> objects) {
+    public void readAllAsync_Complete(@NonNull List<Notification> objects) {
         Log.d(TAG, "NotificationManager read all complete, notifying views");
 
         // Patch old notifications with missing types

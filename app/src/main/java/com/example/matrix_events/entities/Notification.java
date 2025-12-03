@@ -14,6 +14,7 @@ import java.util.Date;
 
 /**
  * Represents a notification to be sent from one user profile to another.
+ * <p>
  * This class extends {@link DBObject} for Firestore compatibility and implements
  * {@link Serializable} to be passed between Android components.
  * <p>

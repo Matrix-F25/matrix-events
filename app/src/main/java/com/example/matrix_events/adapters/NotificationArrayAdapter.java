@@ -131,10 +131,11 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
                 public void onClick(View v) {
                     // if we're currently an admin trying to delete a message
                     if ("admin".equals(adapterType)) {
+                        // Hard delete from database
                         NotificationManager.getInstance().deleteNotification(notification);
                         // if we're currently an entrant trying to delete a message
                     } else {
-                        // Soft delete: Mark as read
+                        // Soft delete (mark as read) for entrants
                         notification.setReadFlag(true);
                         NotificationManager.getInstance().updateNotification(notification);
                     }

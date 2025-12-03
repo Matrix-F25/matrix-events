@@ -224,6 +224,7 @@ public class ProfileActivity extends AppCompatActivity implements View {
         String email = Objects.requireNonNull(profileEmail.getText()).toString().trim();
         String phoneNumber = profilePhoneNumber.getText().toString().trim();
 
+        // Handle optional phone number
         if (phoneNumber.equals("")) {
             phoneNumber = null;
         }

@@ -80,6 +80,7 @@ public class NotificationActivity extends AppCompatActivity implements View {
 
         // 2. Setup ListView
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
         notifications = new ArrayList<>();
         ListView notificationListView = findViewById(R.id.notification_listview);
         notificationArrayAdapter = new NotificationArrayAdapter(this, notifications);

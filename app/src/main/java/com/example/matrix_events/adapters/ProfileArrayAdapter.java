@@ -50,7 +50,7 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
      */
     public ProfileArrayAdapter(@NonNull Context context, @NonNull ArrayList<Profile> arrayList,
                                boolean cancelEnabled,
-                               Listener listener) {
+                               @Nullable Listener listener) {
         super(context, 0, arrayList);
         this.cancelEnabled = cancelEnabled;
         this.listener = listener;
@@ -89,6 +89,8 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         }
 
         ImageButton cancelButton = convertView.findViewById(R.id.item_profile_list_cancel_button);
+        assert cancelButton != null;
+        cancelButton.setVisibility(View.INVISIBLE);
 
         // 4. Handle Logic
         if (cancelButton != null) {

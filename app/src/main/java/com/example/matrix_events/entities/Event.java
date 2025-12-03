@@ -20,10 +20,12 @@ import java.util.Map;
 
 /**
  * Represents an event within the application.
+ * <p>
  * This class extends {@link DBObject} to be compatible with the Firestore database
  * and implements {@link Serializable} to be passable between Android components.
  * It holds all the details about an event, including its name, description, organizer,
  * location, timing, capacity, and attendee lists.
+ * </p>
  */
 public class Event extends DBObject implements Serializable {
     private String name;
@@ -40,7 +42,7 @@ public class Event extends DBObject implements Serializable {
     private transient Timestamp reoccurringEndDateTime;     // can be null if not reoccurring
     private ReoccurringType reoccurringType;                // can be null if not reoccurring
     private Boolean requireGeolocationTracking = true;
-    private transient HashMap<String, GeoPoint> geolocationMap = new HashMap<>(); ;   // store deviceID -> location of where entrants joined the event IF requireGeolocationTracking
+    private transient HashMap<String, GeoPoint> geolocationMap = new HashMap<>();   // store deviceID -> location of where entrants joined the event IF requireGeolocationTracking
     private Poster poster;                                  // can be null if no poster
     private String qrCodeHash;
     private List<String> waitList = new ArrayList<>();      // holds profile deviceId
@@ -198,6 +200,8 @@ public class Event extends DBObject implements Serializable {
 
     // Event join / leave / accept / decline list mechanics
 
+
+
     /**
      * Checks if a user is on the waitlist.
      * @param deviceId The device ID of the user to check.
@@ -304,9 +308,11 @@ public class Event extends DBObject implements Serializable {
     }
 
     /**
-     * Moves a user from the pending list to the declined list.
+     * Moves a user from the pending list to the declined list and triggers a replacement.
+     * <p>
      * If a user declines, this method attempts to offer their spot to the next user on the waitlist
-     * by moving them to the pending list and sending them a notification.
+     * by moving the top waitlisted user to the pending list and sending them an automated notification.
+     * </p>
      * @param deviceId The device ID of the user to decline.
      */
     public void joinDeclinedList(@NonNull String deviceId) {
@@ -565,10 +571,20 @@ public class Event extends DBObject implements Serializable {
         this.requireGeolocationTracking = requireGeolocationTracking;
     }
 
+    /**
+     * Gets the map of device IDs to their geolocation points.
+     *
+     * @return A HashMap where keys are device IDs and values are {@link GeoPoint} objects.
+     */
     public HashMap<String, GeoPoint> getGeolocationMap() {
         return geolocationMap;
     }
 
+    /**
+     * Sets the map of device IDs to their geolocation points.
+     *
+     * @param geolocationMap The new map of geolocations. Cannot be null.
+     */
     public void setGeolocationMap(@NonNull HashMap<String, GeoPoint> geolocationMap) {
         this.geolocationMap = geolocationMap;
     }
@@ -586,13 +602,13 @@ public class Event extends DBObject implements Serializable {
     public void setPoster(Poster poster) { this.poster = poster; }
 
     /**
-     * Sets the event poster.
+     * Gets the QR code hash string.
      * @return The qrHashCode.
      */
     public String getQrCodeHash() {return qrCodeHash; }
 
     /**
-     * Sets the event poster.
+     * Sets the QR code hash string.
      * @param qrCodeHash The new qrCodeHash.
      */
     public void setQrCodeHash(String qrCodeHash) {this.qrCodeHash = qrCodeHash; }
@@ -681,6 +697,17 @@ public class Event extends DBObject implements Serializable {
      */
     public void setPendingExpired(boolean pendingExpired) { this.pendingExpired = pendingExpired; }
 
+    /**
+     * Custom serialization logic to handle Firebase {@link Timestamp} and {@link GeoPoint} fields.
+     * <p>
+     * Firebase {@code Timestamp} and {@code GeoPoint} classes are not {@code Serializable}.
+     * This method converts timestamps to milliseconds (long) and GeoPoints to separate
+     * latitude/longitude (double) values, then writes them manually to the output stream.
+     * </p>
+     *
+     * @param out The {@link java.io.ObjectOutputStream} to write to.
+     * @throws IOException If an I/O error occurs.
+     */
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
 
@@ -703,6 +730,17 @@ public class Event extends DBObject implements Serializable {
         }
     }
 
+    /**
+     * Custom deserialization logic to reconstruct Firebase {@link Timestamp} and {@link GeoPoint} fields.
+     * <p>
+     * This method reads the primitive types (longs and doubles) from the input stream
+     * and reconstructs the {@code Timestamp} and {@code GeoPoint} objects.
+     * </p>
+     *
+     * @param in The {@link java.io.ObjectInputStream} to read from.
+     * @throws IOException            If an I/O error occurs.
+     * @throws ClassNotFoundException If the class of a serialized object cannot be found.
+     */
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
