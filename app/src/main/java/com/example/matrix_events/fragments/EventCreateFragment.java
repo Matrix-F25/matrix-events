@@ -38,7 +38,6 @@ import java.util.Calendar;
 import java.util.List;
 
 public class EventCreateFragment extends Fragment {
-
     View view = null;
     private EditText nameInput, descriptionInput, capacityInput, locationInput, waitlistCapacityInput;
     private MaterialSwitch isReoccurringSwitch, geolocationTrackingSwitch;
