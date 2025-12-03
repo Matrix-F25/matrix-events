@@ -91,6 +91,22 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Empty View Text -->
+    <TextView
+        android:id="@+id/empty_list_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_results_found"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/event_search_listview"
+        app:layout_constraintBottom_toBottomOf="@id/event_search_listview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.25"
+        />
+
     <!-- ListView -->
     <ListView
         android:id="@+id/event_search_listview"

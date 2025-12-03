@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -125,6 +126,12 @@ public class EventSearchActivity extends AppCompatActivity implements View {
         eventArrayAdapter = new EventArrayAdapter(getApplicationContext(), events);
         ListView eventListView = findViewById(R.id.event_search_listview);
         eventListView.setAdapter(eventArrayAdapter);
+
+        // Link the Empty View
+        TextView emptyTextView = findViewById(R.id.empty_list_textview);
+        if (emptyTextView != null) {
+            eventListView.setEmptyView(emptyTextView);
+        }
 
         // Initialize Inputs
         TextInputEditText searchInput = findViewById(R.id.search_input);
