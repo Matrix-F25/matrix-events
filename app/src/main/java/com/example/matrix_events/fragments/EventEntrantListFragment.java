@@ -118,7 +118,7 @@ public class EventEntrantListFragment extends Fragment implements com.example.ma
             else {
                 NotificationCreateFragment fragment = new NotificationCreateFragment();
                 getParentFragmentManager().beginTransaction()
-                        .add(R.id.main, fragment)
+                        .add(R.id.fragment_container, fragment)
                         .addToBackStack(null)
                         .commit();
             }
