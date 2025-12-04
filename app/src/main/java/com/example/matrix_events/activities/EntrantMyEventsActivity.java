@@ -29,8 +29,27 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity responsible for displaying the events an entrant is participating in.
+ * <p>
+ * This class serves as a dashboard for the user to view their status across different events.
+ * It filters events into five distinct categories based on the entrant's progression through
+ * the event lifecycle:
+ * <ul>
+ * <li><b>Waitlist:</b> Events where the user is waiting for the lottery draw.</li>
+ * <li><b>Not Selected:</b> Events where the lottery occurred, and the user was not chosen.</li>
+ * <li><b>Pending:</b> Events where the user won the lottery but hasn't accepted/declined yet.</li>
+ * <li><b>Accepted:</b> Events the user is confirmed to attend.</li>
+ * <li><b>Declined:</b> Events the user was invited to but chose not to attend.</li>
+ * </ul>
+ * This activity implements {@link View} to observe changes in the {@link EventManager}.
+ * </p>
+ */
 public class EntrantMyEventsActivity extends AppCompatActivity implements View {
 
+    /**
+     * Enumeration representing the currently selected filter tab.
+     */
     enum Selection {
         Waitlist,
         NotSelected,
@@ -47,6 +66,17 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
     private MaterialButtonToggleGroup toggleGroup;
     private MaterialButton waitlistButton, notSelectedButton, pendingButton, acceptedButton, declinedButton;
 
+    /**
+     * Called when the activity is starting.
+     * <p>
+     * Initializes the UI, sets up the navigation bar, configures the list adapter,
+     * and attaches listeners to the filter toggle buttons. It also handles the
+     * switch between Entrant and Organizer views.
+     * </p>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     * shut down then this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +87,8 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Initialize Navigation Bar
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.navigation_bar_fragment, NavigationBarFragment.newInstance(R.id.nav_my_events))
@@ -64,11 +96,13 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
 
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
+        // Setup List and Adapter
         eventArray = new ArrayList<>();
         eventAdapter = new EventArrayAdapter(getApplicationContext(), eventArray);
         ListView eventListview = findViewById(R.id.entrant_listview);
         eventListview.setAdapter(eventAdapter);
 
+        // Click Listener to view Event Details
         eventListview.setOnItemClickListener(((parent, view, position, id) -> {
             Log.d("DEBUG", "event clicked");
             Event selectedEvent = eventArray.get(position);
@@ -89,6 +123,7 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
 
         listTitleTextview = findViewById(R.id.entrant_list_title_textview);
 
+        // Setup Filter Buttons
         toggleGroup = findViewById(R.id.filter_toggle_group);
         waitlistButton = findViewById(R.id.entrant_waitlisted_button);
         notSelectedButton = findViewById(R.id.entrant_not_selected_button);
@@ -117,12 +152,25 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
         EventManager.getInstance().addView(this);
     }
 
+    /**
+     * Cleanup method called when the activity is destroyed.
+     * <p>
+     * Unregisters this activity from the {@link EventManager} to prevent memory leaks.
+     * </p>
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventManager.getInstance().removeView(this);
     }
 
+    /**
+     * Updates the visual style of the filter buttons based on the current {@link Selection}.
+     * <p>
+     * The selected button is highlighted with a solid green background and white text.
+     * Unselected buttons are styled with a white background and green text/outline.
+     * </p>
+     */
     private void updateButtonStyles() {
         int green = Color.parseColor("#388E3C");
         int white = Color.WHITE;
@@ -152,6 +200,22 @@ public class EntrantMyEventsActivity extends AppCompatActivity implements View {
         }
     }
 
+    /**
+     * MVC Callback: Updates the list when the Model data changes or a filter is selected.
+     * <p>
+     * This method clears the current list and populates it with events from the {@link EventManager}
+     * based on the current {@link Selection}.
+     * </p>
+     * <p>
+     * <b>Special Logic for Waitlists:</b>
+     * <ul>
+     * <li><b>Waitlist Selection:</b> Shows events where the user is in the waitlist AND
+     * registration is NOT closed (lottery hasn't happened yet).</li>
+     * <li><b>Not Selected Selection:</b> Shows events where the user is in the waitlist BUT
+     * registration IS closed (lottery happened, and they were not picked).</li>
+     * </ul>
+     * </p>
+     */
     @Override
     public void update() {
         eventArray.clear();

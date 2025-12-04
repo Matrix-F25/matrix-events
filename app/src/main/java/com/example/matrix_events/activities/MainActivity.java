@@ -19,8 +19,42 @@ import com.example.matrix_events.R;
 import com.example.matrix_events.fragments.SignUpFragment;
 import com.example.matrix_events.managers.ProfileManager;
 
+/**
+ * The entry point activity for the Matrix Events application.
+ * <p>
+ * This activity serves as the initial authentication screen. It utilizes the Android Device ID
+ * ({@link Settings.Secure#ANDROID_ID}) as a unique credential to verify user identity without
+ * requiring a traditional username/password.
+ * </p>
+ * <p>
+ * It provides two primary pathways:
+ * <ul>
+ * <li><b>Login:</b> Validates the device ID against the {@link ProfileManager}. If a profile exists, proceeds to the app.</li>
+ * <li><b>Sign Up:</b> Checks if the device ID is new. If so, launches the {@link SignUpFragment}.</li>
+ * </ul>
+ * </p>
+ */
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Called when the activity is starting.
+     * <p>
+     * Sets up the UI, handles window insets for edge-to-edge display, and configures
+     * the click listeners for authentication.
+     * </p>
+     * <p>
+     * <b>Authentication Logic:</b>
+     * <ul>
+     * <li><b>Sign Up Button:</b> Checks if the current Device ID already exists in the database.
+     * If it does, a Toast prompts the user to login. If not, it opens the registration form.</li>
+     * <li><b>Login Button:</b> Checks if the current Device ID exists.
+     * If it does, it navigates to {@link EventSearchActivity}. If not, a Toast prompts the user to sign up.</li>
+     * </ul>
+     * </p>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     * shut down then this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

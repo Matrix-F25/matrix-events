@@ -14,10 +14,34 @@ import com.example.matrix_events.R;
 import com.example.matrix_events.fragments.NavigationBarFragment;
 import com.example.matrix_events.fragments.QRScannerFragment;
 
+/**
+ * Activity responsible for hosting the QR Code scanning functionality.
+ * <p>
+ * This activity acts as a container for the {@link QRScannerFragment}, which handles the actual
+ * camera and scanning logic. It manages the visibility of the bottom navigation bar, ensuring it is
+ * visible during scanning but hidden when the user navigates deeper into a sub-fragment
+ * (e.g., viewing event details after a successful scan).
+ * </p>
+ */
 public class QRCodeActivity extends AppCompatActivity {
 
     private FragmentContainerView navigationBarContainer;
 
+    /**
+     * Called when the activity is starting.
+     * <p>
+     * Initializes the UI layout, applies window insets for edge-to-edge display, and performs two main tasks:
+     * <ol>
+     * <li>Loads the {@link NavigationBarFragment} and the {@link QRScannerFragment}.</li>
+     * <li>Registers a {@link androidx.fragment.app.FragmentManager.OnBackStackChangedListener} to toggle
+     * the navigation bar's visibility. If the back stack has entries (meaning a detail view is open),
+     * the nav bar is hidden to provide more screen space.</li>
+     * </ol>
+     * </p>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     * shut down then this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +81,24 @@ public class QRCodeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Hides the bottom navigation bar container.
+     * <p>
+     * Called when the user navigates away from the root scanner view to a detail view.
+     * </p>
+     */
     private void hideNavigationBar() {
         if (navigationBarContainer != null) {
             navigationBarContainer.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * Shows the bottom navigation bar container.
+     * <p>
+     * Called when the user returns to the root scanner view.
+     * </p>
+     */
     private void showNavigationBar() {
         if (navigationBarContainer != null) {
             navigationBarContainer.setVisibility(View.VISIBLE);

@@ -199,7 +199,7 @@ public class EventDetailFragment extends Fragment implements com.example.matrix_
                     .error(R.drawable.placeholder)              // optional
                     .into(posterImage);
         } else {
-            posterImage.setImageResource(R.drawable.placeholder);
+            posterImage.setVisibility(View.GONE);
         }
 
         // Organizer Name

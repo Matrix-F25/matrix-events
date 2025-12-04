@@ -5,13 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EventTest">
+      <SelectionState runConfigName="Tests in 'com.example.matrix_events'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EventManagerTest">
+      <SelectionState runConfigName="NavigationBarFragmentTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EventSearchActivityTest">
+      <SelectionState runConfigName="test_US_01_05_01_SecondChancePool()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="USTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="Tests in 'com.example.matrix_events.unit'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
