@@ -91,7 +91,7 @@
         android:orientation="vertical"
         android:paddingHorizontal="70dp"
         android:paddingVertical="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navigation_bar_fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
