@@ -179,6 +179,15 @@ public class EventCreateFragment extends Fragment {
             String name = nameInput.getText().toString().trim();
             String description = descriptionInput.getText().toString().trim();
             String locationName = locationInput.getText().toString().trim();
+
+            // Check for empty strings first to avoid NumberFormatException crashes
+            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(description) ||
+                    TextUtils.isEmpty(capacityInput.getText().toString().trim()) ||
+                    eventStart == null || eventEnd == null || regStart == null || regEnd == null) {
+                Toast.makeText(requireContext(), "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             int capacity = Integer.parseInt(capacityInput.getText().toString().trim());
             Integer waitlistCapacity = null;
 
@@ -193,12 +202,6 @@ public class EventCreateFragment extends Fragment {
             if (isReoccurring) {
                 String selected = reoccurringTypeSpinner.getSelectedItem().toString();
                 reoccurringType = ReoccurringType.valueOf(selected);
-            }
-
-            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(description) ||
-                    eventStart == null || eventEnd == null || regStart == null || regEnd == null) {
-                Toast.makeText(requireContext(), "Please fill in all required fields", Toast.LENGTH_SHORT).show();
-                return;
             }
 
             // start loading state
@@ -313,6 +316,8 @@ public class EventCreateFragment extends Fragment {
 
         } catch (Exception e) {
             Log.e(TAG, "Error creating event: ", e);
+            // BUG FIX: Re-enable buttons if an exception occurred during the creation process
+            setLoading(false);
             Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }

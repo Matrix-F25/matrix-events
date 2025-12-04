@@ -122,7 +122,7 @@
         android:textColor="@android:color/white"
         app:icon="@drawable/ic_event"
         app:iconTint="@android:color/white"
-        app:backgroundTint="#388E3C"
+        app:backgroundTint="@color/filter_grey2"
         app:layout_constraintBottom_toTopOf="@id/navigation_bar_fragment"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -141,7 +141,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navigation_bar_fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
